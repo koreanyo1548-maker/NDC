@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1140d66fc8f448398ff269c4f220f3d, type: 3}
+  m_Name: EDbAbilities
+  m_EditorClassIdentifier: 
+  AbilityRune:
+  - Id: 29
+    Value: 64000000c80000002c0100005e01000090010000ef0100003a02000085020000d00200001b030000
+    NameId: 103033
+    Resource: Icon_AbilityPower
+  - Id: 30
+    Value: 64000000c80000002c0100005e01000090010000ef0100003a02000085020000d00200001b030000
+    NameId: 103034
+    Resource: Icon_AbilityHp
+  - Id: 31
+    Value: 1400000028000000500000005a000000640000008100000096000000ab000000c0000000d5000000
+    NameId: 103035
+    Resource: Icon_AbilityGold
+  - Id: 32
+    Value: 1400000028000000500000005a000000640000008100000096000000ab000000c0000000d5000000
+    NameId: 103036
+    Resource: Icon_AbilityExp
+  - Id: 15
+    Value: 78000000f000000068010000a4010000e001000052020000ac0200000603000060030000ba030000
+    NameId: 103037
+    Resource: Icon_AbilitySkill
+  AbilityOption:
+  - Id: 29
+    Value: 0a000000140000001e0000002c0000003c0000005a000000a0000000
+  - Id: 30
+    Value: 0a000000140000001e0000002c0000003c0000005a000000a0000000
+  - Id: 3
+    Value: 370000004b0000006900000096000000dc0000005401000026020000
+  - Id: 2
+    Value: 0a00000014000000190000001e000000320000005000000064000000
+  - Id: 7
+    Value: 0a000000140000001e00000028000000320000003c00000046000000
+  - Id: 6
+    Value: 0a000000140000001e00000028000000320000003c00000046000000
+  - Id: 5
+    Value: f401000058020000200300004c04000040060000b80b00007c150000
+  - Id: 4
+    Value: f401000058020000200300004c04000040060000b80b00007c150000
+  - Id: 8
+    Value: 0500000006000000080000000b000000100000001e00000037000000
+  AbilityOptionSummon:
+  - Id: 0
+    Probability: 429800
+  - Id: 1
+    Probability: 382100
+  - Id: 2
+    Probability: 125300
+  - Id: 3
+    Probability: 52600
+  - Id: 4
+    Probability: 6800
+  - Id: 5
+    Probability: 2400
+  - Id: 6
+    Probability: 1000

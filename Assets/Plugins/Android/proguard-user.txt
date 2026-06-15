@@ -1,0 +1,28 @@
+-keep class com.google.android.material.** { *; }
+-dontwarn com.google.android.material.**
+-dontnote com.google.android.material.**
+ 
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
+ 
+# ORIG/KS Interface
+-keep class com.hive.** { *; }
+# KS
+-keep class com.gcp.** { *; }
+# 개별모듈
+-keep class com.com2us.** { *; }
+
+#unity
+-keep class com.android.** { *; }
+-keep class com.unity3d.** { *; }
+ 
+#google / admob
+-keep class com.google.** { *; }
+ 
+-keepattributes *Annotation*
+-dontobfuscate
+ 
+-keep class net.codestage.actk.androidnative.ACTkAndroidRoutines { *; }
+-keep class net.codestage.actk.androidnative.CodeHashGenerator {public void GetCodeHash(...);}
+-keep class net.codestage.actk.androidnative.CodeHashCallback { *; }

@@ -1,0 +1,662 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2cd3768d3d4e48a1c05d010c199a7c, type: 3}
+  m_Name: EDbSummons
+  m_EditorClassIdentifier: 
+  SummonGradeProbability:
+  - Id: 1
+    Normal: 550000
+    Magic: 350000
+    Rare: 100000
+    Unique: 0
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 2
+    Normal: 484500
+    Magic: 335500
+    Rare: 150000
+    Unique: 30000
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 3
+    Normal: 450600
+    Magic: 320600
+    Rare: 148800
+    Unique: 80000
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 4
+    Normal: 437900
+    Magic: 309700
+    Rare: 147400
+    Unique: 100000
+    Heroic: 5000
+    Legendary: 0
+    Mythic: 0
+  - Id: 5
+    Normal: 429300
+    Magic: 306600
+    Rare: 145600
+    Unique: 108500
+    Heroic: 10000
+    Legendary: 0
+    Mythic: 0
+  - Id: 6
+    Normal: 402400
+    Magic: 290400
+    Rare: 142100
+    Unique: 112100
+    Heroic: 50000
+    Legendary: 3000
+    Mythic: 0
+  - Id: 7
+    Normal: 393600
+    Magic: 271700
+    Rare: 140400
+    Unique: 114300
+    Heroic: 70000
+    Legendary: 10000
+    Mythic: 0
+  - Id: 8
+    Normal: 389700
+    Magic: 241200
+    Rare: 139500
+    Unique: 118600
+    Heroic: 80000
+    Legendary: 30000
+    Mythic: 1000
+  - Id: 9
+    Normal: 325400
+    Magic: 218600
+    Rare: 136700
+    Unique: 119300
+    Heroic: 90000
+    Legendary: 60000
+    Mythic: 50000
+  - Id: 10
+    Normal: 228000
+    Magic: 172000
+    Rare: 140000
+    Unique: 130000
+    Heroic: 120000
+    Legendary: 110000
+    Mythic: 100000
+  SummonNumberProbability:
+  - Id: 0
+    Probability: e093040090d00300400d0300f0490200a0860100
+  - Id: 1
+    Probability: e093040090d00300400d0300f0490200a0860100
+  - Id: 2
+    Probability: e093040090d00300400d0300f0490200a0860100
+  - Id: 3
+    Probability: e093040090d00300400d0300f0490200a0860100
+  - Id: 4
+    Probability: d0dd060090d00300f0490200a086010050c30000
+  - Id: 5
+    Probability: d0dd060090d00300f0490200a086010050c30000
+  - Id: 6
+    Probability: d0dd060090d00300f0490200a086010050c30000
+  SummonSkillProbability:
+  - Id: 1
+    Normal: 650000
+    Magic: 300000
+    Rare: 50000
+    Unique: 0
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 2
+    Normal: 550000
+    Magic: 350000
+    Rare: 100000
+    Unique: 0
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 3
+    Normal: 400000
+    Magic: 400000
+    Rare: 150000
+    Unique: 50000
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 4
+    Normal: 400000
+    Magic: 400000
+    Rare: 150000
+    Unique: 50000
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 5
+    Normal: 400000
+    Magic: 350000
+    Rare: 150000
+    Unique: 100000
+    Heroic: 0
+    Legendary: 0
+    Mythic: 0
+  - Id: 6
+    Normal: 309500
+    Magic: 290000
+    Rare: 200000
+    Unique: 200000
+    Heroic: 3000
+    Legendary: 0
+    Mythic: 0
+  - Id: 7
+    Normal: 309500
+    Magic: 290000
+    Rare: 200000
+    Unique: 200000
+    Heroic: 5000
+    Legendary: 0
+    Mythic: 0
+  - Id: 8
+    Normal: 304500
+    Magic: 290000
+    Rare: 200000
+    Unique: 200000
+    Heroic: 10000
+    Legendary: 0
+    Mythic: 0
+  - Id: 9
+    Normal: 307000
+    Magic: 280000
+    Rare: 200000
+    Unique: 200000
+    Heroic: 15000
+    Legendary: 1000
+    Mythic: 0
+  - Id: 10
+    Normal: 300000
+    Magic: 280000
+    Rare: 200000
+    Unique: 200000
+    Heroic: 15000
+    Legendary: 3000
+    Mythic: 0
+  - Id: 11
+    Normal: 292000
+    Magic: 280000
+    Rare: 200000
+    Unique: 200000
+    Heroic: 20000
+    Legendary: 8000
+    Mythic: 0
+  - Id: 12
+    Normal: 299000
+    Magic: 280000
+    Rare: 190000
+    Unique: 190000
+    Heroic: 30000
+    Legendary: 10000
+    Mythic: 1000
+  - Id: 13
+    Normal: 299000
+    Magic: 280000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 40000
+    Legendary: 20000
+    Mythic: 1000
+  - Id: 14
+    Normal: 285000
+    Magic: 280000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 50000
+    Legendary: 20000
+    Mythic: 5000
+  - Id: 15
+    Normal: 274000
+    Magic: 270000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 60000
+    Legendary: 30000
+    Mythic: 6000
+  - Id: 16
+    Normal: 253000
+    Magic: 260000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 70000
+    Legendary: 50000
+    Mythic: 7000
+  - Id: 17
+    Normal: 242000
+    Magic: 250000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 80000
+    Legendary: 60000
+    Mythic: 8000
+  - Id: 18
+    Normal: 240000
+    Magic: 220000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 100000
+    Legendary: 70000
+    Mythic: 10000
+  - Id: 19
+    Normal: 230000
+    Magic: 200000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 100000
+    Legendary: 80000
+    Mythic: 30000
+  - Id: 20
+    Normal: 200000
+    Magic: 190000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 100000
+    Legendary: 100000
+    Mythic: 50000
+  - Id: 21
+    Normal: 200000
+    Magic: 190000
+    Rare: 180000
+    Unique: 180000
+    Heroic: 100000
+    Legendary: 100000
+    Mythic: 50000
+  SummonNecklaceProbability:
+  - Id: 1
+    Normal: 400000
+    Magic: 250000
+    Rare: 170000
+    Unique: 100000
+    Heroic: 50000
+    Legendary: 20000
+    Mythic: 10000
+  - Id: 2
+    Normal: 397800
+    Magic: 249200
+    Rare: 168700
+    Unique: 102000
+    Heroic: 51000
+    Legendary: 20800
+    Mythic: 10500
+  - Id: 3
+    Normal: 395600
+    Magic: 248400
+    Rare: 167400
+    Unique: 104000
+    Heroic: 52000
+    Legendary: 21600
+    Mythic: 11000
+  - Id: 4
+    Normal: 393400
+    Magic: 247600
+    Rare: 166100
+    Unique: 106000
+    Heroic: 53000
+    Legendary: 22400
+    Mythic: 11500
+  - Id: 5
+    Normal: 391200
+    Magic: 246800
+    Rare: 164800
+    Unique: 108000
+    Heroic: 54000
+    Legendary: 23200
+    Mythic: 12000
+  - Id: 6
+    Normal: 389000
+    Magic: 246000
+    Rare: 163500
+    Unique: 110000
+    Heroic: 55000
+    Legendary: 24000
+    Mythic: 12500
+  - Id: 7
+    Normal: 386800
+    Magic: 245200
+    Rare: 162200
+    Unique: 112000
+    Heroic: 56000
+    Legendary: 24800
+    Mythic: 13000
+  - Id: 8
+    Normal: 384600
+    Magic: 244400
+    Rare: 160900
+    Unique: 114000
+    Heroic: 57000
+    Legendary: 25600
+    Mythic: 13500
+  - Id: 9
+    Normal: 382400
+    Magic: 243600
+    Rare: 159600
+    Unique: 116000
+    Heroic: 58000
+    Legendary: 26400
+    Mythic: 14000
+  - Id: 10
+    Normal: 380200
+    Magic: 242800
+    Rare: 158300
+    Unique: 118000
+    Heroic: 59000
+    Legendary: 27200
+    Mythic: 14500
+  SummonProduct:
+  - Id: 0
+    Counts: 10
+    Cost: 500
+  - Id: 1
+    Counts: 30
+    Cost: 1500
+  - Id: 2
+    Counts: 100
+    Cost: 5000
+  - Id: 3
+    Counts: 300
+    Cost: 15000
+  - Id: 4
+    Counts: 30
+    Cost: 0
+  - Id: 5
+    Counts: 10
+    Cost: 500
+  - Id: 6
+    Counts: 30
+    Cost: 1500
+  - Id: 7
+    Counts: 100
+    Cost: 5000
+  - Id: 8
+    Counts: 300
+    Cost: 15000
+  - Id: 9
+    Counts: 30
+    Cost: 0
+  - Id: 10
+    Counts: 5
+    Cost: 2500
+  - Id: 11
+    Counts: 15
+    Cost: 7500
+  - Id: 12
+    Counts: 25
+    Cost: 12500
+  - Id: 13
+    Counts: 50
+    Cost: 25000
+  - Id: 14
+    Counts: 10
+    Cost: 0
+  - Id: 15
+    Counts: 5
+    Cost: 3000
+  - Id: 16
+    Counts: 15
+    Cost: 9000
+  - Id: 17
+    Counts: 25
+    Cost: 15000
+  - Id: 18
+    Counts: 50
+    Cost: 30000
+  - Id: 19
+    Counts: 10
+    Cost: 0
+  - Id: 20
+    Counts: 10
+    Cost: 800
+  - Id: 21
+    Counts: 30
+    Cost: 2400
+  - Id: 22
+    Counts: 50
+    Cost: 4000
+  - Id: 23
+    Counts: 100
+    Cost: 8000
+  - Id: 24
+    Counts: 10
+    Cost: 0
+  SummonLevel:
+  - Id: 1
+    NeedExp: 0
+    SkillNeedExp: 0
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 0
+  - Id: 2
+    NeedExp: 7000
+    SkillNeedExp: 2000
+    NecklaceNeedExp: 800000
+    WeaponId: 18
+    WeaponCount: 1
+    AccessoryId: 18
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 5000
+  - Id: 3
+    NeedExp: 30000
+    SkillNeedExp: 5000
+    NecklaceNeedExp: 800000
+    WeaponId: 20
+    WeaponCount: 1
+    AccessoryId: 20
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 6500
+  - Id: 4
+    NeedExp: 60000
+    SkillNeedExp: 8000
+    NecklaceNeedExp: 800000
+    WeaponId: 23
+    WeaponCount: 1
+    AccessoryId: 23
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 8450
+  - Id: 5
+    NeedExp: 300000
+    SkillNeedExp: 12500
+    NecklaceNeedExp: 1000000
+    WeaponId: 25
+    WeaponCount: 1
+    AccessoryId: 25
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 10985
+  - Id: 6
+    NeedExp: 750000
+    SkillNeedExp: 60000
+    NecklaceNeedExp: 1000000
+    WeaponId: 28
+    WeaponCount: 1
+    AccessoryId: 28
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 14281
+  - Id: 7
+    NeedExp: 1200000
+    SkillNeedExp: 72000
+    NecklaceNeedExp: 1000000
+    WeaponId: 30
+    WeaponCount: 1
+    AccessoryId: 30
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 18565
+  - Id: 8
+    NeedExp: 1650000
+    SkillNeedExp: 130000
+    NecklaceNeedExp: 1200000
+    WeaponId: 33
+    WeaponCount: 1
+    AccessoryId: 33
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 24135
+  - Id: 9
+    NeedExp: 2100000
+    SkillNeedExp: 163000
+    NecklaceNeedExp: 1200000
+    WeaponId: 35
+    WeaponCount: 1
+    AccessoryId: 35
+    AccessoryCount: 1
+    SkillId: 0
+    SkillCount: 31376
+  - Id: 10
+    NeedExp: 450000
+    SkillNeedExp: 450000
+    NecklaceNeedExp: 1500000
+    WeaponId: 0
+    WeaponCount: 100000000000
+    AccessoryId: 0
+    AccessoryCount: 100000000000
+    SkillId: 0
+    SkillCount: 40789
+  - Id: 11
+    NeedExp: 0
+    SkillNeedExp: 600000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 53026
+  - Id: 12
+    NeedExp: 0
+    SkillNeedExp: 640000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 68934
+  - Id: 13
+    NeedExp: 0
+    SkillNeedExp: 820000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 89614
+  - Id: 14
+    NeedExp: 0
+    SkillNeedExp: 880000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 116498
+  - Id: 15
+    NeedExp: 0
+    SkillNeedExp: 1100000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 151447
+  - Id: 16
+    NeedExp: 0
+    SkillNeedExp: 1350000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 196881
+  - Id: 17
+    NeedExp: 0
+    SkillNeedExp: 1350000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 255945
+  - Id: 18
+    NeedExp: 0
+    SkillNeedExp: 1350000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 332729
+  - Id: 19
+    NeedExp: 0
+    SkillNeedExp: 1350000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 432548
+  - Id: 20
+    NeedExp: 0
+    SkillNeedExp: 1350000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 562312
+  - Id: 21
+    NeedExp: 0
+    SkillNeedExp: 250000
+    NecklaceNeedExp: 0
+    WeaponId: 0
+    WeaponCount: 0
+    AccessoryId: 0
+    AccessoryCount: 0
+    SkillId: 0
+    SkillCount: 255000
+  SummonRelicProbability:
+  - Id: 0
+    Probability: 360000
+  - Id: 1
+    Probability: 270000
+  - Id: 2
+    Probability: 190000
+  - Id: 3
+    Probability: 100000
+  - Id: 4
+    Probability: 40000
+  - Id: 5
+    Probability: 30000
+  - Id: 6
+    Probability: 10000

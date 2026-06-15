@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mushroom Hero — 프로젝트 대시보드</title>
+<style>
+:root {
+  --bg:#0f1117; --bg2:#1a1d27; --bg3:#22263a; --border:#2e3350;
+  --accent:#4f8ef7; --green:#3ecf8e; --yellow:#f5a623; --red:#e05252;
+  --purple:#c084fc; --text:#e2e8f0; --text2:#94a3b8; --code-bg:#1e2235;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+       background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; }
+a { color:var(--accent); text-decoration:none; }
+.layout { display:flex; min-height:100vh; }
+nav { width:220px; min-width:220px; background:var(--bg2);
+      border-right:1px solid var(--border); padding:24px 0;
+      position:sticky; top:0; height:100vh; overflow-y:auto; }
+nav .logo { padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:16px; }
+nav .logo h1 { font-size:16px; color:var(--accent); }
+nav .logo p  { font-size:11px; color:var(--text2); margin-top:2px; }
+nav ul { list-style:none; }
+nav ul li a { display:block; padding:7px 20px; color:var(--text2); font-size:13px; transition:all 0.15s; }
+nav ul li a:hover { color:var(--text); background:var(--bg3); }
+nav .nav-group { padding:14px 20px 6px; font-size:10px; color:var(--text2);
+                 text-transform:uppercase; letter-spacing:0.08em; }
+main { flex:1; padding:32px; max-width:1200px; }
+section { margin-bottom:48px; }
+.section-title { font-size:20px; font-weight:600; margin-bottom:20px;
+                 padding-bottom:12px; border-bottom:1px solid var(--border);
+                 display:flex; align-items:center; gap:10px; }
+.section-title .icon { font-size:22px; }
+.card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-bottom:20px; }
+.card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; }
+.card .card-label { font-size:12px; color:var(--text2); margin-bottom:6px; }
+.card .card-value { font-size:22px; font-weight:700; }
+.card .card-sub   { font-size:12px; color:var(--text2); margin-top:4px; }
+.card.accent { border-color:var(--accent); }
+.card.green  { border-color:var(--green);  }
+.card.yellow { border-color:var(--yellow); }
+.progress-bar  { background:var(--bg3); border-radius:4px; height:8px; margin:8px 0 12px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--green)); border-radius:4px; }
+.phase-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:16px; }
+.phase-card.status-done     { border-left:4px solid var(--green);  }
+.phase-card.status-progress { border-left:4px solid var(--accent); }
+.phase-card.status-pending  { border-left:4px solid var(--border); }
+.phase-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+.phase-header h3 { font-size:15px; font-weight:600; }
+.phase-count { font-size:12px; color:var(--text2); margin-left:auto; }
+.badge { font-size:11px; padding:2px 8px; border-radius:20px; font-weight:600; }
+.badge-done     { background:rgba(62,207,142,0.15); color:var(--green);  }
+.badge-progress { background:rgba(79,142,247,0.15); color:var(--accent); }
+.badge-pending  { background:rgba(100,116,139,0.15); color:var(--text2); }
+.check-list { display:flex; flex-direction:column; gap:4px; }
+.check-item { padding:4px 8px; border-radius:4px; font-size:13px; }
+.check-item.done    { color:var(--text2); }
+.check-item.pending { color:var(--text);  }
+.check-item code { background:var(--code-bg); padding:1px 5px; border-radius:3px; font-size:12px; }
+table { width:100%; border-collapse:collapse; background:var(--bg2);
+        border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+th { background:var(--bg3); padding:10px 14px; text-align:left; font-size:12px;
+     color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; }
+td { padding:9px 14px; border-top:1px solid var(--border); font-size:13px; }
+td code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:12px; }
+td.note { color:var(--text2); font-size:12px; }
+td.sep-row { padding:2px; background:var(--bg3); }
+tr:hover td:not(.sep-row) { background:var(--bg3); }
+.info-box { background:var(--bg2); border:1px solid var(--border);
+            border-radius:10px; padding:20px; margin-bottom:16px; }
+.info-box h4 { font-size:14px; font-weight:600; margin-bottom:10px; color:var(--accent); }
+.info-box p  { font-size:13px; color:var(--text2); margin-bottom:6px; }
+.tag-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+.tag { background:var(--bg3); border:1px solid var(--border);
+       padding:3px 10px; border-radius:20px; font-size:12px; color:var(--text2); }
+.tag.green  { border-color:var(--green);  color:var(--green);  background:rgba(62,207,142,0.08); }
+.tag.blue   { border-color:var(--accent); color:var(--accent); background:rgba(79,142,247,0.08); }
+.tag.yellow { border-color:var(--yellow); color:var(--yellow); background:rgba(245,166,35,0.08); }
+.tag.purple { border-color:var(--purple); color:var(--purple); background:rgba(192,132,252,0.08); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.sub-title { font-size:15px; font-weight:600; margin:20px 0 10px; color:var(--text); }
+.currency-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; margin-bottom:16px; }
+.currency-item { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:10px 14px; }
+.currency-item .c-name { font-size:13px; font-weight:500; }
+.currency-item .c-id   { font-size:11px; color:var(--text2); }
+.note-text { font-size:12px; color:var(--text2); margin-top:6px; }
+footer { color:var(--text2); font-size:12px; text-align:center;
+         padding:24px 0 40px; border-top:1px solid var(--border); margin-top:40px; }
+@media (max-width:768px) { .two-col { grid-template-columns:1fr; } nav { display:none; } }
+.history-entry { background:var(--bg2); border:1px solid var(--border); border-radius:10px;
+                 padding:20px; margin-bottom:16px; }
+.history-entry.type-decision { border-left:4px solid var(--accent); }
+.history-entry.type-done     { border-left:4px solid var(--green);  }
+.history-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+.history-date { font-size:11px; color:var(--text2); background:var(--bg3);
+                padding:2px 10px; border-radius:20px; font-weight:500; }
+.history-title { font-size:15px; font-weight:600; margin-bottom:12px; color:var(--text); }
+.history-label { font-size:10px; color:var(--text2); text-transform:uppercase;
+                 letter-spacing:0.08em; margin:12px 0 6px; }
+.history-list { list-style:none; display:flex; flex-direction:column; gap:5px; padding:0; }
+.history-list li { font-size:13px; color:var(--text2); padding-left:14px; position:relative; }
+.history-list li::before { content:"·"; position:absolute; left:0; color:var(--accent); }
+.history-list li strong { color:var(--text); }
+.history-next { background:var(--bg3); border-radius:6px; padding:10px 14px; margin-top:14px; }
+.history-next .history-label { margin-top:0; }
+.history-separator { border:none; border-top:1px dashed var(--border); margin:4px 0 16px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <div class="logo">
+    <h1>🍄 Mushroom Hero</h1>
+    <p>프로젝트 대시보드</p>
+  </div>
+  <ul>
+    <li class="nav-group">기록</li>
+    <li><a href="#history">📜 히스토리</a></li>
+    <li class="nav-group">관리</li>
+    <li><a href="#summary">📊 요약</a></li>
+    <li><a href="#migration">🔄 마이그레이션</a></li>
+    <li><a href="#build">⚙️ 빌드 설정</a></li>
+    <li><a href="#sdk">📦 SDK 버전</a></li>
+    <li class="nav-group">게임 설계</li>
+    <li><a href="#overview">🎮 게임 개요</a></li>
+    <li><a href="#scenes">🎬 씬 구조</a></li>
+    <li><a href="#currency">💰 재화 시스템</a></li>
+    <li><a href="#grade">⭐ 등급 체계</a></li>
+    <li><a href="#equipment">⚔️ 장비/펫</a></li>
+    <li><a href="#dungeon">🏰 던전 시스템</a></li>
+    <li><a href="#skill">✨ 스킬 시스템</a></li>
+    <li><a href="#quest">📋 퀘스트</a></li>
+    <li><a href="#iap">💳 IAP/광고</a></li>
+    <li><a href="#lock">🔒 잠금 조건</a></li>
+    <li><a href="#setting">⚙️ 게임 설정</a></li>
+    <li><a href="#stat">📐 스탯 목록</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- 히스토리 -->
+<section id="history">
+  <div class="section-title"><span class="icon">📜</span>의사결정 히스토리</div>
+  <p style="color:var(--text2);font-size:12px;margin-bottom:20px">큰 방향 결정 및 세션 완료 기록 — 최신순</p>
+
+  <!-- 2026-06-15 2차 -->
+  <div class="history-entry type-done">
+    <div class="history-header">
+      <span class="history-date">2026-06-15 · 2차 세션</span>
+      <span class="badge badge-done">완료</span>
+    </div>
+    <div class="history-title">CharacterMaker 이식 완료: Player 비주얼 교체 동작 확인</div>
+    <div class="history-label">완료 내용 (코드)</div>
+    <ul class="history-list">
+      <li><code>Player.cs</code> — <code>using Costume;</code> 제거, <code>GetComponentInChildren&lt;Animator&gt;()</code> (자식 Animator 탐색), <code>GetOrAddComponent&lt;CostumeSetter&gt;()</code> 제거</li>
+      <li><code>_animator.Play("Die")</code> → <code>_animator.Play("Dead1")</code></li>
+      <li><code>_hitFired</code>, <code>HIT_NORMALIZED_TIME = 0.5f</code> 필드 추가, <code>UpdateAttackEvents()</code> 메서드 추가 (normalizedTime 폴링)</li>
+      <li><code>DoSkill()</code> → 항상 <code>"Skill"</code> 재생 (LayerLab _Controller 단일 Skill 상태)</li>
+      <li><code>_Controller.controller</code> — <code>AttackSpeed</code> float 파라미터 추가, Attack State에 SpeedParameter 연결</li>
+      <li><code>Attack.anim</code>, <code>Skill.anim</code>, <code>Jump Attack.anim</code> — 빈 Animation Event 제거 (<code>m_Events: []</code>)</li>
+    </ul>
+    <div class="history-label">완료 내용 (에디터 · 직접 작업)</div>
+    <ul class="history-list">
+      <li>Player.prefab: 기존 비주얼 자식(head, eyes, Body 등) 삭제</li>
+      <li><code>Character_20260615_220922.prefab</code> → Player body 자식으로 배치</li>
+      <li>Player body의 Animator 컴포넌트 제거 → <code>GetComponentInChildren</code> 충돌 해소</li>
+    </ul>
+    <div class="history-label">트러블슈팅</div>
+    <ul class="history-list">
+      <li>구 Animator가 먼저 잡혀 애니메이션 불재생 → Player body Animator 제거로 해결</li>
+      <li><code>DoSkill(skill.Animation)</code> 상태명 불일치 → <code>"Skill"</code> 고정으로 해결</li>
+      <li>LayerLab 클립 빈 Animation Event 경고 → 직접 제거로 해결</li>
+    </ul>
+    <div class="history-label">미결</div>
+    <ul class="history-list">
+      <li><code>HIT_NORMALIZED_TIME</code> 현재 <code>0.5f</code> (기본값) — Attack.anim 실제 히트 타이밍 확인 후 조정 필요</li>
+    </ul>
+
+    <div class="history-label" style="margin-top:16px;color:var(--green)">캐릭터 제작 파이프라인 (실제 구현 기준)</div>
+
+    <div class="sub-title" style="font-size:12px;margin:10px 0 6px">Player.prefab 실제 계층</div>
+    <div style="background:var(--code-bg);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--text2);font-family:monospace;line-height:1.8">
+      ROOT "Player"<br>
+      &nbsp;&nbsp;└── Positioner<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <strong style="color:var(--text)">Player body</strong> (Player.cs, scale: 0.1)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── normalSkill, Attack2~4Skill<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <strong style="color:var(--accent)">Character_20260615_220922</strong> (scale override: <strong style="color:var(--yellow)">10,10,10</strong>)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Animator (_Controller) ← GetComponentInChildren이 탐색<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── PartsManager<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Head, Hair, Chest, HandRight ...
+    </div>
+    <p class="note-text" style="margin-top:6px">⚠️ Player body scale이 0.1이므로 CharacterMaker localScale을 <strong>10</strong>으로 오버라이드해야 실제 크기 1.0</p>
+
+    <div class="sub-title" style="font-size:12px;margin:14px 0 6px">_Controller 실제 상태</div>
+    <table style="margin-bottom:0">
+      <tr><th>상태명</th><th>Player.cs 호출</th><th>비고</th></tr>
+      <tr><td><code>Idle</code></td><td><code>Play("Idle")</code></td><td class="note">기본 상태</td></tr>
+      <tr><td><code>Walk</code></td><td><code>Play("Walk")</code></td><td class="note"></td></tr>
+      <tr><td><code>Attack</code></td><td><code>Play("Attack")</code></td><td class="note">AttackSpeed 파라미터 연결</td></tr>
+      <tr><td><code>Skill</code></td><td><code>Play("Skill")</code></td><td class="note">DoSkill() 파라미터 무시, 항상 이 이름</td></tr>
+      <tr><td><code>Dead1</code></td><td><code>Play("Dead1")</code></td><td class="note">이 세션에서 추가</td></tr>
+    </table>
+    <p class="note-text" style="margin-top:6px">파라미터: <code>AttackSpeed</code> float (default 1) — <code>WhenAttackSpeedChanged()</code>에서 <code>SetFloat()</code> 실시간 업데이트</p>
+
+    <div class="sub-title" style="font-size:12px;margin:14px 0 6px">PartsManager 핵심 API</div>
+    <ul class="history-list">
+      <li><code>EquipParts(PartsType, int index)</code> — 파츠 교체</li>
+      <li><code>UnequipParts(PartsType)</code> — 파츠 제거 (canToggle인 경우만)</li>
+      <li><code>SetColor(ColorTargetType, Color)</code> — 색상 변경 (Skin / Hair / Beard)</li>
+      <li><code>ToPresetItem()</code> — 현재 외형 직렬화 → LocalSaveManager 저장용</li>
+      <li><code>ApplyPresetItem(item)</code> — 저장된 외형 복원</li>
+      <li>HandRight 무기 그룹 (동시에 하나만 활성): Sword, Axe, Bow, Wand, Staff, Spear, Blunt, Crossbow</li>
+      <li>자동 연동: Bow/Crossbow 장착 시 Arrow/Bolt 표시 · Helmet 장착 시 HelmetHair 자동 교체</li>
+    </ul>
+
+    <div class="sub-title" style="font-size:12px;margin:14px 0 6px">새 캐릭터 교체 절차 (에디터)</div>
+    <ul class="history-list">
+      <li>① LayerLab CharacterMaker 씬에서 파츠/색상 선택 → "Save Prefab"</li>
+      <li>② Player.prefab → Player body 안 기존 CharacterMaker 자식 제거</li>
+      <li>③ 새 프리팹 드래그 → Player body 하위 배치</li>
+      <li>④ 새 프리팹 localScale을 <strong>(10, 10, 10)</strong> 으로 설정</li>
+      <li>⑤ Player body에 Animator 컴포넌트 없는지 확인 (있으면 제거)</li>
+      <li>⑥ 실행 후 Idle / Walk / Attack / Dead1 확인</li>
+    </ul>
+
+    <div class="history-next">
+      <div class="history-label">다음 세션에 이어할 것</div>
+      <ul class="history-list">
+        <li><strong>스케일 자동 설정</strong>: Player.cs Awake에서 CharacterMaker 자식 localScale 고정 (원하는 크기 결정 필요)</li>
+        <li><strong>파츠 연동 설계</strong>: LayerLab <code>PartsManager</code> API 확인 → 장비/코스튬 변경 시 파츠 교체 연결
+          <ul class="history-list" style="margin-top:4px;padding-left:14px">
+            <li>무기 종류 → HandRight 파츠 교체</li>
+            <li>코스튬 → Chest, Hair 등 파츠 교체</li>
+            <li>선택된 파츠 <code>LocalSaveManager</code>에 저장/복원</li>
+          </ul>
+        </li>
+        <li><strong>Phase 2</strong> (별도): AdMob·Firebase·Unity 프로젝트 ID 교체 (새 계정 준비 후 착수)</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="history-separator">
+
+  <!-- 2026-06-15 1차 -->
+  <div class="history-entry type-decision">
+    <div class="history-header">
+      <span class="history-date">2026-06-15 · 1차 세션</span>
+      <span class="badge badge-progress">결정</span>
+    </div>
+    <div class="history-title">결정: LayerLab CharacterMaker → Player 비주얼 교체</div>
+    <div class="history-label">결정 내용</div>
+    <ul class="history-list">
+      <li>CharacterMaker 프리팹을 Player body의 <strong>자식</strong>으로 배치 (비주얼 레이어만 교체)</li>
+      <li>Player.prefab의 ROOT/Positioner 계층 및 게임 전용 오브젝트(DamagePosition, Bubble, PetPositions 등) 유지</li>
+      <li>Animation Event 방식 → <strong>Update normalizedTime 폴링</strong> 방식으로 전환 (LayerLab 에셋 무수정 유지)</li>
+      <li>LayerLab _Controller에 "Die" State(Dead1.anim) + "AttackSpeed" 파라미터 추가</li>
+    </ul>
+    <div class="history-label">이유</div>
+    <ul class="history-list">
+      <li>CharacterMaker Animator는 루트 기준 상대경로로 SR 제어 → Animator를 상위로 옮기면 클립 경로 깨짐</li>
+      <li>Animation Event를 LayerLab 클립에 추가하면 에셋 업데이트 시 손실 위험 → 코드 폴링이 더 안전</li>
+      <li>지금은 비주얼 교체만. 파츠 선택 UI는 이후 Phase</li>
+    </ul>
+    <div class="history-next">
+      <div class="history-label">참고</div>
+      <ul class="history-list">
+        <li>상세 설계 문서: <code>_dev/character-visual-migration-20260615.md</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="history-separator">
+
+  <!-- 2026-06-14 2차 -->
+  <div class="history-entry type-done">
+    <div class="history-header">
+      <span class="history-date">2026-06-14 · 2차 세션</span>
+      <span class="badge badge-done">완료</span>
+    </div>
+    <div class="history-title">Phase 1 완료: PlayFab 완전 제거 &amp; 로컬 저장 전환</div>
+    <div class="history-label">완료 내용</div>
+    <ul class="history-list">
+      <li><code>LocalSaveManager.cs</code>, <code>LeaderboardEntry.cs</code> 신규 작성</li>
+      <li><code>PlayFabStore.cs</code>, <code>PlayFabManager.cs</code>, <code>PlayFabLeaderboard.cs</code>, <code>PlayFabTitleData.cs</code> 전면 재작성 (로컬 스탠드얼론)</li>
+      <li><code>PlayFabFunctions.cs</code> 삭제</li>
+      <li><code>using PlayFab.*</code> 잔존 파일 전수 정리 (IAPManager, FieldScene, UI_Summon_Item 등)</li>
+      <li><code>Assets/Plugins/PlayFabSDK/</code> 폴더 삭제</li>
+      <li>컴파일 오류 해결 (누락된 <code>using Controller.Play</code>, <code>using Controller.Infos</code> 추가)</li>
+    </ul>
+    <div class="history-label">핵심 결정</div>
+    <ul class="history-list">
+      <li><strong>GPGS / Apple Sign In SDK 유지</strong>: 출시 시 재활용 가능성 높음, SDK 재설치 비용 큼. <code>#if UNITY_ANDROID/IOS</code> 블록 유지.</li>
+      <li><strong>랭킹 public 시그니처 유지</strong>: <code>PlayFabLeaderboard</code> 메서드를 스텁으로만 교체. Phase 4 Firebase 연동 시 내부만 교체하면 호출부 수정 불필요.</li>
+    </ul>
+    <div class="history-next">
+      <div class="history-label">다음 단계</div>
+      <ul class="history-list">
+        <li><strong>Phase 2</strong>: AdMob 계정 교체, Firebase 프로젝트 교체, Unity 프로젝트 ID 교체, 앱 이름/번들 ID 교체</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="history-separator">
+
+  <!-- 2026-06-14 1차 -->
+  <div class="history-entry type-decision">
+    <div class="history-header">
+      <span class="history-date">2026-06-14 · 1차 세션</span>
+      <span class="badge badge-progress">결정</span>
+    </div>
+    <div class="history-title">결정: Mushroom Hero → 스탠드얼론 신규 게임 전환</div>
+    <div class="history-label">배경</div>
+    <ul class="history-list">
+      <li>PlayFab 서버의 버전 체크(<code>ClientVer: 1.03.044</code>)가 앱을 강제 차단 → 크래시 발생</li>
+      <li>Mushroom Hero 코드베이스를 재활용해 신규 게임 제작 결정</li>
+    </ul>
+    <div class="history-label">결정 내용</div>
+    <ul class="history-list">
+      <li><strong>PlayFab 완전 제거</strong> → 로컬 JSON 저장으로 대체</li>
+      <li><strong>GPGS / Apple Sign In 제거</strong> (PlayFab 로그인과 연동되어 있어 함께 제거)</li>
+      <li><strong>AdMob / Firebase / IAP 유지</strong> → 새 계정으로 교체</li>
+      <li><strong>랭킹 스텁 처리</strong> → 추후 Firebase로 재설계 (Phase 4)</li>
+    </ul>
+    <div class="history-label">이유</div>
+    <ul class="history-list">
+      <li>서버 의존성을 없애 빠르게 실행 가능한 상태로 만드는 것이 우선</li>
+      <li>Firebase 기반 재설계는 복잡도가 높아 Phase 4로 미룸</li>
+    </ul>
+  </div>
+
+  <hr class="history-separator">
+
+  <!-- 백로그 -->
+  <div class="history-entry" style="border-left:4px solid var(--yellow);">
+    <div class="history-header">
+      <span class="history-date" style="background:rgba(245,166,35,0.12);color:var(--yellow)">백로그</span>
+      <span class="badge" style="background:rgba(245,166,35,0.15);color:var(--yellow)">추후 과제</span>
+    </div>
+    <div class="history-title">Dashboard 로컬 서버 전환</div>
+    <div class="history-label">배경</div>
+    <ul class="history-list">
+      <li>현재 <code>Dashboard.html</code>은 <code>generate_dashboard.py</code>로 생성하는 정적 파일</li>
+      <li>프로젝트 파일 변경이 자동으로 반영되지 않고, 갱신 버튼도 없음</li>
+    </ul>
+    <div class="history-label">목표</div>
+    <ul class="history-list">
+      <li>프로젝트 파일(md, json 등)을 동적으로 읽어 항상 최신 상태 표시</li>
+      <li>브라우저 새로고침 또는 버튼으로 즉시 갱신</li>
+      <li>향후 외부 에디터 기능으로 확장 가능한 구조</li>
+    </ul>
+    <div class="history-next">
+      <div class="history-label">방향</div>
+      <ul class="history-list">
+        <li>Python 경량 서버(Flask 등)로 전환. 요청 시 파일을 읽어 렌더링, API 엔드포인트로 에디터 확장 연결</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 요약 -->
+<section id="summary">
+  <div class="section-title"><span class="icon">📊</span>프로젝트 요약</div>
+  <p style="color:var(--text2);font-size:12px;margin-bottom:16px">
+    생성: 2026-06-15 02:06:28 &nbsp;·&nbsp;
+    Define.cs enum 38종 &nbsp;·&nbsp;
+    씬 11개
+  </p>
+  <div class="card-grid">
+    <div class="card accent">
+      <div class="card-label">전체 마이그레이션 진행률</div>
+      <div class="card-value">42%</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:42%"></div></div>
+      <div class="card-sub">16 / 38 항목 완료</div>
+    </div>
+    <div class="card green">
+      <div class="card-label">앱 버전</div>
+      <div class="card-value">1.03.043</div>
+      <div class="card-sub">코드: 103043</div>
+    </div>
+    <div class="card green">
+      <div class="card-label">Target SDK</div>
+      <div class="card-value">API 35</div>
+      <div class="card-sub">✅ Google Play 충족</div>
+    </div>
+    <div class="card">
+      <div class="card-label">GMA Unity SDK</div>
+      <div class="card-value">9.3.0</div>
+      <div class="card-sub">Android: 23.4.0</div>
+    </div>
+  </div>
+</section>
+
+<!-- 마이그레이션 -->
+<section id="migration">
+  <div class="section-title"><span class="icon">🔄</span>마이그레이션 현황</div>
+  
+        <div class="phase-card status-done">
+          <div class="phase-header">
+            <h3>Phase 1: PlayFab 제거 & 스탠드얼론 전환 ✅ 완료 (2026-06-14)</h3>
+            <span class="badge badge-done">완료</span> <span class="phase-count">13/13</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+          <div class="check-list"><div class="check-item done">✅ <code>PlayFabManager.ManualGuestLogin(deviceId)</code> → 내부적으로 바로 AfterLogin 호출하도록 교체</div><div class="check-item done">✅ <code>LoginScene.cs</code>에서 PlayFab 초기화 코드 제거</div><div class="check-item done">✅ GPGS / AppleAuth 코드는 <code>#if</code> 블록 안에 유지 (SDK 유지 결정 — 출시 시 재활용 가능)</div><div class="check-item done">✅ <code>LocalSaveManager.cs</code> 신규 작성 (<code>Application.persistentDataPath/save.json</code>, atomic write)</div><div class="check-item done">✅ <code>LeaderboardEntry.cs</code> 신규 작성 (PlayFab 타입 대체)</div><div class="check-item done">✅ <code>PlayFabStore.cs</code> 내부 구현 전면 교체 (로컬 파일 저장)</div><div class="check-item done">✅ <code>PlayFabManager.cs</code> 재작성 (디바이스 UUID 자동 로그인)</div><div class="check-item done">✅ <code>PlayFabLeaderboard</code> 스텁으로 교체 (public 시그니처 유지 → Firebase 재활용 가능)</div><div class="check-item done">✅ <code>UI_Ranking.cs</code> → <code>LeaderboardEntry</code> 타입으로 교체</div><div class="check-item done">✅ 모든 메서드 no-op 또는 즉시 콜백 반환으로 교체</div><div class="check-item done">✅ <code>PlayFab.*</code> using 전체 제거 (IAPManager, FieldScene, UI_Summon_Item, UI_Dungeon_Item, DbSkill, UI_Nickname 등)</div><div class="check-item done">✅ <code>PlayFabFunctions.cs</code> 삭제</div><div class="check-item done">✅ <code>PlayFab SDK</code> (<code>Assets/Plugins/PlayFabSDK/</code>) 삭제</div></div>
+        </div>
+        <div class="phase-card status-progress">
+          <div class="phase-header">
+            <h3>Phase 2: SDK 물리적 제거 & 프로젝트 신원 교체</h3>
+            <span class="badge badge-progress">진행 중</span> <span class="phase-count">3/20</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:15%"></div></div>
+          <div class="check-list"><div class="check-item done">✅ <code>Assets/Plugins/PlayFabSDK/</code> 삭제</div><div class="check-item pending">⬜ <code>Assets/GooglePlayGames/</code> — **유지 결정** (출시 시 재활용 가능, <code>#if</code>로 격리됨)</div><div class="check-item pending">⬜ <code>Assets/AppleAuth/</code> — **유지 결정** (동일 이유)</div><div class="check-item done">✅ <code>Assets/Scripts/ThirdParty/HiveManager.cs</code> 삭제</div><div class="check-item done">✅ <code>Assets/Scripts/ThirdParty/PlayFabFunctions.cs</code> 삭제</div><div class="check-item pending">⬜ 새 AdMob 계정에서 앱 등록 및 광고 유닛 ID 발급</div><div class="check-item pending">⬜ <code>GetAdId()</code> 함수의 모든 ID 교체</div><div class="check-item pending">⬜ <code>AndroidManifest.xml</code>의 AdMob App ID 교체</div><div class="check-item pending">⬜ 신규 Firebase 프로젝트 생성 (새 앱 이름/Bundle ID 기준)</div><div class="check-item pending">⬜ <code>Assets/google-services.json</code> 교체</div><div class="check-item pending">⬜ <code>Assets/GoogleService-Info.plist</code> 교체 (iOS)</div><div class="check-item pending">⬜ <code>ProjectSettings/UnityConnectSettings.asset</code> - Unity Project ID 교체</div><div class="check-item pending">⬜ Unity 대시보드에서 새 프로젝트 연결</div><div class="check-item pending">⬜ <code>companyName</code>: "Ndolphin Connect" → 새 회사명</div><div class="check-item pending">⬜ <code>productName</code>: "Mushroom Hero" → 새 게임명</div><div class="check-item pending">⬜ <code>bundleIdentifier</code> (Android/iOS) 교체</div><div class="check-item pending">⬜ 버전 설정 (1.00.000부터 시작)</div><div class="check-item pending">⬜ 새 Google Play 개발자 계정에서 앱 등록</div><div class="check-item pending">⬜ 상품 ID 등록 후 <code>IAPManager.cs</code>의 product ID 교체</div><div class="check-item pending">⬜ App Store Connect 앱 등록 및 상품 ID 교체</div></div>
+        </div>
+        <div class="phase-card status-pending">
+          <div class="phase-header">
+            <h3>Phase 3: 새 Git 레포 생성</h3>
+            <span class="badge badge-pending">대기</span> <span class="phase-count">0/5</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+          <div class="check-list"><div class="check-item pending">⬜ 현재 <code>.git</code> 폴더 삭제</div><div class="check-item pending">⬜ <code>git init</code></div><div class="check-item pending">⬜ <code>.gitignore</code> 재확인 (Library, Temp, build 제외)</div><div class="check-item pending">⬜ 초기 커밋 (Phase 1+2 완료 후)</div><div class="check-item pending">⬜ GitHub/GitLab 새 레포 생성 및 remote 연결</div></div>
+        </div>
+        <div class="phase-card status-pending">
+          <div class="phase-header">
+            <h3>Phase 4: Firebase 인증 & 랭킹 (선택적 / 추후)</h3>
+            <span class="badge badge-pending">대기</span> <span class="phase-count">0/0</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+          <div class="check-list"></div>
+        </div>
+</section>
+
+<!-- 빌드 설정 -->
+<section id="build">
+  <div class="section-title"><span class="icon">⚙️</span>빌드 설정</div>
+  <div class="two-col">
+    <table>
+      <tr><th>항목</th><th>값</th></tr>
+      <tr><td>앱 이름</td><td>Mushroom Hero</td></tr>
+      <tr><td>회사명</td><td>Ndolphin Connect</td></tr>
+      <tr><td>버전</td><td>1.03.043</td></tr>
+      <tr><td>버전 코드</td><td>103043</td></tr>
+      <tr><td>Min SDK</td><td>API 23</td></tr>
+      <tr><td>Target SDK</td><td>API 35 ✅</td></tr>
+    </table>
+    <div class="info-box">
+      <h4>Phase 2 교체 예정</h4>
+      <p>⬜ 앱 이름 / 회사명</p>
+      <p>⬜ Bundle ID</p>
+      <p>⬜ AdMob App ID (AndroidManifest.xml)</p>
+      <p>⬜ google-services.json</p>
+      <p>⬜ Unity Project ID</p>
+    </div>
+  </div>
+</section>
+
+<!-- SDK 버전 -->
+<section id="sdk">
+  <div class="section-title"><span class="icon">📦</span>SDK / 패키지 버전</div>
+  <div class="sub-title">Google SDK</div>
+  <table><tr><th>SDK</th><th>버전</th><th>비고</th></tr><tr><td>GMA Unity SDK</td><td><code>9.3.0</code></td><td class='note'>9.x 최신급</td></tr><tr><td>GMA Android SDK</td><td><code>23.4.0</code></td><td class='note'>Google Play Services</td></tr><tr><td>GMA compileSdkVersion</td><td><code>34</code></td><td class='note'></td></tr><tr><td>GMA buildToolsVersion</td><td><code>34.0.0</code></td><td class='note'></td></tr><tr><td>GMA targetSdkVersion</td><td><code>34</code></td><td class='note'></td></tr><tr><td>UMP</td><td><code>N/A</code></td><td class='note'>동의 관리</td></tr><tr><td>Firebase Unity SDK</td><td><code>12.5.0</code></td><td class='note'>Analytics 전용</td></tr><tr><td>Firebase Analytics</td><td><code>22.1.2</code></td><td class='note'></td></tr><tr><td>GPGS (비활성)</td><td><code>0.11.01</code></td><td class='note'>#if 비활성화 상태</td></tr></table>
+  <div class="sub-title">Unity 패키지 (주요)</div>
+  <table><tr><th>패키지</th><th>ID</th><th>버전</th></tr><tr><td>Unity IAP</td><td><code>com.unity.purchasing</code></td><td>4.12.2</td></tr><tr><td>Localization</td><td><code>com.unity.localization</code></td><td>1.5.2</td></tr><tr><td>Mobile Notifications</td><td><code>com.unity.mobile.notifications</code></td><td>2.4.0</td></tr><tr><td>Post Processing</td><td><code>com.unity.postprocessing</code></td><td>3.4.0</td></tr><tr><td>TextMeshPro</td><td><code>com.unity.textmeshpro</code></td><td>3.0.7</td></tr><tr><td>2D Animation</td><td><code>com.unity.2d.animation</code></td><td>9.2.0</td></tr><tr><td>PSD Importer</td><td><code>com.unity.2d.psdimporter</code></td><td>8.1.0</td></tr><tr><td>AI Navigation</td><td><code>com.unity.ai.navigation</code></td><td>1.1.6</td></tr><tr><td>Timeline</td><td><code>com.unity.timeline</code></td><td>1.7.7</td></tr><tr><td>UI Particle (OpenUPM)</td><td><code>com.coffee.ui-particle</code></td><td>4.1.7</td></tr></table>
+</section>
+
+<!-- 게임 개요 -->
+<section id="overview">
+  <div class="section-title"><span class="icon">🎮</span>게임 개요</div>
+  <div class="two-col">
+    <div class="info-box">
+      <h4>장르 / 구조</h4>
+      <p>수집형 아이들 RPG</p>
+      <p>스테이지 자동 전투 → 재화/장비 획득 → 성장 반복</p>
+      <p>파워 세이브 모드 (배터리 절약, 보상 배치 누적)</p>
+      <div class="tag-list" style="margin-top:8px">
+        <span class="tag green">아이들 RPG</span>
+        <span class="tag blue">수집형</span>
+        <span class="tag yellow">오프라인 보상</span>
+        <span class="tag">IAP</span>
+        <span class="tag">AdMob</span>
+        <span class="tag">로컬 저장</span>
+      </div>
+    </div>
+    <div class="info-box">
+      <h4>핵심 게임 루프</h4>
+      <p>1. 스테이지 진입 (자동 전투)</p>
+      <p>2. 몬스터 처치 → 골드 / 경험치 / 장비</p>
+      <p>3. 보스 처치 → 다음 스테이지</p>
+      <p>4. 재화로 장비 성장 / 소환</p>
+      <p>5. 던전 → 특수 재화</p>
+      <p>6. 오프라인 복귀 보상 수령</p>
+    </div>
+  </div>
+  <div class="info-box">
+    <h4>저장 / 서버 구조 (Phase 1 완료)</h4>
+    <p>PlayFab 완전 제거 → 로컬 JSON 저장 (<code>save.json</code>)</p>
+    <p>로그인: 디바이스 UUID 기반 자동 게스트</p>
+    <p>랭킹: 스텁 처리 (Phase 4에서 Firebase 예정)</p>
+  </div>
+</section>
+
+<!-- 씬 구조 -->
+<section id="scenes">
+  <div class="section-title"><span class="icon">🎬</span>씬 구조</div>
+  <table><tr><th>씬 파일</th><th>역할</th><th>상태</th></tr><tr><td>CI.unity</td><td>CI/테스트</td><td><span class="badge badge-pending">대기</span></td></tr><tr><td>CYTest.unity</td><td></td><td><span class="badge badge-pending">대기</span></td></tr><tr><td>DamageFontScene.unity</td><td></td><td><span class="badge badge-pending">대기</span></td></tr><tr><td>dev_Prologue.unity</td><td>개발용 프롤로그</td><td><span class="badge badge-pending">대기</span></td></tr><tr><td>Field.unity</td><td>메인 게임플레이 — 스테이지·던전·UI 전체</td><td><span class="badge badge-done">완료</span></td></tr><tr><td>Login.unity</td><td>게임 시작, 85+ DB 초기화, 로그인 처리</td><td><span class="badge badge-done">완료</span></td></tr><tr><td>NEW_SET_TEST.unity</td><td></td><td><span class="badge badge-pending">대기</span></td></tr><tr><td>Prologue.unity</td><td>프롤로그 시나리오</td><td><span class="badge badge-done">완료</span></td></tr><tr><td>TestScene.unity</td><td></td><td><span class="badge badge-pending">대기</span></td></tr><tr><td>TestSkillScene.unity</td><td></td><td><span class="badge badge-pending">대기</span></td></tr><tr><td>UI_SET_TEST.unity</td><td></td><td><span class="badge badge-pending">대기</span></td></tr></table>
+</section>
+
+<!-- 재화 시스템 -->
+<section id="currency">
+  <div class="section-title"><span class="icon">💰</span>재화 시스템</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Assets/Scripts/Data/Define.cs</code> CurrencyType enum</p>
+  <div class="sub-title">💵 통화 (Money)</div><div class="currency-grid"><div class="currency-item"><div class="c-name">Dia</div><div class="c-id">ID: 0</div></div><div class="currency-item"><div class="c-name">Gold</div><div class="c-id">ID: 1</div></div><div class="currency-item"><div class="c-name">Mileage</div><div class="c-id">ID: 44</div></div><div class="currency-item"><div class="c-name">Passion</div><div class="c-id">ID: 48</div></div><div class="currency-item"><div class="c-name">DropEventMoney</div><div class="c-id">ID: 61</div></div><div class="currency-item"><div class="c-name">BlackMarketCoin</div><div class="c-id">ID: 76</div></div><div class="currency-item"><div class="c-name">BeadsOre</div><div class="c-id">ID: 77</div></div></div><div class="sub-title">🪨 성장석 (Stone)</div><div class="currency-grid"><div class="currency-item"><div class="c-name">WeaponGrowthStone</div><div class="c-id">ID: 2</div></div><div class="currency-item"><div class="c-name">AwakeningStone</div><div class="c-id">ID: 3</div></div><div class="currency-item"><div class="c-name">AccessoryGrowthStone</div><div class="c-id">ID: 4</div></div><div class="currency-item"><div class="c-name">SkillGrowthStone</div><div class="c-id">ID: 5</div></div><div class="currency-item"><div class="c-name">PetGrowthStone</div><div class="c-id">ID: 9</div></div></div><div class="sub-title">⚡ 기타 재화</div><div class="currency-grid"><div class="currency-item"><div class="c-name">LevelPoint</div><div class="c-id">ID: 6</div></div></div><div class="sub-title">🎯 보유 장비</div><div class="currency-grid"><div class="currency-item"><div class="c-name">AdSkip</div><div class="c-id">ID: 10</div></div><div class="currency-item"><div class="c-name">Ad</div><div class="c-id">ID: 11</div></div></div><div class="sub-title">📊 경험치</div><div class="currency-grid"><div class="currency-item"><div class="c-name">Weapon</div><div class="c-id">ID: 12</div></div><div class="currency-item"><div class="c-name">Accessory</div><div class="c-id">ID: 13</div></div><div class="currency-item"><div class="c-name">Skill</div><div class="c-id">ID: 14</div></div><div class="currency-item"><div class="c-name">Costume</div><div class="c-id">ID: 43</div></div><div class="currency-item"><div class="c-name">Pet</div><div class="c-id">ID: 39</div></div><div class="currency-item"><div class="c-name">Necklace</div><div class="c-id">ID: 63</div></div></div><div class="sub-title">🎫 패스 / 프리셋</div><div class="currency-grid"><div class="currency-item"><div class="c-name">Exp</div><div class="c-id">ID: 15</div></div></div><div class="sub-title">🗝️ 스킬 프리셋 슬롯</div><div class="currency-grid"><div class="currency-item"><div class="c-name">LevelPass1</div><div class="c-id">ID: 16</div></div><div class="currency-item"><div class="c-name">LevelPass2</div><div class="c-id">ID: 17</div></div><div class="currency-item"><div class="c-name">LevelPass3</div><div class="c-id">ID: 18</div></div><div class="currency-item"><div class="c-name">LevelPass4</div><div class="c-id">ID: 50</div></div><div class="currency-item"><div class="c-name">LevelPass5</div><div class="c-id">ID: 51</div></div><div class="currency-item"><div class="c-name">StagePass1</div><div class="c-id">ID: 19</div></div><div class="currency-item"><div class="c-name">StagePass2</div><div class="c-id">ID: 20</div></div><div class="currency-item"><div class="c-name">StagePass3</div><div class="c-id">ID: 21</div></div><div class="currency-item"><div class="c-name">StagePass4</div><div class="c-id">ID: 52</div></div><div class="currency-item"><div class="c-name">StagePass5</div><div class="c-id">ID: 53</div></div><div class="currency-item"><div class="c-name">SoulPass</div><div class="c-id">ID: 22</div></div><div class="currency-item"><div class="c-name">SeasonPass</div><div class="c-id">ID: 59</div></div></div><div class="sub-title">🏰 던전 티켓</div><div class="currency-grid"><div class="currency-item"><div class="c-name">SkillPreset3</div><div class="c-id">ID: 23</div></div><div class="currency-item"><div class="c-name">SkillPreset4</div><div class="c-id">ID: 24</div></div><div class="currency-item"><div class="c-name">SkillPreset5</div><div class="c-id">ID: 25</div></div></div><div class="sub-title">🏰 광고 던전 티켓</div><div class="currency-grid"><div class="currency-item"><div class="c-name">SkillGrowthDungeonTicket</div><div class="c-id">ID: 7</div></div><div class="currency-item"><div class="c-name">AwakeningDungeonTicket</div><div class="c-id">ID: 8</div></div><div class="currency-item"><div class="c-name">PetDungeonTicket</div><div class="c-id">ID: 26</div></div><div class="currency-item"><div class="c-name">BlackMarketDungeonTicket</div><div class="c-id">ID: 27</div></div><div class="currency-item"><div class="c-name">DiaDungeonTicket</div><div class="c-id">ID: 28</div></div></div><div class="sub-title">📿 소환 티켓</div><div class="currency-grid"><div class="currency-item"><div class="c-name">AdSkillGrowthDungeonTicket</div><div class="c-id">ID: 64</div></div><div class="currency-item"><div class="c-name">AdAwakeningDungeonTicket</div><div class="c-id">ID: 65</div></div><div class="currency-item"><div class="c-name">AdPetDungeonTicket</div><div class="c-id">ID: 66</div></div><div class="currency-item"><div class="c-name">AdBlackMarketDungeonTicket</div><div class="c-id">ID: 67</div></div><div class="currency-item"><div class="c-name">AdDiaDungeonTicket</div><div class="c-id">ID: 68</div></div></div><div class="sub-title">📿 광고 소환 티켓</div><div class="currency-grid"><div class="currency-item"><div class="c-name">WeaponSummonTicket</div><div class="c-id">ID: 55</div></div><div class="currency-item"><div class="c-name">AccessorySummonTicket</div><div class="c-id">ID: 56</div></div><div class="currency-item"><div class="c-name">SkillSummonTicket</div><div class="c-id">ID: 57</div></div><div class="currency-item"><div class="c-name">RelicSummonTicket</div><div class="c-id">ID: 58</div></div><div class="currency-item"><div class="c-name">NecklaceSummonTicket</div><div class="c-id">ID: 62</div></div></div><div class="sub-title">📚 도감 / 책</div><div class="currency-grid"><div class="currency-item"><div class="c-name">AdWeaponSummonTicket</div><div class="c-id">ID: 69</div></div><div class="currency-item"><div class="c-name">AdAccessorySummonTicket</div><div class="c-id">ID: 70</div></div><div class="currency-item"><div class="c-name">AdSkillSummonTicket</div><div class="c-id">ID: 71</div></div><div class="currency-item"><div class="c-name">AdRelicSummonTicket</div><div class="c-id">ID: 72</div></div><div class="currency-item"><div class="c-name">AdNecklaceSummonTicket</div><div class="c-id">ID: 73</div></div></div><div class="sub-title">📚 책장</div><div class="currency-grid"><div class="currency-item"><div class="c-name">NormalBook1</div><div class="c-id">ID: 29</div></div><div class="currency-item"><div class="c-name">NormalBook2</div><div class="c-id">ID: 30</div></div><div class="currency-item"><div class="c-name">NormalBook3</div><div class="c-id">ID: 31</div></div><div class="currency-item"><div class="c-name">NormalBook4</div><div class="c-id">ID: 32</div></div><div class="currency-item"><div class="c-name">SealedBook1</div><div class="c-id">ID: 33</div></div><div class="currency-item"><div class="c-name">SealedBook2</div><div class="c-id">ID: 34</div></div><div class="currency-item"><div class="c-name">SealedBook3</div><div class="c-id">ID: 35</div></div><div class="currency-item"><div class="c-name">SealedBook4</div><div class="c-id">ID: 36</div></div></div><div class="sub-title">🎨 어빌리티 프리셋</div><div class="currency-grid"><div class="currency-item"><div class="c-name">Bookshelf1</div><div class="c-id">ID: 40</div></div><div class="currency-item"><div class="c-name">Bookshelf2</div><div class="c-id">ID: 41</div></div><div class="currency-item"><div class="c-name">Bookshelf3</div><div class="c-id">ID: 42</div></div></div><div class="sub-title">🌙 오프라인 보상</div><div class="currency-grid"><div class="currency-item"><div class="c-name">AbilityPreset3</div><div class="c-id">ID: 45</div></div><div class="currency-item"><div class="c-name">AbilityPreset4</div><div class="c-id">ID: 46</div></div><div class="currency-item"><div class="c-name">AbilityPreset5</div><div class="c-id">ID: 47</div></div></div><div class="sub-title">그룹 16</div><div class="currency-grid"><div class="currency-item"><div class="c-name">OfflineReward</div><div class="c-id">ID: 49</div></div><div class="currency-item"><div class="c-name">OfflineGold</div><div class="c-id">ID: 54</div></div><div class="currency-item"><div class="c-name">OfflineExp</div><div class="c-id">ID: 60</div></div><div class="currency-item"><div class="c-name">OfflineWeaponGrowthStone</div><div class="c-id">ID: 74</div></div><div class="currency-item"><div class="c-name">OfflineAccessoryGrowthStone</div><div class="c-id">ID: 75</div></div></div><div class="sub-title">그룹 17</div><div class="currency-grid"><div class="currency-item"><div class="c-name">None</div><div class="c-id">ID: 999</div></div></div>
+</section>
+
+<!-- 등급 체계 -->
+<section id="grade">
+  <div class="section-title"><span class="icon">⭐</span>등급 체계</div>
+  <div class="info-box"><h4>등급 체계 GradeType — 7단계</h4><div class="tag-list"><span class="tag ">Normal (=0)</span><span class="tag blue">Magic (=1)</span><span class="tag blue">Rare (=2)</span><span class="tag yellow">Unique (=3)</span><span class="tag yellow">Heroic (=4)</span><span class="tag green">Legendary (=5)</span><span class="tag purple">Mythic (=6)</span></div><p style="margin-top:12px;color:var(--text2)">FullGradeType: 각 등급 × 5단계 = 총 35단계 (Normal1~Mythic5)</p></div>
+  <div class="info-box">
+    <h4>적용 장비</h4>
+    <div class="tag-list">
+      <span class="tag blue">무기 (Weapon)</span>
+      <span class="tag blue">악세서리 (Accessory)</span>
+      <span class="tag blue">스킬 (Skill)</span>
+      <span class="tag blue">목걸이 (Necklace)</span>
+      <span class="tag blue">펫 (Pet)</span>
+      <span class="tag blue">유물 (Relic)</span>
+    </div>
+  </div>
+</section>
+
+<!-- 장비 / 펫 -->
+<section id="equipment">
+  <div class="section-title"><span class="icon">⚔️</span>장비 / 펫 / 코스튬</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> EquipmentType / CostumeCategoryType</p>
+  
+    <table><tr><th>EquipmentType</th><th>종류</th><th>설명</th></tr><tr><td><code>Weapon</code></td><td>무기</td><td class="note">공격력 증가, 성장/각성/소환 공통 시스템</td></tr><tr><td><code>Accessory</code></td><td>악세서리</td><td class="note">HP 증가, 성장/각성/소환 공통 시스템</td></tr><tr><td><code>Skill</code></td><td>스킬</td><td class="note">스킬 슬롯 장착, SkillType으로 동작 정의</td></tr><tr><td><code>Pet</code></td><td>펫</td><td class="note">전투 동행 유닛, 별도 던전(FieldType.Pet)에서 성장석 획득</td></tr></table>
+    <div class="two-col">
+      <div class="info-box">
+        <h4>펫 시스템 구조</h4>
+        <p>장비 타입 중 하나 (EquipmentType.Pet)</p>
+        <p>GradeType 공유 (Normal ~ Mythic)</p>
+        <p>전용 스킬: Heal, AttackBuff (SkillType)</p>
+        <p>전용 던전: FieldType.Pet → 펫 성장석</p>
+        <p>각성 시스템: DbPetAwakening</p>
+        <div class="tag-list" style="margin-top:8px">
+          <span class="tag blue">PetManager</span>
+          <span class="tag blue">PetController</span>
+          <span class="tag blue">DbPet (CSV)</span>
+          <span class="tag blue">DbPetAwakening</span>
+        </div>
+      </div>
+      <div class="info-box">
+        <h4>코스튬 시스템</h4>
+        <h4 style="font-size:13px;margin-top:0">CostumeCategoryType</h4>
+        <div class="tag-list"><span class="tag">Promotion</span><span class="tag">InGameShop</span><span class="tag">InAppShop</span><span class="tag">Event</span></div>
+        <h4 style="font-size:13px;margin-top:10px">CostumePositionType</h4>
+        <div class="tag-list"><span class="tag">Body</span><span class="tag">Weapon</span></div>
+        <p style="margin-top:8px;color:var(--text2);font-size:12px">승급 던전(FieldType.Promotion) 보상으로 획득</p>
+      </div>
+    </div>
+</section>
+
+<!-- 던전 시스템 -->
+<section id="dungeon">
+  <div class="section-title"><span class="icon">🏰</span>던전 시스템</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> FieldType enum</p>
+  <table><tr><th>ID</th><th>enum</th><th>던전 종류</th><th>주요 보상</th><th>비고</th></tr><tr><td>0</td><td><code>Stage</code></td><td>일반 스테이지</td><td>골드·경험치·장비</td><td class="note">메인 진행</td></tr><tr><td>1</td><td><code>Awakening</code></td><td>각성 던전</td><td>각성석</td><td class="note">스테이지 몬스터 능력 % 적용</td></tr><tr><td>2</td><td><code>SkillGrowth</code></td><td>스킬 성장 던전</td><td>스킬 성장석</td><td class="note">스테이지 % 적용</td></tr><tr><td>3</td><td><code>Promotion</code></td><td>승급 던전</td><td>코스튬·Attack/Hp 상승</td><td class="note">성공/실패 시나리오</td></tr><tr><td>4</td><td><code>Pet</code></td><td>펫 던전</td><td>펫 성장석</td><td class="note">스테이지 % 적용</td></tr><tr><td>5</td><td><code>BlackMarket</code></td><td>검은시장 던전</td><td>검은시장 동전</td><td class="note">단일 스폰·스테이지별 진행</td></tr><tr><td>6</td><td><code>Dia</code></td><td>다이아 던전</td><td>다이아</td><td class="note">단일 스폰·스테이지별 진행</td></tr><tr><td>7</td><td><code>Training</code></td><td>훈련장</td><td>구슬 광석</td><td class="note">몬스터 ID 32 고정·피해량 단계</td></tr></table>
+  <div class="info-box">
+    <h4>공통 StageType</h4>
+    <div class="tag-list">
+      <span class="tag">Normal</span><span class="tag">Boss</span><span class="tag">Pass</span><span class="tag">Defense</span><span class="tag">Sequence</span><span class="tag">Training</span>
+    </div>
+  </div>
+</section>
+
+<!-- 스킬 시스템 -->
+<section id="skill">
+  <div class="section-title"><span class="icon">✨</span>스킬 시스템</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> SkillType / TargetRangeType</p>
+  
+    <div class="two-col">
+      <div class="info-box">
+        <h4>SkillType — 스킬 동작 유형</h4>
+        <div class="tag-list"><span class="tag">Attack</span><span class="tag">DotAttack</span><span class="tag">Stun</span><span class="tag">Push</span><span class="tag">Gather</span><span class="tag">TargetAttack</span><span class="tag">여기서부터</span><span class="tag">Heal</span><span class="tag">AttackBuff</span></div>
+        <p style="margin-top:10px;color:var(--text2);font-size:12px">Heal·AttackBuff = 펫 전용 스킬</p>
+      </div>
+      <div class="info-box">
+        <h4>TargetRangeType — 타겟 방식</h4>
+        <div class="tag-list"><span class="tag">Range</span><span class="tag">Number</span><span class="tag">Straight</span></div>
+        <h4 style="margin-top:12px">EffectPositionType</h4>
+        <div class="tag-list"><span class="tag">Player</span><span class="tag">Target</span><span class="tag">PlayerDirection</span><span class="tag">Random</span><span class="tag">Center</span><span class="tag">MoveRandom</span></div>
+      </div>
+    </div>
+  <div class="info-box">
+    <h4>소환 유형 SummonType</h4>
+    <div class="tag-list">
+      <span class="tag blue">Weapon</span><span class="tag blue">Accessory</span><span class="tag blue">Skill</span><span class="tag blue">Relic</span><span class="tag blue">Necklace</span>
+    </div>
+  </div>
+</section>
+
+<!-- 퀘스트 -->
+<section id="quest">
+  <div class="section-title"><span class="icon">📋</span>퀘스트 시스템</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> QuestType / QuestCycleType</p>
+  
+    <div class="info-box">
+      <h4>QuestCycleType</h4>
+      <div class="tag-list"><span class="tag blue">Daily</span><span class="tag blue">Weekly</span><span class="tag blue">Repeat</span></div>
+    </div>
+    <div class="info-box">
+      <h4>QuestType — 69종</h4>
+      <div class="tag-list"><span class="tag" style="font-size:11px">Attend</span><span class="tag" style="font-size:11px">PlayTime</span><span class="tag" style="font-size:11px">LevelUp</span><span class="tag" style="font-size:11px">GoldStatLevelUp</span><span class="tag" style="font-size:11px">DungeonClear</span><span class="tag" style="font-size:11px">MonsterKillCount</span><span class="tag" style="font-size:11px">BossKillCount</span><span class="tag" style="font-size:11px">CharacterDeath</span><span class="tag" style="font-size:11px">WeaponGrowth</span><span class="tag" style="font-size:11px">AccessoryGrowth</span><span class="tag" style="font-size:11px">SkillGrowth</span><span class="tag" style="font-size:11px">PetGrowth</span><span class="tag" style="font-size:11px">WeaponMerge</span><span class="tag" style="font-size:11px">AccessoryMerge</span><span class="tag" style="font-size:11px">WeaponSummon</span><span class="tag" style="font-size:11px">AccessorySummon</span><span class="tag" style="font-size:11px">SkillSummon</span><span class="tag" style="font-size:11px">RelicSummon</span><span class="tag" style="font-size:11px">ChangeAbility</span><span class="tag" style="font-size:11px">BookUnseal</span><span class="tag" style="font-size:11px">SealedBookUnseal</span><span class="tag" style="font-size:11px">EquipRecommendWeapon</span><span class="tag" style="font-size:11px">EquipRecommendAccessory</span><span class="tag" style="font-size:11px">Dia</span><span class="tag" style="font-size:11px">AdWatch</span><span class="tag" style="font-size:11px">UseSkill</span><span class="tag" style="font-size:11px">DailyQuestClear</span><span class="tag" style="font-size:11px">WeeklyQuestClear</span><span class="tag" style="font-size:11px">CheckAttackLevel</span><span class="tag" style="font-size:11px">CheckHpLevel</span><span class="tag" style="font-size:11px">CheckCriticalProbabilityLevel</span><span class="tag" style="font-size:11px">CheckCriticalAttackBonusLevel</span><span class="tag" style="font-size:11px">CheckLevelUp</span><span class="tag" style="font-size:11px">CheckLevelPoint</span><span class="tag" style="font-size:11px">CheckBibleLevel</span><span class="tag" style="font-size:11px">CheckPromotion</span><span class="tag" style="font-size:11px">CheckWeaponAwakening</span><span class="tag" style="font-size:11px">CheckAccessoryAwakening</span><span class="tag" style="font-size:11px">CheckSkillAwakening</span><span class="tag" style="font-size:11px">CheckPetAwakening</span><span class="tag" style="font-size:11px">CheckWeaponEquip</span><span class="tag" style="font-size:11px">CheckAccessoryEquip</span><span class="tag" style="font-size:11px">CheckSkill1Equip</span><span class="tag" style="font-size:11px">CheckSkill2Equip</span><span class="tag" style="font-size:11px">CheckPetEquip</span><span class="tag" style="font-size:11px">CheckStageClear</span><span class="tag" style="font-size:11px">CheckAwakeningDungeonClear</span><span class="tag" style="font-size:11px">CheckSkillDungeonClear</span><span class="tag" style="font-size:11px">CheckPetDungeonClear</span><span class="tag" style="font-size:11px">CheckAutoSkillOn</span><span class="tag" style="font-size:11px">CheckBuffAdWatch</span><span class="tag" style="font-size:11px">CheckWeaponGrowth</span><span class="tag" style="font-size:11px">CheckAccessoryGrowth</span><span class="tag" style="font-size:11px">CheckRelicLevel</span><span class="tag" style="font-size:11px">NecklaceSummon</span><span class="tag" style="font-size:11px">CheckWeaponSummon</span><span class="tag" style="font-size:11px">CheckAccessorySummon</span><span class="tag" style="font-size:11px">CheckSkillSummon</span><span class="tag" style="font-size:11px">CheckRelicSummon</span><span class="tag" style="font-size:11px">CheckNecklaceSummon</span><span class="tag" style="font-size:11px">NewbieDayQuestClear</span><span class="tag" style="font-size:11px">TrainingGroundClear</span><span class="tag" style="font-size:11px">PassionGet</span><span class="tag" style="font-size:11px">BlackMarketDungeonClear</span><span class="tag" style="font-size:11px">RelicUpgrade</span><span class="tag" style="font-size:11px">WeaponAwakening</span><span class="tag" style="font-size:11px">AccessoryAwakening</span><span class="tag" style="font-size:11px">AwakeningDungeonClear</span><span class="tag" style="font-size:11px">PetDungeonClear</span></div>
+    </div>
+</section>
+
+<!-- IAP / 광고 -->
+<section id="iap">
+  <div class="section-title"><span class="icon">💳</span>IAP / 광고</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> ShopCategoryType / eAdType</p>
+  
+    <div class="two-col">
+      <div>
+        <div class="info-box">
+          <h4>ShopCategoryType — IAP 상품 카테고리</h4>
+          <div class="tag-list"><span class="tag">Package</span><span class="tag">Dia</span><span class="tag">Hidden</span><span class="tag">Mileage</span><span class="tag">Costume</span><span class="tag">Ad</span><span class="tag">Unlock</span><span class="tag">Ticket</span><span class="tag">Normal</span></div>
+        </div>
+        <div class="info-box">
+          <h4>RenewalType — 갱신 주기</h4>
+          <div class="tag-list"><span class="tag">Infinite</span><span class="tag">OnlyOnce</span><span class="tag">Daily</span><span class="tag">Weekly</span><span class="tag">Monthly</span></div>
+          <h4 style="margin-top:10px">PlatformType — 플랫폼 분기</h4>
+          <div class="tag-list"><span class="tag">All</span><span class="tag">OneStore</span><span class="tag">AppStore</span><span class="tag">GooglePlay</span><span class="tag">AppStoreReview</span></div>
+          <h4 style="margin-top:10px">PassType — 패스 종류</h4>
+          <div class="tag-list"><span class="tag">LevelPass</span><span class="tag">StagePass</span><span class="tag">SoulPass</span><span class="tag">SeasonPass</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="info-box">
+          <h4>eAdType — 광고 슬롯 (AdManager)</h4>
+          <table><tr><th>슬롯</th><th>ID</th></tr><tr><td><code>Summon</code></td><td>1</td></tr><tr><td><code>Dungeon</code></td><td>None</td></tr><tr><td><code>Buff</code></td><td>None</td></tr><tr><td><code>OfflineReward</code></td><td>None</td></tr><tr><td><code>Bookshelf</code></td><td>None</td></tr><tr><td><code>Shop</code></td><td>None</td></tr></table>
+          <h4 style="margin-top:10px">AdBuffType</h4>
+          <div class="tag-list"><span class="tag">GoldBuff</span><span class="tag">GrowthStoneBuff</span></div>
+          <p style="margin-top:10px;color:var(--text2);font-size:12px">⚠️ Phase 2: AdMob App ID / Ad Unit ID 교체 필요</p>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- 잠금 조건 -->
+<section id="lock">
+  <div class="section-title"><span class="icon">🔒</span>잠금 조건 시스템</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> LockType / LockConditionType</p>
+  
+    <div class="info-box">
+      <h4>LockConditionType — 잠금 해제 조건</h4>
+      <div class="tag-list"><span class="tag blue">Stage</span><span class="tag blue">Promotion</span><span class="tag blue">GuideQuest</span><span class="tag blue">BibleLevel</span><span class="tag blue">NewbieDay</span></div>
+    </div>
+    <div class="info-box">
+      <h4>LockType — 잠금 항목 34종</h4>
+      <div class="tag-list"><span class="tag" style="font-size:11px">SkillSlot2</span><span class="tag" style="font-size:11px">SkillSlot3</span><span class="tag" style="font-size:11px">SkillSlot4</span><span class="tag" style="font-size:11px">Pet</span><span class="tag" style="font-size:11px">Character</span><span class="tag" style="font-size:11px">Summon</span><span class="tag" style="font-size:11px">Skill</span><span class="tag" style="font-size:11px">Level</span><span class="tag" style="font-size:11px">SkillSummon</span><span class="tag" style="font-size:11px">Inventory</span><span class="tag" style="font-size:11px">AccessorySummon</span><span class="tag" style="font-size:11px">Accessory</span><span class="tag" style="font-size:11px">Dungeon</span><span class="tag" style="font-size:11px">AwakeningDungeon</span><span class="tag" style="font-size:11px">PetDungeon</span><span class="tag" style="font-size:11px">AutoSkill</span><span class="tag" style="font-size:11px">PetSlot2</span><span class="tag" style="font-size:11px">PetSlot3</span><span class="tag" style="font-size:11px">PetSlot4</span><span class="tag" style="font-size:11px">BlackMarketDungeon</span><span class="tag" style="font-size:11px">DiaDungeon</span><span class="tag" style="font-size:11px">Ability</span><span class="tag" style="font-size:11px">Relic</span><span class="tag" style="font-size:11px">RelicSummon</span><span class="tag" style="font-size:11px">Necklace</span><span class="tag" style="font-size:11px">NecklaceSummon</span><span class="tag" style="font-size:11px">BlackMarket</span><span class="tag" style="font-size:11px">TrainingGround</span><span class="tag" style="font-size:11px">NewbieQuestDay2</span><span class="tag" style="font-size:11px">NewbieQuestDay3</span><span class="tag" style="font-size:11px">NewbieQuestDay4</span><span class="tag" style="font-size:11px">NewbieQuestDay5</span><span class="tag" style="font-size:11px">NewbieQuestDay6</span><span class="tag" style="font-size:11px">NewbieQuestDay7</span></div>
+    </div>
+</section>
+
+<!-- 게임 설정 -->
+<section id="setting">
+  <div class="section-title"><span class="icon">⚙️</span>게임 설정 (SettingType)</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> SettingType</p>
+  <div class="info-box"><h4>SettingType — 22종</h4><div class="tag-list"><span class="tag">IsGuest</span><span class="tag">Setting</span><span class="tag">IsAutoProgress</span><span class="tag">IsAutoSkill</span><span class="tag">SfxSound</span><span class="tag">BGMSound</span><span class="tag">Language</span><span class="tag">StatUpCount</span><span class="tag">LevelUpCount</span><span class="tag">IsCameraShaking</span><span class="tag">IsAutoPowerSaving</span><span class="tag">IsPushAlarm</span><span class="tag">IsNightPushAlarm</span><span class="tag">NormalSkillPreset</span><span class="tag">BossSkillPreset</span><span class="tag">SGSDungeonSkillPreset</span><span class="tag">ASDungeonSkillPreset</span><span class="tag">DoPrologue1</span><span class="tag">PetDungeonSkillPreset</span><span class="tag">BMDungeonSkillPreset</span><span class="tag">DiaDungeonSkillPreset</span><span class="tag">TrainingSkillPreset</span></div></div>
+</section>
+
+<!-- 스탯 목록 -->
+<section id="stat">
+  <div class="section-title"><span class="icon">📐</span>스탯 목록 (StatType)</div>
+  <p class="note-text" style="margin-bottom:12px">소스: <code>Define.cs</code> StatType</p>
+  <div class="currency-grid"><div class="currency-item"><div class="c-name">Attack</div></div><div class="currency-item"><div class="c-name">Hp</div></div><div class="currency-item"><div class="c-name">CriticalProbability</div></div><div class="currency-item"><div class="c-name">CriticalAttackBonus</div></div><div class="currency-item"><div class="c-name">StageExpEarn</div></div><div class="currency-item"><div class="c-name">StageGoldEarn</div></div><div class="currency-item"><div class="c-name">MoveSpeedBonus</div></div><div class="currency-item"><div class="c-name">AttackSpeedBonus</div></div><div class="currency-item"><div class="c-name">StageGrowthEarn</div></div><div class="currency-item"><div class="c-name">BlackMarketDungeonEarn</div></div><div class="currency-item"><div class="c-name">SkillGrowthDungeonEarn</div></div><div class="currency-item"><div class="c-name">DiaDungeonEarn</div></div><div class="currency-item"><div class="c-name">AwakeningDungeonEarn</div></div><div class="currency-item"><div class="c-name">BossAttackBonus</div></div><div class="currency-item"><div class="c-name">SpecificSkillAttackBonus</div></div><div class="currency-item"><div class="c-name">SkillAttackBonus</div></div><div class="currency-item"><div class="c-name">DashAttackBonus</div></div><div class="currency-item"><div class="c-name">FinalAttackBonus</div></div><div class="currency-item"><div class="c-name">FinalHpBonus</div></div><div class="currency-item"><div class="c-name">AwakeningAttackBonus</div></div><div class="currency-item"><div class="c-name">AwakeningHpBonus</div></div><div class="currency-item"><div class="c-name">PetAttackBonus</div></div><div class="currency-item"><div class="c-name">PetHpBonus</div></div><div class="currency-item"><div class="c-name">StageItemRate</div></div><div class="currency-item"><div class="c-name">DebuffMonsterHp</div></div><div class="currency-item"><div class="c-name">DebuffMonsterAttack</div></div><div class="currency-item"><div class="c-name">AttackBonus</div></div><div class="currency-item"><div class="c-name">HpBonus</div></div><div class="currency-item"><div class="c-name">Skill</div></div><div class="currency-item"><div class="c-name">PotentialAttackBonus</div></div><div class="currency-item"><div class="c-name">PotentialHpBonus</div></div><div class="currency-item"><div class="c-name">AbilityGoldEarn</div></div><div class="currency-item"><div class="c-name">AbilityExpEarn</div></div><div class="currency-item"><div class="c-name">RelicAttackBonus</div></div><div class="currency-item"><div class="c-name">RelicHpBonus</div></div><div class="currency-item"><div class="c-name">NecklaceAttackBonus</div></div><div class="currency-item"><div class="c-name">NecklaceHpBonus</div></div><div class="currency-item"><div class="c-name">NormalAttackBonus</div></div></div><p class="note-text">총 38종 (Define.cs StatType)</p>
+</section>
+
+<footer>
+  Mushroom Hero 프로젝트 대시보드 &nbsp;·&nbsp; 생성: 2026-06-15 02:06:28<br>
+  <code>python _dev/generate_dashboard.py</code> 로 재생성
+</footer>
+
+</main>
+</div>
+<script>
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.style.color = '');
+      const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (active) active.style.color = 'var(--accent)';
+    }
+  });
+}, { threshold: 0.25 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,4152 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77953beb016c4d679b808c96f6c4ceea, type: 3}
+  m_Name: EDbShops
+  m_EditorClassIdentifier: 
+  InAppShop:
+  - Id: 1002
+    NameId: 112000
+    Category: 0
+    Resource: Noads
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - AdSkip:1
+    - Dia:10000
+    - WeaponSummonTicket:200
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.noads
+    Mileage: 99
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 1
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1003
+    NameId: 112001
+    Category: 1
+    Resource: BaseDia_001
+    BackgroundResource: 0
+    Rewards:
+    - Dia:8000
+    RenewalInterval: 0
+    BuyLimit: 0
+    ProductId: com.mh.basedia_001
+    Mileage: 35
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1004
+    NameId: 112002
+    Category: 1
+    Resource: BaseDia_002
+    BackgroundResource: 0
+    Rewards:
+    - Dia:24000
+    RenewalInterval: 0
+    BuyLimit: 0
+    ProductId: com.mh.basedia_002
+    Mileage: 99
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1005
+    NameId: 112003
+    Category: 1
+    Resource: BaseDia_003
+    BackgroundResource: 0
+    Rewards:
+    - Dia:52000
+    RenewalInterval: 0
+    BuyLimit: 0
+    ProductId: com.mh.basedia_003
+    Mileage: 199
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1006
+    NameId: 112004
+    Category: 1
+    Resource: BaseDia_004
+    BackgroundResource: 0
+    Rewards:
+    - Dia:130000
+    RenewalInterval: 0
+    BuyLimit: 0
+    ProductId: com.mh.basedia_004
+    Mileage: 490
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1007
+    NameId: 112005
+    Category: 1
+    Resource: BaseDia_005
+    BackgroundResource: 0
+    Rewards:
+    - Dia:300000
+    RenewalInterval: 0
+    BuyLimit: 0
+    ProductId: com.mh.basedia_005
+    Mileage: 990
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1008
+    NameId: 112006
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG2
+    Rewards:
+    - Dia:7000
+    - BlackMarketDungeonTicket:1
+    - SkillGrowthDungeonTicket:1
+    - PetDungeonTicket:1
+    - AwakeningDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    ProductId: com.mh.dayticket_001
+    Mileage: 75
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1009
+    NameId: 112007
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - Dia:5000
+    - AwakeningDungeonTicket:2
+    RenewalInterval: 3
+    BuyLimit: 1
+    ProductId: com.mh.weekticket_001
+    Mileage: 49
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1010
+    NameId: 112008
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - Dia:5000
+    - SkillGrowthDungeonTicket:2
+    RenewalInterval: 3
+    BuyLimit: 1
+    ProductId: com.mh.weekticket_002
+    Mileage: 49
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1011
+    NameId: 112009
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - Dia:5000
+    - PetDungeonTicket:2
+    RenewalInterval: 3
+    BuyLimit: 1
+    ProductId: com.mh.weekticket_003
+    Mileage: 49
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1012
+    NameId: 112010
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - Dia:5000
+    - BlackMarketDungeonTicket:2
+    RenewalInterval: 3
+    BuyLimit: 1
+    ProductId: com.mh.weekticket_004
+    Mileage: 49
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1013
+    NameId: 112011
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - Dia:10000
+    - AwakeningDungeonTicket:5
+    RenewalInterval: 4
+    BuyLimit: 1
+    ProductId: com.mh.monthticket_001
+    Mileage: 99
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1014
+    NameId: 112012
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - Dia:10000
+    - SkillGrowthDungeonTicket:5
+    RenewalInterval: 4
+    BuyLimit: 1
+    ProductId: com.mh.monthticket_002
+    Mileage: 99
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1015
+    NameId: 112013
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - Dia:10000
+    - PetDungeonTicket:5
+    RenewalInterval: 4
+    BuyLimit: 1
+    ProductId: com.mh.monthticket_003
+    Mileage: 99
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1016
+    NameId: 112014
+    Category: 7
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - Dia:10000
+    - BlackMarketDungeonTicket:5
+    RenewalInterval: 4
+    BuyLimit: 1
+    ProductId: com.mh.monthticket_004
+    Mileage: 99
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1082
+    NameId: 112030
+    Category: 4
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG2
+    Rewards:
+    - Dia:20000
+    - Costume:12:1
+    - Costume:13:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.costume_001
+    Mileage: 190
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 1
+    Value: 0
+    IsLimited: 0
+  - Id: 1081
+    NameId: 112026
+    Category: 4
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG2
+    Rewards:
+    - Dia:20000
+    - Costume:10:1
+    - Costume:11:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.costume_002
+    Mileage: 190
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1027
+    NameId: 112027
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - WeaponSummonTicket:300
+    - AccessorySummonTicket:300
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.newbie_01
+    Mileage: 11
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 1
+    Value: 0
+    IsLimited: 0
+  - Id: 1028
+    NameId: 112028
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG2
+    Rewards:
+    - BeadsOre:150000
+    RenewalInterval: 2
+    BuyLimit: 1
+    ProductId: com.mh.ore_01
+    Mileage: 99
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 1
+    Value: 0
+    IsLimited: 0
+  - Id: 1029
+    NameId: 112029
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - BeadsOre:1500000
+    RenewalInterval: 4
+    BuyLimit: 5
+    ProductId: com.mh.ore_02
+    Mileage: 790
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 1
+    Value: 0
+    IsLimited: 0
+  - Id: 1030
+    NameId: 112031
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG2
+    Rewards:
+    - Dia:30000
+    - AwakeningStone:5000
+    - AwakeningDungeonTicket:10
+    RenewalInterval: 1
+    BuyLimit: 3
+    ProductId: com.mh.awakening_01
+    Mileage: 285
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 1
+    Value: 0
+    IsLimited: 0
+  - Id: 1017
+    NameId: 112015
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - WeaponSummonTicket:500
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.oncepackage_001
+    Mileage: 39
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1018
+    NameId: 112016
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - AccessorySummonTicket:500
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.oncepackage_002
+    Mileage: 39
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1019
+    NameId: 112017
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - SkillSummonTicket:100
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.oncepackage_003
+    Mileage: 39
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1020
+    NameId: 112018
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG1
+    Rewards:
+    - SealedBook1:6
+    RenewalInterval: 1
+    BuyLimit: 1
+    ProductId: com.mh.oncepackage_004
+    Mileage: 79
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1021
+    NameId: 112019
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG2
+    Rewards:
+    - WeaponSummonTicket:1000
+    - AccessorySummonTicket:1000
+    - SkillSummonTicket:200
+    RenewalInterval: 1
+    BuyLimit: 3
+    ProductId: com.mh.openpackage_001
+    Mileage: 390
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1022
+    NameId: 112020
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG2
+    Rewards:
+    - RelicSummonTicket:150
+    RenewalInterval: 1
+    BuyLimit: 3
+    ProductId: com.mh.openpackage_002
+    Mileage: 290
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1023
+    NameId: 112021
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - WeaponSummonTicket:10000
+    RenewalInterval: 4
+    BuyLimit: 5
+    ProductId: com.mh.allinpackage_001
+    Mileage: 850
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1024
+    NameId: 112022
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - AccessorySummonTicket:10000
+    RenewalInterval: 4
+    BuyLimit: 5
+    ProductId: com.mh.allinpackage_002
+    Mileage: 850
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1025
+    NameId: 112023
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - SkillSummonTicket:1000
+    RenewalInterval: 4
+    BuyLimit: 5
+    ProductId: com.mh.allinpackage_003
+    Mileage: 850
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  - Id: 1026
+    NameId: 112024
+    Category: 0
+    Resource: 0
+    BackgroundResource: UI_DefaultShopBG3
+    Rewards:
+    - RelicSummonTicket:850
+    RenewalInterval: 4
+    BuyLimit: 5
+    ProductId: com.mh.allinpackage_004
+    Mileage: 850
+    UnlockStage: 0
+    Platform: 0
+    StartDate: 0
+    Duration: 0
+    IsBest: 0
+    IsNew: 0
+    Value: 0
+    IsLimited: 0
+  InGameShop:
+  - Id: 2006
+    NameId: 0
+    Category: 5
+    Resource: Diamond
+    Rewards:
+    - Dia:5000
+    RenewalInterval: 2
+    BuyLimit: 2
+    PriceType: 11
+    Price: 0
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 2013
+    NameId: 0
+    Category: 5
+    Resource: Icon_Passion400
+    Rewards:
+    - Passion:400
+    RenewalInterval: 2
+    BuyLimit: 5
+    PriceType: 11
+    Price: 0
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 2001
+    NameId: 0
+    Category: 5
+    Resource: BeadsOre
+    Rewards:
+    - BeadsOre:1
+    RenewalInterval: 2
+    BuyLimit: 5
+    PriceType: 11
+    Price: 0
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 3001
+    NameId: 0
+    Category: 3
+    Resource: BaseDia_001
+    Rewards:
+    - Dia:1000
+    RenewalInterval: 2
+    BuyLimit: 10
+    PriceType: 44
+    Price: 100
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 3002
+    NameId: 0
+    Category: 3
+    Resource: Awakener200
+    Rewards:
+    - AwakeningStone:400
+    RenewalInterval: 2
+    BuyLimit: 10
+    PriceType: 44
+    Price: 100
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 3008
+    NameId: 0
+    Category: 3
+    Resource: Icon_Passion500
+    Rewards:
+    - Passion:150
+    RenewalInterval: 2
+    BuyLimit: 5
+    PriceType: 44
+    Price: 100
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 3003
+    NameId: 0
+    Category: 3
+    Resource: Icon_DungeonAwakening
+    Rewards:
+    - AwakeningDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 44
+    Price: 300
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 3004
+    NameId: 0
+    Category: 3
+    Resource: Icon_DungeonSkill
+    Rewards:
+    - SkillGrowthDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 44
+    Price: 300
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 3005
+    NameId: 0
+    Category: 3
+    Resource: Icon_DungeonPet
+    Rewards:
+    - PetDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 44
+    Price: 300
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 3006
+    NameId: 0
+    Category: 3
+    Resource: Icon_DungeonBlackMarket
+    Rewards:
+    - BlackMarketDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 44
+    Price: 300
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 512
+    NameId: 0
+    Category: 2
+    Resource: 0
+    Rewards:
+    - SkillPreset3:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 513
+    NameId: 0
+    Category: 2
+    Resource: 0
+    Rewards:
+    - SkillPreset4:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 20000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 514
+    NameId: 0
+    Category: 2
+    Resource: 
+    Rewards:
+    - SkillPreset5:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 30000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 515
+    NameId: 0
+    Category: 2
+    Resource: 
+    Rewards:
+    - Bookshelf2:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 516
+    NameId: 0
+    Category: 2
+    Resource: 
+    Rewards:
+    - Bookshelf3:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 20000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 517
+    NameId: 0
+    Category: 2
+    Resource: 
+    Rewards:
+    - AbilityPreset3:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 518
+    NameId: 0
+    Category: 2
+    Resource: 
+    Rewards:
+    - AbilityPreset4:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 20000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 519
+    NameId: 0
+    Category: 2
+    Resource: 
+    Rewards:
+    - AbilityPreset5:1
+    RenewalInterval: 1
+    BuyLimit: 1
+    PriceType: 0
+    Price: 30000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4001
+    NameId: 0
+    Category: 8
+    Resource: Icon_DungeonAwakening
+    Rewards:
+    - AwakeningDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4002
+    NameId: 0
+    Category: 8
+    Resource: Icon_DungeonSkill
+    Rewards:
+    - SkillGrowthDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4003
+    NameId: 0
+    Category: 8
+    Resource: Icon_DungeonPet
+    Rewards:
+    - PetDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4004
+    NameId: 0
+    Category: 8
+    Resource: Icon_DungeonBlackMarket
+    Rewards:
+    - BlackMarketDungeonTicket:1
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4009
+    NameId: 0
+    Category: 8
+    Resource: BeadsOre
+    Rewards:
+    - BeadsOre:15000
+    RenewalInterval: 2
+    BuyLimit: 10
+    PriceType: 0
+    Price: 10000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4010
+    NameId: 0
+    Category: 8
+    Resource: Icon_Passion500
+    Rewards:
+    - Passion:500
+    RenewalInterval: 2
+    BuyLimit: 10
+    PriceType: 0
+    Price: 2000
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4005
+    NameId: 0
+    Category: 8
+    Resource: Diamond
+    Rewards:
+    - Dia:10000
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 11
+    Price: 1
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4006
+    NameId: 0
+    Category: 8
+    Resource: Icon_Passion500
+    Rewards:
+    - Passion:2000
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 11
+    Price: 1
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  - Id: 4007
+    NameId: 0
+    Category: 8
+    Resource: BeadsOre
+    Rewards:
+    - BeadsOre:10000
+    RenewalInterval: 2
+    BuyLimit: 1
+    PriceType: 11
+    Price: 1
+    IncreasePrice: 0
+    StartDate: 0
+    Duration: 0
+  BlackMarket:
+  - Id: 5001
+    Resource: Gold
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 350
+    RewardType: 54
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5002
+    Resource: icon_exp
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 350
+    RewardType: 60
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5003
+    Resource: Icon_Weapon booster256x256
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 350
+    RewardType: 74
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5004
+    Resource: Icon_Jewelry booster256x256
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 350
+    RewardType: 75
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5005
+    Resource: Icon_Passion500
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 500
+    RewardType: 48
+    RewardCount: 500
+    RewardId: 0
+  - Id: 5006
+    Resource: BeadsOre
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 500
+    RewardType: 77
+    RewardCount: 3000
+    RewardId: 0
+  - Id: 5007
+    Resource: Gold
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 700
+    RewardType: 54
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5008
+    Resource: icon_exp
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 700
+    RewardType: 60
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5009
+    Resource: Icon_Weapon booster256x256
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 700
+    RewardType: 74
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5010
+    Resource: Icon_Jewelry booster256x256
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 700
+    RewardType: 75
+    RewardCount: 60
+    RewardId: 0
+  - Id: 5011
+    Resource: Icon_Passion500
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 1000
+    RewardType: 48
+    RewardCount: 500
+    RewardId: 0
+  - Id: 5012
+    Resource: BeadsOre
+    RenewalInterval: 3
+    BuyLimit: 60
+    Price: 1000
+    RewardType: 77
+    RewardCount: 3000
+    RewardId: 0
+  PassShop:
+  - Id: 201
+    NameId: 110000
+    PassType: 16
+    Resource: Icon_levelpass_1
+    Rewards:
+    - LevelPass1:1
+    BuyLimit: 1
+    ProductId: com.mh.levelpass_001
+    Condition: 0
+    ResetDay: 0
+    Mileage: 99
+  - Id: 202
+    NameId: 110001
+    PassType: 17
+    Resource: Icon_levelpass_2
+    Rewards:
+    - LevelPass2:1
+    BuyLimit: 1
+    ProductId: com.mh.levelpass_002
+    Condition: 1
+    ResetDay: 0
+    Mileage: 149
+  - Id: 203
+    NameId: 110002
+    PassType: 18
+    Resource: Icon_levelpass_3
+    Rewards:
+    - LevelPass3:1
+    BuyLimit: 1
+    ProductId: com.mh.levelpass_003
+    Condition: 1
+    ResetDay: 0
+    Mileage: 199
+  - Id: 204
+    NameId: 110003
+    PassType: 19
+    Resource: Icon_Stagepass_1
+    Rewards:
+    - StagePass1:1
+    BuyLimit: 1
+    ProductId: com.mh.stagepass_001
+    Condition: 0
+    ResetDay: 0
+    Mileage: 99
+  - Id: 205
+    NameId: 110004
+    PassType: 20
+    Resource: Icon_Stagepass_2
+    Rewards:
+    - StagePass2:1
+    BuyLimit: 1
+    ProductId: com.mh.stagepass_002
+    Condition: 1
+    ResetDay: 0
+    Mileage: 149
+  - Id: 206
+    NameId: 110005
+    PassType: 21
+    Resource: Icon_Stagepass_3
+    Rewards:
+    - StagePass3:1
+    BuyLimit: 1
+    ProductId: com.mh.stagepass_003
+    Condition: 1
+    ResetDay: 0
+    Mileage: 199
+  - Id: 207
+    NameId: 110006
+    PassType: 22
+    Resource: Icon_Soulpass
+    Rewards:
+    - SoulPass:2
+    BuyLimit: 1
+    ProductId: com.mh.soulpass_003
+    Condition: 2
+    ResetDay: 7
+    Mileage: 49
+  - Id: 208
+    NameId: 110007
+    PassType: 50
+    Resource: Icon_levelpass_4
+    Rewards:
+    - LevelPass4:1
+    BuyLimit: 1
+    ProductId: com.mh.levelpass_004
+    Condition: 1
+    ResetDay: 0
+    Mileage: 249
+  - Id: 209
+    NameId: 110008
+    PassType: 51
+    Resource: Icon_levelpass_5
+    Rewards:
+    - LevelPass5:1
+    BuyLimit: 1
+    ProductId: com.mh.levelpass_005
+    Condition: 1
+    ResetDay: 0
+    Mileage: 299
+  - Id: 211
+    NameId: 110009
+    PassType: 52
+    Resource: Icon_Stagepass_4
+    Rewards:
+    - StagePass4:1
+    BuyLimit: 1
+    ProductId: com.mh.stagepass_004
+    Condition: 1
+    ResetDay: 0
+    Mileage: 249
+  - Id: 212
+    NameId: 110010
+    PassType: 53
+    Resource: Icon_Stagepass_5
+    Rewards:
+    - StagePass5:1
+    BuyLimit: 1
+    ProductId: com.mh.stagepass_005
+    Condition: 1
+    ResetDay: 0
+    Mileage: 299
+  - Id: 301
+    NameId: 110011
+    PassType: 59
+    Resource: Icon_AfterLife
+    Rewards:
+    - SeasonPass:1
+    BuyLimit: 1
+    ProductId: com.mh.seasonpass_001
+    Condition: 1
+    ResetDay: 0
+    Mileage: 399
+  LevelPass:
+  - Id: 0
+    PassType: 16
+    NeedLevel: 0
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 50
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 150
+    NextId: 1
+  - Id: 1
+    PassType: 16
+    NeedLevel: 2
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2000
+    NextId: 2
+  - Id: 2
+    PassType: 16
+    NeedLevel: 6
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2000
+    NextId: 3
+  - Id: 3
+    PassType: 16
+    NeedLevel: 10
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2000
+    NextId: 4
+  - Id: 4
+    PassType: 16
+    NeedLevel: 14
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2000
+    NextId: 5
+  - Id: 5
+    PassType: 16
+    NeedLevel: 18
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 50
+    PremiumRewardType: 7
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 6
+  - Id: 6
+    PassType: 16
+    NeedLevel: 22
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2500
+    NextId: 7
+  - Id: 7
+    PassType: 16
+    NeedLevel: 26
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2500
+    NextId: 8
+  - Id: 8
+    PassType: 16
+    NeedLevel: 30
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2500
+    NextId: 9
+  - Id: 9
+    PassType: 16
+    NeedLevel: 34
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2500
+    NextId: 10
+  - Id: 10
+    PassType: 16
+    NeedLevel: 38
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 50
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 150
+    NextId: 11
+  - Id: 11
+    PassType: 16
+    NeedLevel: 42
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 12
+  - Id: 12
+    PassType: 16
+    NeedLevel: 46
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 13
+  - Id: 13
+    PassType: 16
+    NeedLevel: 50
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 14
+  - Id: 14
+    PassType: 16
+    NeedLevel: 54
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 15
+  - Id: 15
+    PassType: 16
+    NeedLevel: 58
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 50
+    PremiumRewardType: 8
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 16
+  - Id: 16
+    PassType: 16
+    NeedLevel: 62
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 17
+  - Id: 17
+    PassType: 16
+    NeedLevel: 66
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 18
+  - Id: 18
+    PassType: 16
+    NeedLevel: 70
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 19
+  - Id: 19
+    PassType: 16
+    NeedLevel: 74
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 20
+  - Id: 20
+    PassType: 16
+    NeedLevel: 78
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 100
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 200
+    NextId: -1
+  - Id: 21
+    PassType: 17
+    NeedLevel: 78
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 50
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 300
+    NextId: 22
+  - Id: 22
+    PassType: 17
+    NeedLevel: 85
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 23
+  - Id: 23
+    PassType: 17
+    NeedLevel: 90
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 24
+  - Id: 24
+    PassType: 17
+    NeedLevel: 95
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 25
+  - Id: 25
+    PassType: 17
+    NeedLevel: 100
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 26
+  - Id: 26
+    PassType: 17
+    NeedLevel: 105
+    FreeRewardType: 5
+    FreeRewardValue: 0
+    FreeRewardCounts: 6000
+    PremiumRewardType: 26
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 27
+  - Id: 27
+    PassType: 17
+    NeedLevel: 110
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 28
+  - Id: 28
+    PassType: 17
+    NeedLevel: 115
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 29
+  - Id: 29
+    PassType: 17
+    NeedLevel: 120
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 30
+  - Id: 30
+    PassType: 17
+    NeedLevel: 125
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 31
+  - Id: 31
+    PassType: 17
+    NeedLevel: 130
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 300
+    NextId: 32
+  - Id: 32
+    PassType: 17
+    NeedLevel: 135
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 33
+  - Id: 33
+    PassType: 17
+    NeedLevel: 140
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 34
+  - Id: 34
+    PassType: 17
+    NeedLevel: 145
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 35
+  - Id: 35
+    PassType: 17
+    NeedLevel: 150
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 36
+  - Id: 36
+    PassType: 17
+    NeedLevel: 155
+    FreeRewardType: 5
+    FreeRewardValue: 0
+    FreeRewardCounts: 12000
+    PremiumRewardType: 8
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 37
+  - Id: 37
+    PassType: 17
+    NeedLevel: 160
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 38
+  - Id: 38
+    PassType: 17
+    NeedLevel: 165
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 39
+  - Id: 39
+    PassType: 17
+    NeedLevel: 170
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 40
+  - Id: 40
+    PassType: 17
+    NeedLevel: 175
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4500
+    NextId: 41
+  - Id: 41
+    PassType: 17
+    NeedLevel: 180
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: -1
+  - Id: 42
+    PassType: 18
+    NeedLevel: 180
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 50
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 43
+  - Id: 43
+    PassType: 18
+    NeedLevel: 185
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 44
+  - Id: 44
+    PassType: 18
+    NeedLevel: 190
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 45
+  - Id: 45
+    PassType: 18
+    NeedLevel: 195
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 46
+  - Id: 46
+    PassType: 18
+    NeedLevel: 200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 47
+  - Id: 47
+    PassType: 18
+    NeedLevel: 205
+    FreeRewardType: 5
+    FreeRewardValue: 0
+    FreeRewardCounts: 200000
+    PremiumRewardType: 8
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 48
+  - Id: 48
+    PassType: 18
+    NeedLevel: 210
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 49
+  - Id: 49
+    PassType: 18
+    NeedLevel: 215
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 50
+  - Id: 50
+    PassType: 18
+    NeedLevel: 220
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 51
+  - Id: 51
+    PassType: 18
+    NeedLevel: 225
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 52
+  - Id: 52
+    PassType: 18
+    NeedLevel: 230
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 53
+  - Id: 53
+    PassType: 18
+    NeedLevel: 235
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 54
+  - Id: 54
+    PassType: 18
+    NeedLevel: 240
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 55
+  - Id: 55
+    PassType: 18
+    NeedLevel: 245
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 56
+  - Id: 56
+    PassType: 18
+    NeedLevel: 250
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 57
+  - Id: 57
+    PassType: 18
+    NeedLevel: 255
+    FreeRewardType: 5
+    FreeRewardValue: 0
+    FreeRewardCounts: 400000
+    PremiumRewardType: 26
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 58
+  - Id: 58
+    PassType: 18
+    NeedLevel: 260
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 59
+  - Id: 59
+    PassType: 18
+    NeedLevel: 265
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 60
+  - Id: 60
+    PassType: 18
+    NeedLevel: 270
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 61
+  - Id: 61
+    PassType: 18
+    NeedLevel: 275
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 62
+  - Id: 62
+    PassType: 18
+    NeedLevel: 280
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 63
+  - Id: 63
+    PassType: 18
+    NeedLevel: 285
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: -1
+  - Id: 64
+    PassType: 50
+    NeedLevel: 285
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 26
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 65
+  - Id: 65
+    PassType: 50
+    NeedLevel: 289
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 66
+  - Id: 66
+    PassType: 50
+    NeedLevel: 293
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 67
+  - Id: 67
+    PassType: 50
+    NeedLevel: 297
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 68
+  - Id: 68
+    PassType: 50
+    NeedLevel: 301
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 69
+  - Id: 69
+    PassType: 50
+    NeedLevel: 305
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1000
+    NextId: 70
+  - Id: 70
+    PassType: 50
+    NeedLevel: 309
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 71
+  - Id: 71
+    PassType: 50
+    NeedLevel: 313
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 72
+  - Id: 72
+    PassType: 50
+    NeedLevel: 317
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 73
+  - Id: 73
+    PassType: 50
+    NeedLevel: 321
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8000
+    NextId: 74
+  - Id: 74
+    PassType: 50
+    NeedLevel: 325
+    FreeRewardType: 5
+    FreeRewardValue: 0
+    FreeRewardCounts: 800000
+    PremiumRewardType: 8
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 75
+  - Id: 75
+    PassType: 50
+    NeedLevel: 329
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8000
+    NextId: 76
+  - Id: 76
+    PassType: 50
+    NeedLevel: 333
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8000
+    NextId: 77
+  - Id: 77
+    PassType: 50
+    NeedLevel: 337
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 78
+  - Id: 78
+    PassType: 50
+    NeedLevel: 341
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 79
+  - Id: 79
+    PassType: 50
+    NeedLevel: 345
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1000
+    NextId: 80
+  - Id: 80
+    PassType: 50
+    NeedLevel: 349
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 81
+  - Id: 81
+    PassType: 50
+    NeedLevel: 353
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 82
+  - Id: 82
+    PassType: 50
+    NeedLevel: 357
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 83
+  - Id: 83
+    PassType: 50
+    NeedLevel: 361
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 36
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: -1
+  - Id: 84
+    PassType: 51
+    NeedLevel: 361
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 26
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 85
+  - Id: 85
+    PassType: 51
+    NeedLevel: 365
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8500
+    NextId: 86
+  - Id: 86
+    PassType: 51
+    NeedLevel: 367
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8500
+    NextId: 87
+  - Id: 87
+    PassType: 51
+    NeedLevel: 370
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8500
+    NextId: 88
+  - Id: 88
+    PassType: 51
+    NeedLevel: 373
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8500
+    NextId: 89
+  - Id: 89
+    PassType: 51
+    NeedLevel: 376
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1000
+    NextId: 90
+  - Id: 90
+    PassType: 51
+    NeedLevel: 379
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 91
+  - Id: 91
+    PassType: 51
+    NeedLevel: 382
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 92
+  - Id: 92
+    PassType: 51
+    NeedLevel: 385
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 93
+  - Id: 93
+    PassType: 51
+    NeedLevel: 388
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 94
+  - Id: 94
+    PassType: 51
+    NeedLevel: 391
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3500
+    PremiumRewardType: 8
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 95
+  - Id: 95
+    PassType: 51
+    NeedLevel: 394
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 96
+  - Id: 96
+    PassType: 51
+    NeedLevel: 397
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 97
+  - Id: 97
+    PassType: 51
+    NeedLevel: 400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 10000
+    NextId: 98
+  - Id: 98
+    PassType: 51
+    NeedLevel: 403
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 10000
+    NextId: 99
+  - Id: 99
+    PassType: 51
+    NeedLevel: 406
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1500
+    NextId: 100
+  - Id: 100
+    PassType: 51
+    NeedLevel: 409
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 12000
+    NextId: 101
+  - Id: 101
+    PassType: 51
+    NeedLevel: 412
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 12000
+    NextId: 102
+  - Id: 102
+    PassType: 51
+    NeedLevel: 415
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 5000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 12000
+    NextId: 103
+  - Id: 103
+    PassType: 51
+    NeedLevel: 418
+    FreeRewardType: 48
+    FreeRewardValue: 0
+    FreeRewardCounts: 600
+    PremiumRewardType: 36
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: -1
+  StagePass:
+  - Id: 0
+    PassType: 19
+    NeedStage: 1
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 1
+  - Id: 1
+    PassType: 19
+    NeedStage: 5
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 2
+  - Id: 2
+    PassType: 19
+    NeedStage: 10
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 3
+  - Id: 3
+    PassType: 19
+    NeedStage: 15
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 4
+  - Id: 4
+    PassType: 19
+    NeedStage: 20
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 5
+  - Id: 5
+    PassType: 19
+    NeedStage: 25
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 100
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 300
+    NextId: 6
+  - Id: 6
+    PassType: 19
+    NeedStage: 30
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 7
+  - Id: 7
+    PassType: 19
+    NeedStage: 35
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 8
+  - Id: 8
+    PassType: 19
+    NeedStage: 40
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 9
+  - Id: 9
+    PassType: 19
+    NeedStage: 45
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3000
+    NextId: 10
+  - Id: 10
+    PassType: 19
+    NeedStage: 50
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 100
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 300
+    NextId: 11
+  - Id: 11
+    PassType: 19
+    NeedStage: 55
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 12
+  - Id: 12
+    PassType: 19
+    NeedStage: 60
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 13
+  - Id: 13
+    PassType: 19
+    NeedStage: 65
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 14
+  - Id: 14
+    PassType: 19
+    NeedStage: 70
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 15
+  - Id: 15
+    PassType: 19
+    NeedStage: 75
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 100
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 16
+  - Id: 16
+    PassType: 19
+    NeedStage: 80
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 17
+  - Id: 17
+    PassType: 19
+    NeedStage: 85
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 18
+  - Id: 18
+    PassType: 19
+    NeedStage: 90
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 19
+  - Id: 19
+    PassType: 19
+    NeedStage: 95
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 3500
+    NextId: 20
+  - Id: 20
+    PassType: 19
+    NeedStage: 100
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: -1
+  - Id: 21
+    PassType: 20
+    NeedStage: 100
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 22
+  - Id: 22
+    PassType: 20
+    NeedStage: 110
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 23
+  - Id: 23
+    PassType: 20
+    NeedStage: 120
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 24
+  - Id: 24
+    PassType: 20
+    NeedStage: 130
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 25
+  - Id: 25
+    PassType: 20
+    NeedStage: 140
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 4000
+    NextId: 26
+  - Id: 26
+    PassType: 20
+    NeedStage: 150
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 700
+    NextId: 27
+  - Id: 27
+    PassType: 20
+    NeedStage: 160
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 28
+  - Id: 28
+    PassType: 20
+    NeedStage: 170
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 29
+  - Id: 29
+    PassType: 20
+    NeedStage: 180
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 30
+  - Id: 30
+    PassType: 20
+    NeedStage: 190
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 5000
+    NextId: 31
+  - Id: 31
+    PassType: 20
+    NeedStage: 200
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 700
+    NextId: 32
+  - Id: 32
+    PassType: 20
+    NeedStage: 210
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 33
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 33
+  - Id: 33
+    PassType: 20
+    NeedStage: 220
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 34
+  - Id: 34
+    PassType: 20
+    NeedStage: 230
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 35
+  - Id: 35
+    PassType: 20
+    NeedStage: 240
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6000
+    NextId: 36
+  - Id: 36
+    PassType: 20
+    NeedStage: 250
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 800
+    NextId: 37
+  - Id: 37
+    PassType: 20
+    NeedStage: 260
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 38
+  - Id: 38
+    PassType: 20
+    NeedStage: 270
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 39
+  - Id: 39
+    PassType: 20
+    NeedStage: 280
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 40
+  - Id: 40
+    PassType: 20
+    NeedStage: 290
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 41
+  - Id: 41
+    PassType: 20
+    NeedStage: 300
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 1500
+    PremiumRewardType: 33
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: -1
+  - Id: 42
+    PassType: 21
+    NeedStage: 300
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 43
+  - Id: 43
+    PassType: 21
+    NeedStage: 315
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 44
+  - Id: 44
+    PassType: 21
+    NeedStage: 330
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 45
+  - Id: 45
+    PassType: 21
+    NeedStage: 345
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 46
+  - Id: 46
+    PassType: 21
+    NeedStage: 360
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 47
+  - Id: 47
+    PassType: 21
+    NeedStage: 375
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 600
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1100
+    NextId: 48
+  - Id: 48
+    PassType: 21
+    NeedStage: 390
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 34
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 49
+  - Id: 49
+    PassType: 21
+    NeedStage: 405
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 50
+  - Id: 50
+    PassType: 21
+    NeedStage: 420
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 51
+  - Id: 51
+    PassType: 21
+    NeedStage: 435
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 52
+  - Id: 52
+    PassType: 21
+    NeedStage: 450
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 600
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1100
+    NextId: 53
+  - Id: 53
+    PassType: 21
+    NeedStage: 465
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 54
+  - Id: 54
+    PassType: 21
+    NeedStage: 480
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 6500
+    NextId: 55
+  - Id: 55
+    PassType: 21
+    NeedStage: 495
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 56
+  - Id: 56
+    PassType: 21
+    NeedStage: 510
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 57
+  - Id: 57
+    PassType: 21
+    NeedStage: 525
+    FreeRewardType: 3
+    FreeRewardValue: 0
+    FreeRewardCounts: 700
+    PremiumRewardType: 3
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1100
+    NextId: 58
+  - Id: 58
+    PassType: 21
+    NeedStage: 540
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 59
+  - Id: 59
+    PassType: 21
+    NeedStage: 555
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 60
+  - Id: 60
+    PassType: 21
+    NeedStage: 570
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 61
+  - Id: 61
+    PassType: 21
+    NeedStage: 585
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 62
+  - Id: 62
+    PassType: 21
+    NeedStage: 600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 7000
+    NextId: 63
+  - Id: 63
+    PassType: 21
+    NeedStage: 615
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 2000
+    PremiumRewardType: 34
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: -1
+  - Id: 64
+    PassType: 52
+    NeedStage: 615
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8000
+    NextId: 65
+  - Id: 65
+    PassType: 52
+    NeedStage: 630
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8000
+    NextId: 66
+  - Id: 66
+    PassType: 52
+    NeedStage: 650
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8000
+    NextId: 67
+  - Id: 67
+    PassType: 52
+    NeedStage: 670
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 8000
+    NextId: 68
+  - Id: 68
+    PassType: 52
+    NeedStage: 690
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 69
+  - Id: 69
+    PassType: 52
+    NeedStage: 710
+    FreeRewardType: 48
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 48
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1600
+    NextId: 70
+  - Id: 70
+    PassType: 52
+    NeedStage: 730
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 71
+  - Id: 71
+    PassType: 52
+    NeedStage: 750
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 72
+  - Id: 72
+    PassType: 52
+    NeedStage: 770
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 73
+  - Id: 73
+    PassType: 52
+    NeedStage: 790
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 26
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 74
+  - Id: 74
+    PassType: 52
+    NeedStage: 810
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 48
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1000
+    NextId: 75
+  - Id: 75
+    PassType: 52
+    NeedStage: 830
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 10000
+    NextId: 76
+  - Id: 76
+    PassType: 52
+    NeedStage: 850
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 10000
+    NextId: 77
+  - Id: 77
+    PassType: 52
+    NeedStage: 870
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 78
+  - Id: 78
+    PassType: 52
+    NeedStage: 890
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 79
+  - Id: 79
+    PassType: 52
+    NeedStage: 910
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 48
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2400
+    NextId: 80
+  - Id: 80
+    PassType: 52
+    NeedStage: 930
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 81
+  - Id: 81
+    PassType: 52
+    NeedStage: 950
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 82
+  - Id: 82
+    PassType: 52
+    NeedStage: 970
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 3000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 83
+  - Id: 83
+    PassType: 52
+    NeedStage: 990
+    FreeRewardType: 48
+    FreeRewardValue: 0
+    FreeRewardCounts: 500
+    PremiumRewardType: 8
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: -1
+  - Id: 84
+    PassType: 53
+    NeedStage: 990
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 85
+  - Id: 85
+    PassType: 53
+    NeedStage: 1010
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 86
+  - Id: 86
+    PassType: 53
+    NeedStage: 1030
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 9000
+    NextId: 87
+  - Id: 87
+    PassType: 53
+    NeedStage: 1050
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 10000
+    NextId: 88
+  - Id: 88
+    PassType: 53
+    NeedStage: 1070
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 10000
+    NextId: 89
+  - Id: 89
+    PassType: 53
+    NeedStage: 1090
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 48
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1200
+    NextId: 90
+  - Id: 90
+    PassType: 53
+    NeedStage: 1110
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 91
+  - Id: 91
+    PassType: 53
+    NeedStage: 1130
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 92
+  - Id: 92
+    PassType: 53
+    NeedStage: 1150
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 11000
+    NextId: 93
+  - Id: 93
+    PassType: 53
+    NeedStage: 1170
+    FreeRewardType: 48
+    FreeRewardValue: 0
+    FreeRewardCounts: 600
+    PremiumRewardType: 26
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: 94
+  - Id: 94
+    PassType: 53
+    NeedStage: 1190
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 48
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1500
+    NextId: 95
+  - Id: 95
+    PassType: 53
+    NeedStage: 1210
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 12000
+    NextId: 96
+  - Id: 96
+    PassType: 53
+    NeedStage: 1230
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 12000
+    NextId: 97
+  - Id: 97
+    PassType: 53
+    NeedStage: 1250
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 12000
+    NextId: 98
+  - Id: 98
+    PassType: 53
+    NeedStage: 1270
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 13000
+    NextId: 99
+  - Id: 99
+    PassType: 53
+    NeedStage: 1290
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 48
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1800
+    NextId: 100
+  - Id: 100
+    PassType: 53
+    NeedStage: 1310
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 14000
+    NextId: 101
+  - Id: 101
+    PassType: 53
+    NeedStage: 1330
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 4000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 15000
+    NextId: 102
+  - Id: 102
+    PassType: 53
+    NeedStage: 1350
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 5000
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 16000
+    NextId: 103
+  - Id: 103
+    PassType: 53
+    NeedStage: 1370
+    FreeRewardType: 48
+    FreeRewardValue: 0
+    FreeRewardCounts: 600
+    PremiumRewardType: 8
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 2
+    NextId: -1
+  SoulPass:
+  - Id: 0
+    NeedPoints: 0
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 1
+  - Id: 1
+    NeedPoints: 400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 2
+  - Id: 2
+    NeedPoints: 1200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 3
+  - Id: 3
+    NeedPoints: 2000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 4
+  - Id: 4
+    NeedPoints: 2800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 5
+  - Id: 5
+    NeedPoints: 3600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 6
+  - Id: 6
+    NeedPoints: 4400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 7
+  - Id: 7
+    NeedPoints: 5200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 8
+  - Id: 8
+    NeedPoints: 6000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 9
+  - Id: 9
+    NeedPoints: 6800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 150
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 10
+  - Id: 10
+    NeedPoints: 7600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 11
+  - Id: 11
+    NeedPoints: 8800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 12
+  - Id: 12
+    NeedPoints: 10000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 13
+  - Id: 13
+    NeedPoints: 11200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 14
+  - Id: 14
+    NeedPoints: 12400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 15
+  - Id: 15
+    NeedPoints: 14400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 16
+  - Id: 16
+    NeedPoints: 15400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 17
+  - Id: 17
+    NeedPoints: 16000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 18
+  - Id: 18
+    NeedPoints: 17200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 19
+  - Id: 19
+    NeedPoints: 18400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 200
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 400
+    NextId: 20
+  - Id: 20
+    NeedPoints: 19600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 21
+  - Id: 21
+    NeedPoints: 21200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 22
+  - Id: 22
+    NeedPoints: 22800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 23
+  - Id: 23
+    NeedPoints: 24400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 24
+  - Id: 24
+    NeedPoints: 26000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 25
+  - Id: 25
+    NeedPoints: 27600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 26
+  - Id: 26
+    NeedPoints: 29200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 27
+  - Id: 27
+    NeedPoints: 30800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 28
+  - Id: 28
+    NeedPoints: 32400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 29
+  - Id: 29
+    NeedPoints: 34000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 250
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 30
+  - Id: 30
+    NeedPoints: 35200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 31
+  - Id: 31
+    NeedPoints: 37600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 32
+  - Id: 32
+    NeedPoints: 39600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 33
+  - Id: 33
+    NeedPoints: 41600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 34
+  - Id: 34
+    NeedPoints: 43600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 35
+  - Id: 35
+    NeedPoints: 45600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 36
+  - Id: 36
+    NeedPoints: 47600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 37
+  - Id: 37
+    NeedPoints: 49600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 38
+  - Id: 38
+    NeedPoints: 51600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 39
+  - Id: 39
+    NeedPoints: 53600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 300
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 450
+    NextId: 40
+  - Id: 40
+    NeedPoints: 55600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 41
+  - Id: 41
+    NeedPoints: 58000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 42
+  - Id: 42
+    NeedPoints: 60400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 43
+  - Id: 43
+    NeedPoints: 62800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 44
+  - Id: 44
+    NeedPoints: 65200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 45
+  - Id: 45
+    NeedPoints: 67600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 46
+  - Id: 46
+    NeedPoints: 70000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 47
+  - Id: 47
+    NeedPoints: 71400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 48
+  - Id: 48
+    NeedPoints: 72800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 500
+    NextId: 49
+  - Id: 49
+    NeedPoints: 75200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 350
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 50
+  - Id: 50
+    NeedPoints: 77600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 51
+  - Id: 51
+    NeedPoints: 80000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 52
+  - Id: 52
+    NeedPoints: 83600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 53
+  - Id: 53
+    NeedPoints: 87200
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 54
+  - Id: 54
+    NeedPoints: 90800
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 55
+  - Id: 55
+    NeedPoints: 94400
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 56
+  - Id: 56
+    NeedPoints: 98000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 57
+  - Id: 57
+    NeedPoints: 101600
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 58
+  - Id: 58
+    NeedPoints: 106000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 59
+  - Id: 59
+    NeedPoints: 110500
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 400
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 600
+    NextId: 60
+  - Id: 60
+    NeedPoints: 115000
+    FreeRewardType: 0
+    FreeRewardValue: 0
+    FreeRewardCounts: 450
+    PremiumRewardType: 0
+    PremiumRewardValue: 0
+    PremiumRewardCounts: 1000
+    NextId: -1
+  Coupon:
+  - Id: MHopen
+    Rewards:
+    - WeaponSummonTicket:500
+    - AccessorySummonTicket:500
+  - Id: Mushroom0110
+    Rewards:
+    - BlackMarketDungeonTicket:2
+    - SkillGrowthDungeonTicket:2
+    - PetDungeonTicket:2
+    - AwakeningDungeonTicket:2
+  - Id: Formyheroes
+    Rewards:
+    - SkillSummonTicket:100
+  - Id: helloHA
+    Rewards:
+    - Dia:30000
+  - Id: welcomeMH
+    Rewards:
+    - Dia:10000
+  - Id: enjoyMH
+    Rewards:
+    - Dia:20000
+    - WeaponSummonTicket:1000
+  - Id: hungrymushroom
+    Rewards:
+    - AwakeningDungeonTicket:3
+  - Id: hungryhero
+    Rewards:
+    - Dia:20000
+    - RelicSummonTicket:100
+  - Id: heropower
+    Rewards:
+    - Dia:250000
+    - BlackMarketDungeonTicket:5
+    - SkillGrowthDungeonTicket:5
+    - PetDungeonTicket:5
+    - AwakeningDungeonTicket:5
+  - Id: THXhero
+    Rewards:
+    - WeaponSummonTicket:500
+    - AccessorySummonTicket:500
+  - Id: mhfirstday
+    Rewards:
+    - Dia:10000
+  - Id: sweetmushroom
+    Rewards:
+    - Dia:15000
+  - Id: stronghero
+    Rewards:
+    - Dia:20000
+  - Id: sharpknife
+    Rewards:
+    - AccessorySummonTicket:500
+  - Id: bigstone
+    Rewards:
+    - SkillSummonTicket:50
+  - Id: hardhelmet
+    Rewards:
+    - WeaponSummonTicket:500
+  - Id: shininghead
+    Rewards:
+    - RelicSummonTicket:50
+  AdBuff:
+  - Id: 0
+    BuffType: 5
+    NameId: 107001
+    Buff: 5000
+    Duration: 1800
+    LimitPerDay: 10
+    DescriptionId: 108001
+    Resource: Icon_AdBuff_Gold
+    MainResource: Gold
+    RewardResource: Icon_Money
+  - Id: 1
+    BuffType: 8
+    NameId: 107002
+    Buff: 50
+    Duration: 1800
+    LimitPerDay: 10
+    DescriptionId: 108002
+    Resource: Icon_AdBuff_Booster
+    MainResource: GrowthStoneBuff
+    RewardResource: Icon_boosters
+  Costume:
+  - Id: 1
+    Category: 0
+    ShopId: 0
+    Position: 0
+    Grade: 0
+    Options: 
+    Values: 
+    NameId: 123000
+    Resource: Promotion1
+    PrevId: -1
+    NextId: 2
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 2
+    Category: 0
+    ShopId: 0
+    Position: 0
+    Grade: 0
+    Options: 
+    Values: 
+    NameId: 123001
+    Resource: Promotion2
+    PrevId: 1
+    NextId: 3
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 3
+    Category: 0
+    ShopId: 0
+    Position: 0
+    Grade: 1
+    Options: 
+    Values: 
+    NameId: 123002
+    Resource: Promotion3
+    PrevId: 2
+    NextId: 4
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 4
+    Category: 0
+    ShopId: 0
+    Position: 0
+    Grade: 1
+    Options: 
+    Values: 
+    NameId: 123003
+    Resource: Promotion4
+    PrevId: 3
+    NextId: 5
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 5
+    Category: 0
+    ShopId: 0
+    Position: 0
+    Grade: 2
+    Options: 
+    Values: 
+    NameId: 123004
+    Resource: Promotion5
+    PrevId: 4
+    NextId: 6
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 6
+    Category: 0
+    ShopId: 0
+    Position: 0
+    Grade: 2
+    Options: 
+    Values: 
+    NameId: 123005
+    Resource: Promotion6
+    PrevId: 5
+    NextId: 7
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 7
+    Category: 0
+    ShopId: 0
+    Position: 0
+    Grade: 3
+    Options: 
+    Values: 
+    NameId: 123048
+    Resource: Promotion7
+    PrevId: 6
+    NextId: 10
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 10
+    Category: 2
+    ShopId: 1081
+    Position: 0
+    Grade: 6
+    Options: 0400000005000000
+    Values: dc050000d0070000
+    NameId: 123019
+    Resource: Pirate
+    PrevId: 7
+    NextId: 12
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 11
+    Category: 2
+    ShopId: 1081
+    Position: 1
+    Grade: 6
+    Options: 04000000
+    Values: ac0d0000
+    NameId: 123020
+    Resource: PirateWeapon
+    PrevId: -1
+    NextId: 13
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 8
+    Category: 3
+    ShopId: 0
+    Position: 0
+    Grade: 6
+    Options: 040000000f000000
+    Values: dc050000c8000000
+    NameId: 123011
+    Resource: Cowboy
+    PrevId: 12
+    NextId: -1
+    DescriptionId: 123021
+    StartDate: 0
+  - Id: 9
+    Category: 3
+    ShopId: 0
+    Position: 1
+    Grade: 6
+    Options: 0400000009000000
+    Values: dc0500000a000000
+    NameId: 123012
+    Resource: CowboyWeapon
+    PrevId: 13
+    NextId: -1
+    DescriptionId: 123021
+    StartDate: 0
+  - Id: 12
+    Category: 2
+    ShopId: 1082
+    Position: 0
+    Grade: 6
+    Options: 0400000003000000
+    Values: dc0500002c010000
+    NameId: 123022
+    Resource: Ninja
+    PrevId: 10
+    NextId: 8
+    DescriptionId: 0
+    StartDate: 0
+  - Id: 13
+    Category: 2
+    ShopId: 1082
+    Position: 1
+    Grade: 6
+    Options: 040000000c000000
+    Values: dc0500000a000000
+    NameId: 123023
+    Resource: NinjaWeapon
+    PrevId: 11
+    NextId: 9
+    DescriptionId: 0
+    StartDate: 0
+  Profile:
+  - Id: 1
+    Condition: 0
+    Goal: 0
+    Resource: NormalCrow
+  - Id: 2
+    Condition: 0
+    Goal: 0
+    Resource: Logo1
+  - Id: 3
+    Condition: 0
+    Goal: 0
+    Resource: Slime1
+  - Id: 4
+    Condition: 0
+    Goal: 0
+    Resource: Mushroom1
+  - Id: 5
+    Condition: 1
+    Goal: 1
+    Resource: Promotion1
+  - Id: 6
+    Condition: 1
+    Goal: 2
+    Resource: Promotion2
+  - Id: 7
+    Condition: 1
+    Goal: 3
+    Resource: Promotion3
+  - Id: 8
+    Condition: 1
+    Goal: 4
+    Resource: Promotion4
+  - Id: 9
+    Condition: 1
+    Goal: 5
+    Resource: Promotion5
+  - Id: 10
+    Condition: 1
+    Goal: 6
+    Resource: Promotion6
+  - Id: 11
+    Condition: 1
+    Goal: 7
+    Resource: Promotion7
+  - Id: 12
+    Condition: 1
+    Goal: 10
+    Resource: Pirate
+  - Id: 13
+    Condition: 1
+    Goal: 8
+    Resource: Cowboy
+  - Id: 14
+    Condition: 1
+    Goal: 12
+    Resource: Ninja

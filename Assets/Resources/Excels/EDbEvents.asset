@@ -1,0 +1,441 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41d211bfae8f4529b87c2494fe1a31e6, type: 3}
+  m_Name: EDbEvents
+  m_EditorClassIdentifier: 
+  SeasonPass:
+  - Id: 1
+    StartDate: 2023.11.29
+    Duration: 28
+    ShopId: 301
+    NameId: 110011
+  SeasonPassReward:
+  - Id: 1
+    NeedPoint: 0
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 2
+    NeedPoint: 4
+    IsFree: 1
+    RewardType: 48
+    RewardCount: 1500
+    RewardId: 0
+  - Id: 3
+    NeedPoint: 8
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 4
+    NeedPoint: 12
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 5
+    NeedPoint: 16
+    IsFree: 1
+    RewardType: 48
+    RewardCount: 1500
+    RewardId: 0
+  - Id: 6
+    NeedPoint: 20
+    IsFree: 0
+    RewardType: 7
+    RewardCount: 5
+    RewardId: 0
+  - Id: 7
+    NeedPoint: 24
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 8
+    NeedPoint: 28
+    IsFree: 1
+    RewardType: 48
+    RewardCount: 1500
+    RewardId: 0
+  - Id: 9
+    NeedPoint: 32
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 10
+    NeedPoint: 36
+    IsFree: 1
+    RewardType: 48
+    RewardCount: 1500
+    RewardId: 0
+  - Id: 11
+    NeedPoint: 40
+    IsFree: 0
+    RewardType: 8
+    RewardCount: 5
+    RewardId: 0
+  - Id: 12
+    NeedPoint: 44
+    IsFree: 1
+    RewardType: 48
+    RewardCount: 1500
+    RewardId: 0
+  - Id: 13
+    NeedPoint: 48
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 14
+    NeedPoint: 52
+    IsFree: 1
+    RewardType: 48
+    RewardCount: 1500
+    RewardId: 0
+  - Id: 15
+    NeedPoint: 56
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 16
+    NeedPoint: 61
+    IsFree: 0
+    RewardType: 26
+    RewardCount: 5
+    RewardId: 0
+  - Id: 17
+    NeedPoint: 66
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 18
+    NeedPoint: 71
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 19
+    NeedPoint: 76
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 20
+    NeedPoint: 82
+    IsFree: 0
+    RewardType: 56
+    RewardCount: 2000
+    RewardId: 0
+  - Id: 21
+    NeedPoint: 88
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 22
+    NeedPoint: 94
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 23
+    NeedPoint: 100
+    IsFree: 0
+    RewardType: 55
+    RewardCount: 2000
+    RewardId: 0
+  - Id: 24
+    NeedPoint: 106
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 20000
+    RewardId: 0
+  - Id: 25
+    NeedPoint: 113
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 20000
+    RewardId: 0
+  - Id: 26
+    NeedPoint: 120
+    IsFree: 0
+    RewardType: 57
+    RewardCount: 1000
+    RewardId: 0
+  - Id: 27
+    NeedPoint: 127
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 20000
+    RewardId: 0
+  - Id: 28
+    NeedPoint: 134
+    IsFree: 1
+    RewardType: 0
+    RewardCount: 20000
+    RewardId: 0
+  - Id: 29
+    NeedPoint: 141
+    IsFree: 0
+    RewardType: 0
+    RewardCount: 250000
+    RewardId: 0
+  - Id: 30
+    NeedPoint: 148
+    IsFree: 1
+    RewardType: 43
+    RewardCount: 1
+    RewardId: 30
+  - Id: 31
+    NeedPoint: 155
+    IsFree: 1
+    RewardType: 43
+    RewardCount: 1
+    RewardId: 29
+  SeasonPassQuest:
+  - Id: 5
+    Goal: 1000
+    Point: 1
+    NameId: 111002
+  - Id: 12
+    Goal: 3
+    Point: 1
+    NameId: 111027
+  - Id: 13
+    Goal: 3
+    Point: 1
+    NameId: 111031
+  - Id: 18
+    Goal: 10
+    Point: 1
+    NameId: 111014
+  - Id: 17
+    Goal: 15
+    Point: 1
+    NameId: 111015
+  - Id: 24
+    Goal: 3
+    Point: 1
+    NameId: 111007
+  - Id: 4
+    Goal: 3
+    Point: 1
+    NameId: 111006
+  AttendEvent:
+  - Id: 1
+    StartDate: 2023.09.28
+    Duration: 14
+    RewardIds: e9030000ea030000eb030000ec030000ed030000ee030000ef030000
+  - Id: 2
+    StartDate: 2023.10.18
+    Duration: 14
+    RewardIds: d1070000d2070000d3070000d4070000d5070000d6070000d7070000
+  AttendEventReward:
+  - Id: 1001
+    Rewards:
+    - Dia:25000
+  - Id: 1002
+    Rewards:
+    - AwakeningDungeonTicket:2
+    - SkillGrowthDungeonTicket:2
+  - Id: 1003
+    Rewards:
+    - Dia:100000
+  - Id: 1004
+    Rewards:
+    - Costume:14:1
+  - Id: 1005
+    Rewards:
+    - Dia:140000
+  - Id: 1006
+    Rewards:
+    - AwakeningDungeonTicket:2
+    - PetDungeonTicket:2
+  - Id: 1007
+    Rewards:
+    - Costume:13:1
+  - Id: 2001
+    Rewards:
+    - Dia:80000
+  - Id: 2002
+    Rewards:
+    - Passion:1000
+  - Id: 2003
+    Rewards:
+    - Costume:18:1
+  - Id: 2004
+    Rewards:
+    - Passion:1500
+  - Id: 2005
+    Rewards:
+    - Dia:120000
+  - Id: 2006
+    Rewards:
+    - Passion:2000
+  - Id: 2007
+    Rewards:
+    - Costume:17:1
+  DropEvent:
+  - Id: 1
+    StartDate: 2023.12.13
+    DropDuration: 14
+    ShopDuration: 15
+  DropEventShop:
+  - Id: 4001
+    Resource: BaseDia_001
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 250
+    RewardType: 0
+    RewardCount: 5000
+    RewardId: 0
+  - Id: 4002
+    Resource: Icon_PassionStone
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 500
+    RewardType: 48
+    RewardCount: 150
+    RewardId: 0
+  - Id: 4003
+    Resource: TicketSummonScythe
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 200
+    RewardType: 55
+    RewardCount: 110
+    RewardId: 0
+  - Id: 4004
+    Resource: TicketSummonRing
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 200
+    RewardType: 56
+    RewardCount: 110
+    RewardId: 0
+  - Id: 4005
+    Resource: TicketSummonSkill
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 200
+    RewardType: 57
+    RewardCount: 110
+    RewardId: 0
+  - Id: 4006
+    Resource: TicketSummonRelic
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 200
+    RewardType: 58
+    RewardCount: 110
+    RewardId: 0
+  - Id: 4007
+    Resource: Gold
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 50
+    RewardType: 54
+    RewardCount: 60
+    RewardId: 0
+  - Id: 4008
+    Resource: icon_exp
+    RenewalInterval: 1
+    BuyLimit: 30
+    Price: 50
+    RewardType: 60
+    RewardCount: 60
+    RewardId: 0
+  - Id: 4009
+    Resource: Diamond
+    RenewalInterval: 0
+    BuyLimit: 300
+    Price: 100
+    RewardType: 0
+    RewardCount: 500
+    RewardId: 0
+  AttendReward:
+  - Id: 1
+    Rewards:
+    - Dia:20000
+  - Id: 2
+    Rewards:
+    - WeaponSummonTicket:500
+  - Id: 3
+    Rewards:
+    - AccessorySummonTicket:500
+  - Id: 4
+    Rewards:
+    - SkillSummonTicket:100
+  - Id: 5
+    Rewards:
+    - RelicSummonTicket:200
+  - Id: 6
+    Rewards:
+    - Dia:30000
+  - Id: 7
+    Rewards:
+    - Dia:50000
+  FriendReward:
+  - Id: 1
+    NeedCount: 1
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 2
+    NeedCount: 2
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 3
+    NeedCount: 3
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 4
+    NeedCount: 4
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 5
+    NeedCount: 5
+    RewardType: 0
+    RewardCount: 10000
+    RewardId: 0
+  - Id: 6
+    NeedCount: 10
+    RewardType: 0
+    RewardCount: 50000
+    RewardId: 0
+  - Id: 7
+    NeedCount: 15
+    RewardType: 0
+    RewardCount: 50000
+    RewardId: 0
+  - Id: 8
+    NeedCount: 20
+    RewardType: 0
+    RewardCount: 50000
+    RewardId: 0
+  - Id: 9
+    NeedCount: 25
+    RewardType: 0
+    RewardCount: 50000
+    RewardId: 0
+  - Id: 10
+    NeedCount: 30
+    RewardType: 0
+    RewardCount: 50000
+    RewardId: 0

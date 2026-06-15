@@ -1,0 +1,266 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5010a99ff20c4bdb9443a168369258b0, type: 3}
+  m_Name: EDbPromotions
+  m_EditorClassIdentifier: 
+  Promotion:
+  - Id: 1
+    NameId: 106000
+    StartScenarioId: 1
+    SuccessScenarioId: 2
+    FailScenarioId: 201
+    Attack: 100
+    Hp: 100
+    CostumeId: 1
+    Resource: Costume_Promotion1
+    Salary: 0
+    UnlockCondition: 60
+    IsOnUI: 1
+  - Id: 2
+    NameId: 106001
+    StartScenarioId: 3
+    SuccessScenarioId: 4
+    FailScenarioId: 202
+    Attack: 150
+    Hp: 150
+    CostumeId: 2
+    Resource: Costume_Promotion2
+    Salary: 0
+    UnlockCondition: 210
+    IsOnUI: 1
+  - Id: 3
+    NameId: 106002
+    StartScenarioId: 5
+    SuccessScenarioId: 6
+    FailScenarioId: 203
+    Attack: 225
+    Hp: 225
+    CostumeId: 3
+    Resource: Costume_Promotion3
+    Salary: 0
+    UnlockCondition: 410
+    IsOnUI: 1
+  - Id: 4
+    NameId: 106003
+    StartScenarioId: 7
+    SuccessScenarioId: 8
+    FailScenarioId: 201
+    Attack: 325
+    Hp: 325
+    CostumeId: 4
+    Resource: Costume_Promotion4
+    Salary: 0
+    UnlockCondition: 760
+    IsOnUI: 1
+  - Id: 5
+    NameId: 106004
+    StartScenarioId: 9
+    SuccessScenarioId: 10
+    FailScenarioId: 202
+    Attack: 475
+    Hp: 475
+    CostumeId: 5
+    Resource: Costume_Promotion5
+    Salary: 0
+    UnlockCondition: 1260
+    IsOnUI: 1
+  - Id: 6
+    NameId: 106005
+    StartScenarioId: 11
+    SuccessScenarioId: 12
+    FailScenarioId: 203
+    Attack: 650
+    Hp: 650
+    CostumeId: 6
+    Resource: Costume_Promotion6
+    Salary: 0
+    UnlockCondition: 1960
+    IsOnUI: 1
+  - Id: 7
+    NameId: 106006
+    StartScenarioId: 13
+    SuccessScenarioId: 14
+    FailScenarioId: 201
+    Attack: 925
+    Hp: 925
+    CostumeId: 7
+    Resource: Costume_Promotion7
+    Salary: 0
+    UnlockCondition: 2860
+    IsOnUI: 1
+  - Id: 8
+    NameId: 106007
+    StartScenarioId: 15
+    SuccessScenarioId: 16
+    FailScenarioId: 202
+    Attack: 1250
+    Hp: 1250
+    CostumeId: 0
+    Resource: Costume_Promotion7
+    Salary: 0
+    UnlockCondition: 3860
+    IsOnUI: 0
+  - Id: 9
+    NameId: 106008
+    StartScenarioId: 17
+    SuccessScenarioId: 18
+    FailScenarioId: 203
+    Attack: 1800
+    Hp: 1800
+    CostumeId: 0
+    Resource: Costume_Promotion7
+    Salary: 0
+    UnlockCondition: 5060
+    IsOnUI: 0
+  - Id: 10
+    NameId: 106009
+    StartScenarioId: 19
+    SuccessScenarioId: 20
+    FailScenarioId: 201
+    Attack: 2350
+    Hp: 2350
+    CostumeId: 0
+    Resource: Costume_Promotion7
+    Salary: 0
+    UnlockCondition: 6460
+    IsOnUI: 0
+  PromotionDungeon:
+  - Id: 1
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 218013
+    MonsterHp: 17926881
+    Power: 60
+    Monsters: 06000000
+    NameId: 2202
+    Background: 5
+  - Id: 2
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 2349020
+    MonsterHp: 1075218540
+    Power: 160
+    Monsters: 0b000000
+    NameId: 2202
+    Background: 5
+  - Id: 3
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 24976914
+    MonsterHp: 15656526420
+    Power: 250
+    Monsters: 16000000
+    NameId: 2202
+    Background: 5
+  - Id: 4
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 559813568
+    MonsterHp: 576243510860
+    Power: 350
+    Monsters: 15000000
+    NameId: 2202
+    Background: 5
+  - Id: 5
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 7895457865
+    MonsterHp: 13102105463650
+    Power: 450
+    Monsters: 18000000
+    NameId: 2202
+    Background: 5
+  - Id: 6
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 164545105215
+    MonsterHp: 423633329129850
+    Power: 550
+    Monsters: 1c000000
+    NameId: 2202
+    Background: 5
+  - Id: 7
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 18996328543662
+    MonsterHp: 106454464585347000
+    Power: 650
+    Monsters: 1d000000
+    NameId: 2202
+    Background: 5
+  - Id: 8
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 1255702359994030
+    MonsterHp: 183423472471608000000
+    Power: 950
+    Monsters: 19000000
+    NameId: 2202
+    Background: 5
+  - Id: 9
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 220521783310472000
+    MonsterHp: 45316622299400800000000
+    Power: 1250
+    Monsters: 1b000000
+    NameId: 2202
+    Background: 5
+  - Id: 10
+    StageType: 1
+    MinSpawnCount: 1
+    MaxSpawnCount: 1
+    MaxMonsterCount: 1
+    SpawnCoolTime: -1
+    GoalCount: 1
+    MonsterAttack: 220521783310472000
+    MonsterHp: 45316622299400800000000
+    Power: 1550
+    Monsters: 1a000000
+    NameId: 2202
+    Background: 5

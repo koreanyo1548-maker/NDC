@@ -1,0 +1,993 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd9c5887e4014c908b2144e4b6a8d1c3, type: 3}
+  m_Name: EDbDefinitions
+  m_EditorClassIdentifier: 
+  Currency:
+  - Id: 0
+    NameId: 119000
+    InitialValue: 0
+    Resource: Diamond
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 0
+  - Id: 1
+    NameId: 119001
+    InitialValue: 0
+    Resource: Gold
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 0
+  - Id: 2
+    NameId: 119002
+    InitialValue: 0
+    Resource: Icon_Weapon booster256x256
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 1
+  - Id: 3
+    NameId: 119003
+    InitialValue: 0
+    Resource: Icon_Awakener256x256
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 1
+  - Id: 4
+    NameId: 119004
+    InitialValue: 0
+    Resource: Icon_Jewelry booster256x256
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 1
+  - Id: 5
+    NameId: 119005
+    InitialValue: 0
+    Resource: Icon_Skill booster256x256
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 1
+  - Id: 9
+    NameId: 119006
+    InitialValue: 0
+    Resource: Icon_Pet booster256x256
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 1
+  - Id: 6
+    NameId: 119007
+    InitialValue: 1
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 4
+  - Id: 7
+    NameId: 119008
+    InitialValue: 1
+    Resource: Icon_DungeonSkill
+    DailyCharge: 1
+    MaxHave: 999
+    Category: 2
+  - Id: 8
+    NameId: 119009
+    InitialValue: 1
+    Resource: Icon_DungeonAwakening
+    DailyCharge: 1
+    MaxHave: 999
+    Category: 2
+  - Id: 26
+    NameId: 119010
+    InitialValue: 1
+    Resource: Icon_DungeonPet
+    DailyCharge: 1
+    MaxHave: 999
+    Category: 2
+  - Id: 27
+    NameId: 119011
+    InitialValue: 1
+    Resource: Icon_DungeonBlackMarket
+    DailyCharge: 1
+    MaxHave: 999
+    Category: 2
+  - Id: 28
+    NameId: 119012
+    InitialValue: 1
+    Resource: Icon_DungeonDia
+    DailyCharge: 1
+    MaxHave: 999
+    Category: 2
+  - Id: 10
+    NameId: 119013
+    InitialValue: 0
+    Resource: Noads
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 15
+    NameId: 119014
+    InitialValue: 0
+    Resource: icon_exp
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 44
+    NameId: 119015
+    InitialValue: 0
+    Resource: Icon_Mileage
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 0
+  - Id: 12
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 13
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 14
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 63
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 39
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 43
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 16
+    NameId: 110000
+    InitialValue: 0
+    Resource: Icon_levelpass_1
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 17
+    NameId: 110001
+    InitialValue: 0
+    Resource: Icon_levelpass_2
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 18
+    NameId: 110002
+    InitialValue: 0
+    Resource: Icon_levelpass_3
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 50
+    NameId: 110007
+    InitialValue: 0
+    Resource: Icon_levelpass_4
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 51
+    NameId: 110008
+    InitialValue: 0
+    Resource: Icon_levelpass_5
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 19
+    NameId: 110003
+    InitialValue: 0
+    Resource: Icon_Stagepass_1
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 20
+    NameId: 110004
+    InitialValue: 0
+    Resource: Icon_Stagepass_2
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 21
+    NameId: 110005
+    InitialValue: 0
+    Resource: Icon_Stagepass_3
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 52
+    NameId: 110009
+    InitialValue: 0
+    Resource: Icon_Stagepass_4
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 53
+    NameId: 110010
+    InitialValue: 0
+    Resource: Icon_Stagepass_5
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 22
+    NameId: 110006
+    InitialValue: 0
+    Resource: Icon_Soulpass
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 59
+    NameId: 110011
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 11
+    NameId: 0
+    InitialValue: 0
+    Resource: Icon_ad
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 23
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 24
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 25
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 29
+    NameId: 122000
+    InitialValue: 0
+    Resource: NormalBook (1)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 30
+    NameId: 122001
+    InitialValue: 0
+    Resource: NormalBook (2)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 31
+    NameId: 122002
+    InitialValue: 0
+    Resource: NormalBook (3)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 32
+    NameId: 122003
+    InitialValue: 0
+    Resource: NormalBook (4)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 33
+    NameId: 122004
+    InitialValue: 0
+    Resource: SealedBook (1)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 34
+    NameId: 122005
+    InitialValue: 0
+    Resource: SealedBook (2)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 35
+    NameId: 122006
+    InitialValue: 0
+    Resource: SealedBook (3)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 36
+    NameId: 122007
+    InitialValue: 0
+    Resource: SealedBook (4)
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 5
+  - Id: 40
+    NameId: 0
+    InitialValue: 1
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 41
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 42
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 45
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 46
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 47
+    NameId: 0
+    InitialValue: 0
+    Resource: 
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 3
+  - Id: 48
+    NameId: 119016
+    InitialValue: 0
+    Resource: Icon_PassionStone
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 0
+  - Id: 49
+    NameId: 0
+    InitialValue: 0
+    Resource: Icon_Timer
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 54
+    NameId: 0
+    InitialValue: 0
+    Resource: Gold
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 60
+    NameId: 0
+    InitialValue: 0
+    Resource: icon_exp
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 74
+    NameId: 0
+    InitialValue: 0
+    Resource: Icon_Weapon booster256x256
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 75
+    NameId: 0
+    InitialValue: 0
+    Resource: Icon_Jewelry booster256x256
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 6
+  - Id: 55
+    NameId: 119017
+    InitialValue: 0
+    Resource: TicketSummonScythe
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 2
+  - Id: 56
+    NameId: 119018
+    InitialValue: 0
+    Resource: TicketSummonRing
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 2
+  - Id: 57
+    NameId: 119019
+    InitialValue: 0
+    Resource: TicketSummonSkill
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 2
+  - Id: 58
+    NameId: 119020
+    InitialValue: 0
+    Resource: TicketSummonRelic
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 2
+  - Id: 62
+    NameId: 119021
+    InitialValue: 0
+    Resource: TicketSummonNecklace
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 2
+  - Id: 61
+    NameId: 110012
+    InitialValue: 0
+    Resource: Icon_Event_Socks
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 0
+  - Id: 76
+    NameId: 0
+    InitialValue: 0
+    Resource: BlackMarketCoin
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 0
+  - Id: 64
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 65
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 66
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 67
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 68
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 69
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 70
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 71
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 72
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 73
+    NameId: 0
+    InitialValue: 2
+    Resource: Icon_ad
+    DailyCharge: 2
+    MaxHave: 2
+    Category: 2
+  - Id: 77
+    NameId: 119022
+    InitialValue: 0
+    Resource: BeadsOre
+    DailyCharge: 0
+    MaxHave: -1
+    Category: 0
+  Stat:
+  - Id: 0
+    NameId: 104000
+    StaticNameId: 103000
+    ShowMultiply: 1
+    IsPercent: 0
+  - Id: 1
+    NameId: 104001
+    StaticNameId: 103001
+    ShowMultiply: 1
+    IsPercent: 0
+  - Id: 2
+    NameId: 104002
+    StaticNameId: 103002
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 3
+    NameId: 104003
+    StaticNameId: 103003
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 4
+    NameId: 104005
+    StaticNameId: 103005
+    ShowMultiply: 0.01
+    IsPercent: 1
+  - Id: 5
+    NameId: 104006
+    StaticNameId: 103006
+    ShowMultiply: 0.01
+    IsPercent: 1
+  - Id: 6
+    NameId: 104007
+    StaticNameId: 103007
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 7
+    NameId: 104008
+    StaticNameId: 103008
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 8
+    NameId: 104009
+    StaticNameId: 103009
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 9
+    NameId: 104010
+    StaticNameId: 103010
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 10
+    NameId: 104011
+    StaticNameId: 103011
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 11
+    NameId: 104012
+    StaticNameId: 103012
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 12
+    NameId: 104015
+    StaticNameId: 103013
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 13
+    NameId: 104016
+    StaticNameId: 103014
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 14
+    NameId: 104017
+    StaticNameId: 103015
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 15
+    NameId: 104018
+    StaticNameId: 103016
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 16
+    NameId: 104019
+    StaticNameId: 103017
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 17
+    NameId: 104020
+    StaticNameId: 103018
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 18
+    NameId: 104021
+    StaticNameId: 103019
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 19
+    NameId: 104022
+    StaticNameId: 103020
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 20
+    NameId: 104023
+    StaticNameId: 103021
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 21
+    NameId: 104024
+    StaticNameId: 103022
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 22
+    NameId: 104025
+    StaticNameId: 103023
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 23
+    NameId: 104026
+    StaticNameId: 103024
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 24
+    NameId: 104027
+    StaticNameId: 103025
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 25
+    NameId: 104028
+    StaticNameId: 103026
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 26
+    NameId: 104029
+    StaticNameId: 103027
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 27
+    NameId: 104030
+    StaticNameId: 103028
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 29
+    NameId: 104033
+    StaticNameId: 103029
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 30
+    NameId: 104034
+    StaticNameId: 103030
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 31
+    NameId: 104035
+    StaticNameId: 103031
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 32
+    NameId: 104036
+    StaticNameId: 103032
+    ShowMultiply: 1
+    IsPercent: 1
+  - Id: 33
+    NameId: 104037
+    StaticNameId: 103038
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 34
+    NameId: 104038
+    StaticNameId: 103039
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 35
+    NameId: 104039
+    StaticNameId: 103040
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 36
+    NameId: 104040
+    StaticNameId: 103041
+    ShowMultiply: 0.1
+    IsPercent: 1
+  - Id: 37
+    NameId: 104041
+    StaticNameId: 103042
+    ShowMultiply: 0.1
+    IsPercent: 1
+  Cost:
+  - Id: 0
+    Cost: 500
+  - Id: 1
+    Cost: 2500
+  - Id: 2
+    Cost: 600
+  - Id: 3
+    Cost: 5
+  - Id: 4
+    Cost: 600
+  Play:
+  - Id: 0
+    Value: 5
+  - Id: 1
+    Value: 35
+  - Id: 2
+    Value: 1.7
+  - Id: 3
+    Value: 4
+  - Id: 4
+    Value: 15
+  - Id: 5
+    Value: 4
+  - Id: 6
+    Value: 5
+  - Id: 7
+    Value: 2
+  - Id: 8
+    Value: 5
+  - Id: 9
+    Value: 600
+  - Id: 10
+    Value: 100
+  - Id: 11
+    Value: 10000
+  - Id: 12
+    Value: 3
+  Grade:
+  - Id: 0
+    NameId: 100000
+  - Id: 1
+    NameId: 100001
+  - Id: 2
+    NameId: 100002
+  - Id: 3
+    NameId: 100003
+  - Id: 4
+    NameId: 100004
+  - Id: 5
+    NameId: 100005
+  - Id: 6
+    NameId: 100006
+  Dungeon:
+  - Id: 7
+    NameId: 109006
+    Use: 999
+    AdUse: 999
+    Resource: TrainingDungeonImg
+  - Id: 3
+    NameId: 109000
+    Use: 999
+    AdUse: 999
+    Resource: 
+  - Id: 1
+    NameId: 109001
+    Use: 8
+    AdUse: 65
+    Resource: Icon_Awakener256x256
+  - Id: 2
+    NameId: 109002
+    Use: 7
+    AdUse: 64
+    Resource: Icon_Skill booster256x256
+  - Id: 4
+    NameId: 109003
+    Use: 26
+    AdUse: 66
+    Resource: Icon_Pet booster256x256
+  - Id: 5
+    NameId: 109004
+    Use: 27
+    AdUse: 67
+    Resource: BlackMarketCoin
+  - Id: 6
+    NameId: 109005
+    Use: 28
+    AdUse: 68
+    Resource: Diamond
+  Lock:
+  - Id: 0
+    Condition: 0
+    Goal: 31
+    NameId: 117000
+    UsePopup: 1
+  - Id: 1
+    Condition: 0
+    Goal: 51
+    NameId: 117001
+    UsePopup: 1
+  - Id: 2
+    Condition: 0
+    Goal: 81
+    NameId: 117002
+    UsePopup: 1
+  - Id: 3
+    Condition: 0
+    Goal: 201
+    NameId: 117003
+    UsePopup: 1
+  - Id: 14
+    Condition: 0
+    Goal: 201
+    NameId: 117014
+    UsePopup: 0
+  - Id: 4
+    Condition: 2
+    Goal: 10002
+    NameId: 117004
+    UsePopup: 1
+  - Id: 5
+    Condition: 2
+    Goal: 10012
+    NameId: 117005
+    UsePopup: 1
+  - Id: 6
+    Condition: 2
+    Goal: 10025
+    NameId: 117006
+    UsePopup: 0
+  - Id: 7
+    Condition: 2
+    Goal: 10004
+    NameId: 117007
+    UsePopup: 0
+  - Id: 8
+    Condition: 0
+    Goal: 21
+    NameId: 117008
+    UsePopup: 1
+  - Id: 9
+    Condition: 2
+    Goal: 10012
+    NameId: 117009
+    UsePopup: 0
+  - Id: 10
+    Condition: 2
+    Goal: 10015
+    NameId: 117010
+    UsePopup: 0
+  - Id: 11
+    Condition: 2
+    Goal: 10016
+    NameId: 117011
+    UsePopup: 0
+  - Id: 12
+    Condition: 2
+    Goal: 10034
+    NameId: 117012
+    UsePopup: 1
+  - Id: 13
+    Condition: 0
+    Goal: 41
+    NameId: 117013
+    UsePopup: 1
+  - Id: 15
+    Condition: 2
+    Goal: 10025
+    NameId: 117015
+    UsePopup: 0
+  - Id: 19
+    Condition: 0
+    Goal: 91
+    NameId: 117019
+    UsePopup: 1
+  - Id: 20
+    Condition: 0
+    Goal: 111
+    NameId: 117020
+    UsePopup: 1
+  - Id: 16
+    Condition: 3
+    Goal: 2
+    NameId: 117016
+    UsePopup: 0
+  - Id: 17
+    Condition: 3
+    Goal: 4
+    NameId: 117017
+    UsePopup: 0
+  - Id: 18
+    Condition: 3
+    Goal: 6
+    NameId: 117018
+    UsePopup: 0
+  - Id: 21
+    Condition: 0
+    Goal: 301
+    NameId: 117021
+    UsePopup: 1
+  - Id: 22
+    Condition: 0
+    Goal: 401
+    NameId: 117022
+    UsePopup: 0
+  - Id: 23
+    Condition: 0
+    Goal: 401
+    NameId: 117023
+    UsePopup: 1
+  - Id: 24
+    Condition: 0
+    Goal: 501
+    NameId: 117024
+    UsePopup: 0
+  - Id: 25
+    Condition: 0
+    Goal: 501
+    NameId: 117025
+    UsePopup: 1
+  - Id: 26
+    Condition: 0
+    Goal: 101
+    NameId: 117026
+    UsePopup: 1
+  - Id: 27
+    Condition: 0
+    Goal: 71
+    NameId: 117027
+    UsePopup: 1
+  - Id: 28
+    Condition: 4
+    Goal: 2
+    NameId: -1
+    UsePopup: 0
+  - Id: 29
+    Condition: 4
+    Goal: 3
+    NameId: -1
+    UsePopup: 0
+  - Id: 30
+    Condition: 4
+    Goal: 4
+    NameId: -1
+    UsePopup: 0
+  - Id: 31
+    Condition: 4
+    Goal: 5
+    NameId: -1
+    UsePopup: 0
+  - Id: 32
+    Condition: 4
+    Goal: 6
+    NameId: -1
+    UsePopup: 0
+  - Id: 33
+    Condition: 4
+    Goal: 7
+    NameId: -1
+    UsePopup: 0

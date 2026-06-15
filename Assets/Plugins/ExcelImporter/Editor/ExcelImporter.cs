@@ -1,0 +1,333 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+using System;
+using System.IO;
+using System.Numerics;
+using System.Reflection;
+using Newtonsoft.Json;
+using NPOI.HSSF.UserModel;
+using NPOI.XSSF.UserModel;
+using NPOI.SS.UserModel;
+
+public class ExcelImporter : AssetPostprocessor
+{
+	class ExcelAssetInfo
+	{
+		public Type AssetType { get; set; }
+		public ExcelAssetAttribute Attribute { get; set; } 
+		public string ExcelName
+		{
+			get
+			{
+				return string.IsNullOrEmpty(Attribute.ExcelName) ? AssetType.Name : Attribute.ExcelName;
+			}
+		}
+	}
+
+	static List<ExcelAssetInfo> cachedInfos = null; // Clear on compile.
+
+	static void OnPostprocessAllAssets (string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+	{
+		bool imported = false;
+		foreach(string path in importedAssets)
+		{
+			if(Path.GetExtension(path) == ".xls" || Path.GetExtension(path) == ".xlsx") 
+			{
+				if(cachedInfos == null) cachedInfos = FindExcelAssetInfos();
+
+				var excelName = Path.GetFileNameWithoutExtension(path);
+				if(excelName.StartsWith("~$")) continue;
+
+				ExcelAssetInfo info = cachedInfos.Find(i => i.ExcelName == excelName);
+
+				if(info == null) continue;
+
+				ImportExcel(path, info);
+				imported = true;
+			}
+		}
+
+		if(imported) 
+		{
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
+		}
+	}
+
+	static List<ExcelAssetInfo> FindExcelAssetInfos()
+	{
+		var list = new List<ExcelAssetInfo>();
+		foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			foreach(var type in assembly.GetTypes())
+			{
+				var attributes = type.GetCustomAttributes(typeof(ExcelAssetAttribute), false);
+				if(attributes.Length == 0) continue;
+				var attribute = (ExcelAssetAttribute)attributes[0];
+				var info = new ExcelAssetInfo()
+				{
+					AssetType = type,
+					Attribute = attribute
+				};
+				list.Add(info);
+			}
+		}
+		return list;
+	}
+
+	static UnityEngine.Object LoadOrCreateAsset(string assetPath, Type assetType)
+	{
+		Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
+
+		var asset = AssetDatabase.LoadAssetAtPath(assetPath, assetType);
+
+		if (asset == null)
+		{
+			asset = ScriptableObject.CreateInstance(assetType.Name);
+			AssetDatabase.CreateAsset((ScriptableObject)asset, assetPath);
+			asset.hideFlags = HideFlags.NotEditable;
+		}
+
+		return asset;
+	}
+
+	static IWorkbook LoadBook(string excelPath)
+	{
+		using(FileStream stream = File.Open(excelPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+		{
+			if (Path.GetExtension(excelPath) == ".xls") return new HSSFWorkbook(stream);
+			else return new XSSFWorkbook(stream);
+		}
+	}
+
+	static List<string> GetFieldNamesFromSheetHeader(ISheet sheet)
+	{
+		IRow headerRow = sheet.GetRow(0);
+
+		var fieldNames = new List<string>();
+		for (int i = 0; i < headerRow.LastCellNum; i++)
+		{
+			var cell = headerRow.GetCell(i);
+			if(cell == null || cell.CellType == CellType.Blank) break;
+			fieldNames.Add(cell.StringCellValue);
+		}
+		return fieldNames;
+	}
+
+	static object CellToFieldObject(ICell cell, Type fieldType, bool isFormulaEvalute = false)
+	{
+		var type = isFormulaEvalute ? cell.CachedFormulaResultType : cell.CellType;
+
+		switch(type)
+		{
+			case CellType.String:
+				if (fieldType.IsEnum) return Enum.Parse(fieldType, cell.StringCellValue);
+				else return cell.StringCellValue;
+			case CellType.Boolean:
+				return cell.BooleanCellValue;
+			case CellType.Numeric:
+				if (fieldType == typeof(BigInteger)) return new BigInteger(cell.NumericCellValue);
+				if (fieldType == typeof(string)) return cell.NumericCellValue.ToString("F0");
+				return Convert.ChangeType(cell.NumericCellValue, fieldType);
+			case CellType.Formula:
+				if (isFormulaEvalute) return null;
+				return CellToFieldObject(cell, fieldType, true);
+			case CellType.Blank:
+				if (fieldType == typeof(string)) return "0";
+				return null;
+			default:
+				if (fieldType.IsValueType)
+				{
+					return Activator.CreateInstance(fieldType);
+				}
+				return null;
+		}
+	}
+
+	static object CreateEntityFromRow(IRow row, List<string> columnNames, Type entityType, string sheetName)
+	{
+		var entity = Activator.CreateInstance(entityType);
+
+		for (int i = 0; i < columnNames.Count; i++)
+		{
+			FieldInfo entityField = entityType.GetField(
+				columnNames[i],
+				BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic 
+			);
+			if (entityField == null) continue;
+			if (!entityField.IsPublic && entityField.GetCustomAttributes(typeof(SerializeField), false).Length == 0) continue;
+
+			ICell cell = row.GetCell(i);
+			if (cell == null) continue;
+
+			try
+			{
+				// TODO: Hash and Object
+				if(entityField.FieldType.IsArray ||
+					( entityField.FieldType.IsGenericType && entityField.FieldType.GetGenericTypeDefinition() == typeof(List<>))
+				) 
+				{
+					string rawValue = (string)CellToFieldObject(cell, typeof(string));
+					if (entityField.FieldType.GenericTypeArguments.Length > 0 &&
+					    entityField.FieldType.GenericTypeArguments[0].IsEnum)
+					{
+						var methodDefinition = typeof(JsonConvert).GetMethod("DeserializeObject", 1, new[] { typeof(string) });
+						var method = methodDefinition.MakeGenericMethod(entityField.FieldType);
+						// var instance = Activator.CreateInstance(typeof(JsonConvert));
+						var fieldValue = method.Invoke(null, new []{rawValue});
+						entityField.SetValue(entity, fieldValue);
+					}
+					else
+					{
+						var fieldValue = SerializeField(rawValue, entityField.FieldType);
+						entityField.SetValue(entity, fieldValue);
+					}
+					
+				}
+				else
+				{
+					object fieldValue = CellToFieldObject(cell, entityField.FieldType);
+					entityField.SetValue(entity, fieldValue);
+				}
+			}
+			catch (Exception e)
+			{
+				Debug.Log(JsonConvert.SerializeObject(e));
+				Debug.Log(columnNames[i]);
+				Debug.Log(entityField.FieldType + " " + entityField.Name + " ");
+				throw new Exception(
+					string.Format("Invalid excel cell type at row {0}, column {1}, {2} sheet.",
+					row.RowNum,
+					cell.ColumnIndex,
+					sheetName));
+			}
+		}
+		return entity;
+	}
+
+	static object SerializeField(string value, Type type)
+	{
+		if(type.IsArray || ( type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)))
+		{
+			if(!value.StartsWith("["))
+			{
+				value = "[" + value + "]";
+			}
+			Type elementType = null;
+			if(type.IsArray)
+			{
+				elementType = type.GetElementType();
+			}else
+			{
+				var types = type.GetGenericArguments();
+				elementType = types[0];
+			}
+			return JsonHelper.ListFromJson(value, elementType, !type.IsArray);
+		}
+
+		return JsonUtility.FromJson(value, type);
+	}
+
+	public class JsonHelper
+    {
+        public static object ListFromJson(string json, Type type, bool isGenericType)
+        {
+            var newJson = "{ \"elements\": " + json + "}";
+
+			Type wrapperType = null;
+			if(isGenericType)
+			{
+				wrapperType = typeof(ListWrapper<>).MakeGenericType(type);
+			}else{
+				wrapperType = typeof(ArrayWrapper<>).MakeGenericType(type);
+			}
+            var wrapperObject = JsonUtility.FromJson(newJson, wrapperType);
+			var fieldInfo = wrapperType.GetField("elements");
+			return fieldInfo.GetValue(wrapperObject);
+        }
+
+        [System.Serializable]
+        public class ArrayWrapper<T>
+        {
+            public T[] elements;
+        }
+
+        [System.Serializable]
+        public class ListWrapper<T>
+        {
+            public List<T> elements;
+        }
+    }
+
+	static object GetEntityListFromSheet(ISheet sheet, Type entityType)
+	{
+		List<string> excelColumnNames = GetFieldNamesFromSheetHeader(sheet);
+
+		Type listType = typeof(List<>).MakeGenericType(entityType);
+		MethodInfo listAddMethod = listType.GetMethod("Add", new Type[]{entityType});
+		object list = Activator.CreateInstance(listType);
+
+		// row of index 0 is header
+		for (int i = 1; i <= sheet.LastRowNum; i++)
+		{
+			IRow row = sheet.GetRow(i);
+			if(row == null) break;
+
+			ICell entryCell = row.GetCell(0); 
+			if(entryCell == null || entryCell.CellType == CellType.Blank) break;
+
+			// skip comment row
+			if(entryCell.CellType == CellType.String && entryCell.StringCellValue.StartsWith("#")) continue;
+
+			var entity = CreateEntityFromRow(row, excelColumnNames, entityType, sheet.SheetName);
+			listAddMethod.Invoke(list, new object[] { entity });
+		}
+		return list;
+	}
+
+	static void ImportExcel(string excelPath, ExcelAssetInfo info)
+	{
+		string assetPath = "";
+		string assetName = info.AssetType.Name + ".asset";
+
+		if(string.IsNullOrEmpty(info.Attribute.AssetPath))
+		{
+			string basePath = Path.GetDirectoryName(excelPath);
+			assetPath = Path.Combine(basePath, assetName);
+		}else{
+			var path = Path.Combine("Assets", info.Attribute.AssetPath);
+			assetPath = Path.Combine(path, assetName);
+		}
+		UnityEngine.Object asset = LoadOrCreateAsset(assetPath, info.AssetType);
+
+		IWorkbook book = LoadBook(excelPath);
+
+		var assetFields = info.AssetType.GetFields();
+		int sheetCount = 0;
+
+		foreach (var assetField in assetFields)
+		{
+			ISheet sheet =  book.GetSheet(assetField.Name);
+			if(sheet == null) continue;
+
+			Type fieldType = assetField.FieldType;
+			if(! fieldType.IsGenericType || (fieldType.GetGenericTypeDefinition() != typeof(List<>))) continue;
+
+			Type[] types = fieldType.GetGenericArguments();
+			Type entityType = types[0];
+
+			object entities = GetEntityListFromSheet(sheet, entityType);
+			assetField.SetValue(asset, entities);
+			sheetCount++;
+		}
+
+		if(info.Attribute.LogOnImport)
+		{
+			Debug.Log(string.Format("Imported {0} sheets form {1}.", sheetCount, excelPath));
+		}
+
+		EditorUtility.SetDirty(asset);
+	}
+}
