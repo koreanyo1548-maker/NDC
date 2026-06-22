@@ -73,13 +73,15 @@ LayerLab 2D Minimal-CharacterMaker 에셋을 기반으로 플레이어 캐릭터
 - Animation Event를 LayerLab 클립에 추가하면 에셋 업데이트 시 손실 위험 → 코드 폴링이 더 안전
 - 지금은 비주얼 교체만. 파츠 선택 UI는 이후 Phase
 
-**상세 설계 문서**: `_dev/character-visual-migration-20260615.md`
+**상세 설계 문서**: (별도 파일 미작성 — 이후 Shinabro로 대체되어 의미 없어짐)
 
-### 다음 세션에 이어할 것 → ✅ 완료 (2026-06-15 2차 세션)
+### 다음 세션에 이어할 것 → ✅ 완료 후 Shinabro로 대체됨
 
 ---
 
 ## 2026-06-15 (2차 세션)
+
+> ⚠️ **이 세션의 CharacterMaker 파이프라인 전체는 2026-06-21에 Shinabro (Spine)로 대체됨. 역사 기록으로 보존.**
 
 ### CharacterMaker 이식 완료: Player 비주얼 교체 동작 확인
 
@@ -178,23 +180,10 @@ pm.ApplyPresetItem(item);                   // 저장된 외형 복원
 HandRight 무기 그룹 (동시에 하나만 활성): Sword, Axe, Bow, Wand, Staff, Spear, Blunt, Crossbow  
 자동 연동: Bow/Crossbow 장착 시 Arrow/Bolt 표시, Helmet 장착 시 HelmetHair로 교체
 
-#### 새 캐릭터로 교체할 때 에디터 절차
+### 다음 세션에 이어할 것 → ~~CharacterMaker 계획은 Shinabro 교체로 폐기~~ / Phase 2 별도 진행
 
-1. LayerLab CharacterMaker 씬에서 파츠/색상 선택
-2. "Save Prefab" → `Assets/CharacterPrefabs/Character_YYYYMMDD_HHMMSS.prefab` 저장
-3. Player.prefab 열기 → Player body 안 기존 CharacterMaker 자식 제거
-4. 새 프리팹 드래그 → Player body 하위 배치
-5. 새 프리팹 Transform의 localScale을 **(10, 10, 10)** 으로 설정
-6. Player body에 Animator 컴포넌트가 없는지 확인 (있으면 제거)
-7. 실행 후 Idle/Walk/Attack/Dead1 애니메이션 확인
-
-### 다음 세션에 이어할 것
-
-- **스케일 자동 설정**: Player.cs Awake에서 CharacterMaker 자식 localScale 고정 (원하는 크기 결정 필요)
-- **파츠 연동 설계**: LayerLab `PartsManager` API 확인 → 장비/코스튬 변경 시 파츠 교체 연결
-  - 무기 종류 → HandRight 파츠 교체
-  - 코스튬 → Chest, Hair 등 파츠 교체
-  - 선택된 파츠 `LocalSaveManager`에 저장/복원
+- ~~**스케일 자동 설정**: LayerLab CharacterMaker 관련~~ → Shinabro로 대체
+- ~~**파츠 연동 설계**: LayerLab PartsManager API~~ → Shinabro `SimpleSpineSkinAssigner`로 대체
 - **Phase 2** (별도): AdMob·Firebase·Unity 프로젝트 ID 교체 (새 계정 준비 후 착수)
 
 ---
@@ -215,12 +204,151 @@ HandRight 무기 그룹 (동시에 하나만 활성): Sword, Axe, Bow, Wand, Sta
   - `AttackSpeed`는 `WhenAttackSpeedChanged()` 이벤트로 실시간 `SetFloat()`
 - 파이프라인 정식 문서화 (history.md + Dashboard.html 동기화)
 
+---
+
+## 2026-06-21
+
+### Player → Shinabro MiniFantasyCharacters 교체 (LayerLab → Spine)
+
+**배경**  
+LayerLab CharacterMaker 기반 플레이어 비주얼을 Shinabro의 MiniFantasyCharacters (Spine SkeletonMecanim)로 교체.  
+무기 종류에 따른 애니메이션 분기가 필요했고, Spine 스킨 시스템이 이를 더 잘 지원함.
+
+**결정 내용**
+- `Assets/Layer Lab/` 폴더 전체 삭제 (6000+개 파일)
+- `Assets/Downloads/Shinabro/MiniFantasyCharacters/` 에셋 사용
+- Player.cs 전면 수정 — Spine Mecanim 기반 애니메이션명으로 교체
+- `SimpleSpineSkinAssigner.cs` 수정 (AssignSkins public, Start() 추가)
+- `Character_Controller.controller` 수정 (AttackSpeed 파라미터, 전체 상태 추가)
+
+**Player.cs 주요 변경 (asset-migration-analysis.md 1-5 기준)**
+- `"Dead1"` → `"Die"`, `"Idle"` → `"Wait1"`, `"Walk"` → `"Walk1"`, `"Roll"` → `"Run1"`
+- `"Attack"` → `GetAttackAnimation()` (무기 타입별 분기: OneHand/TwoHand/DualHand/Shoot/Spell)
+- `"Skill"` → `GetSkillAnimation()` (무기 타입별 분기: Cast/Spell/Shoot)
+- `SimpleSpineSkinAssigner _skinAssigner` 필드 추가 — 무기 스킨 문자열로 애니메이션 판별
+- `LookAt()` 반전 — Shinabro 기본 방향이 왼쪽이라 LookLeft/LookRight 로직 반전
+- `_skillAnimAlt` 토글로 Skill 1/2 교차 재생
+
+**상세 분석 문서**: `_dev/asset-migration-analysis.md`
+
+### 다음 세션에 이어할 것 → 현재 진행 중
+
+---
+
+## 2026-06-22
+
+### Monster → 2D SD Monster Pack 교체 (코드/설정 완료, 에디터 작업 대기)
+
+**배경**  
+기존 Mushroom Hero 몬스터 비주얼을 2D SD Monster Pack (Unity 2D Animation, SpriteLibrary/SpriteResolver 기반)으로 교체.
+
+**완료 내용**
+
+- `Monster.cs` 애니메이션명 소문자 교체 완료
+  - `"Attack"` → `"attack"`, `"Attack2"` → `"attack2"`, `"Walk"` → `"walk"`, `"Die"` → `"die"`
+- 몬스터 매핑 확정 (`_dev/monster-mapping.md` 작성)
+  - Stage 테이블 분석으로 실제 구조 파악: 5개 월드 × 20스테이지, 일반 몬스터 17종 + 보스 10종
+  - SD Pack 11종을 월드별 배분: 일반 7종(Rat/Spider/Bat/Crow/Goblin/Skeleton/Zombie), 보스 4종(Worm/Ghost/Beholder/Bigguy)
+- Animator Controller 수정 완료 (7개 파일)
+  - **Bat**: `walk` 상태 추가 → `idle.anim` 연결 (walk/fly 모두 없어서 idle로 대체)
+  - **Beholder**: `walk` 상태 추가 → `fly.anim` 연결 / `attack2` 추가 (보스용, attack 동일 클립)
+  - **Goblin, Zombie, Ghost, Skeleton**: `attack` 상태 추가 → 각 `attack-smash` / `attack-stab` 클립 연결
+  - **Ghost, Bigguy**: `attack2` 추가 → `attack-bow.anim` 연결 (보스 2번째 공격용)
+  - **Bigguy**: `attack` 추가 → `attack-smash.anim`
+  - **Worm**: `attack2` 추가 → `attack.anim` 재사용 (단일 공격 보스)
+
+**핵심 결정: 매핑 전략**  
+SD Pack 11종으로 기존 27종 커버. 계열별 동일 외형 공유 (스탯만 다름).  
+DB 테이블 구조는 그대로 유지 — 프리팹 내부 비주얼만 교체.
+
+**핵심 결정: 보스 attack2**  
+단일 공격 보스(Worm/Beholder)는 `attack2` 상태를 `attack` 동일 클립으로 연결.  
+이중 공격 보스(Ghost/Bigguy)는 `attack` → smash, `attack2` → bow 분기.
+
+### Phase 2 일부 완료
+
+- ✅ `productName`: "Mushroom Hero" → "Webtoon Hero"
+- ✅ `companyName`: → "NDC"
+- ❌ `bundleIdentifier`: 아직 `com.NdolphinConnect.MushroomHero` / `mush.room.hero`
+
 ### 다음 세션에 이어할 것
 
-(2차 세션 이어서)
-- **스케일 자동 설정**: Player.cs Awake에서 CharacterMaker 자식 localScale 고정
-- **파츠 연동 설계**: 무기 → HandRight 교체, 코스튬 → Chest/Hair 교체, LocalSaveManager 저장/복원
-- **Phase 2** (별도): AdMob·Firebase·Unity 프로젝트 ID 교체 (새 계정 준비 후 착수)
+- **에디터 프리팹 교체** — `_dev/monster-mapping.md` 5절 절차대로 20종 프리팹 교체
+  - 기존 Child 0의 비주얼/Animator 제거 → SD Pack 해당 몬스터 내부 오브젝트 자식 배치
+  - DamagePosition, TargetingPosition 위치 조정
+- **bundleIdentifier 교체** (Phase 2)
+
+---
+
+## 2026-06-23
+
+### Shinabro 얼굴 스프라이트 교체 및 Spine 버전 호환 픽스
+
+**완료 내용**
+
+- `Character.png` 아틀라스에서 `headA` 얼굴 영역(601, 451, 82×84px)을 신규 이미지로 교체  
+  - Python + Pillow 스크립트로 합성 (`Character_backup.png` 백업 보존)
+  - 소스 이미지가 이미 82×84 RGBA였으므로 리사이즈 불필요
+  - 아틀라스 좌표계: **좌상단 기준** (PIL과 동일 — Spine도 top-left origin)
+  - `Character.atlas.txt` 수정 불필요 (좌표 그대로)
+
+- Spine 버전 불일치 오류 수정  
+  - `Character.json`: Spine 4.2.43으로 익스포트됨  
+  - 설치된 런타임: spine-unity 4.1  
+  - 수정 파일: `Assets/Spine/Runtime/spine-unity/Asset Types/SkeletonDataCompatibility.cs`  
+  - `compatibleBinaryVersions`, `compatibleJsonVersions` 에 `{ 4, 2, 0 }` 추가
+
+**핵심 결정: 버전 체크 완화 (런타임 업그레이드 대신)**  
+4.1 런타임이 4.2 JSON을 파싱 가능한지 실제 동작으로 확인하는 방향 선택.  
+런타임 전체 업그레이드는 API 변경 리스크가 있어 일단 보류.  
+만약 애니메이션 깨짐 등 이상 발생 시 → spine-unity 4.2 런타임 전체 교체 필요.
+
+**상세 작업 문서**: `_dev/shinabro-face-replacement.md`
+
+### 다음 세션에 이어할 것
+
+- 플레이어 파츠 구분 변경
+
+---
+
+## 2026-06-23 (2차 세션)
+
+### Shinabro Character_Controller.controller 애니메이션 상태 전체 추가
+
+**완료 내용**
+
+- `Character_Controller.controller` 수정
+  - `m_AnimatorParameters`: `AttackSpeed` (float, default 1) 추가
+  - `AnimatorState` 14개 신규 추가: Walk1, Run1, Die, Attack_OneHand1/2, Attack_TwoHand1/2, Attack_DualHand1/2, Shoot1, Spell1/2, Cast1/2
+  - `m_ChildStates`에 전체 15개 상태 등록
+  - Attack 계열 상태: `SpeedParameterActive: 1`, `SpeedParameter: AttackSpeed` 설정
+  - 각 상태 → 기존 AnimationClip(fileID) 참조
+
+**배경**  
+컨트롤러에 AnimationClip은 32개 모두 존재했으나, AnimatorState 객체는 Wait1 하나뿐이었음.  
+Player.cs에서 `animator.Play("Walk1")` 등을 호출해도 상태가 없어 애니메이션 불재생.
+
+### Slime2 풀 재활용 시 die 애니메이션으로 시작되는 버그 — 미해결
+
+**증상**  
+죽은 Slime2가 오브젝트 풀로 반환된 후 재소환될 때, 잠깐 die 상태로 시작됨.
+
+**조사한 내용**
+- `Slime.controller` default state는 `idle` — 정상
+- `m_KeepAnimatorStateOnDisable: 0` — disable 시 Animator 상태 리셋 — 정상
+- `Monster.Init()` 내 `animator.Rebind()` + `animator.Update(0f)` 존재
+- AnimationEvent 없음, Pool/HP 초기화 로직 정상
+- `Clear()` 순서: `SetActive(false)` 이후에 `_materialSetter.ChangeColor(Color.black)` 호출 (비정상적 순서이나 동작에는 영향 없음)
+
+**임시 조치**  
+`Monster.Init()`에 `animator.Play("idle", 0, 0)` 명시 추가 (Rebind 직후).  
+실제 효과는 미확인 — 다음 세션에서 디버그 로그로 검증 필요.
+
+### 다음 세션에 이어할 것
+
+- **Slime2 die 버그 디버그**: `Monster.cs`의 Init/Die/Clear 및 Pool OnEnable 시점에 Debug.Log 심고, 실제 플레이로 타이밍 확인
+  - 확인 포인트: `Init()` 호출 시점, `OnEnable()` 호출 시점, 어느 시점에 die 애니메이션이 보이는지
+- 플레이어 파츠 구분 변경
 
 ---
 

@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -157,15 +157,19 @@ namespace Spine.Unity {
 			return spineGameObjectTransform.TransformPoint(new Vector3(bone.WorldX * positionScale, bone.WorldY * positionScale));
 		}
 
+		public static Vector3 GetWorldPosition (this Bone bone, UnityEngine.Transform spineGameObjectTransform, float positionScale, Vector2 positionOffset) {
+			return spineGameObjectTransform.TransformPoint(new Vector3(bone.WorldX * positionScale + positionOffset.x, bone.WorldY * positionScale + positionOffset.y));
+		}
+
 		/// <summary>Gets a skeleton space UnityEngine.Quaternion representation of bone.WorldRotationX.</summary>
 		public static Quaternion GetQuaternion (this Bone bone) {
-			var halfRotation = Mathf.Atan2(bone.C, bone.A) * 0.5f;
+			float halfRotation = Mathf.Atan2(bone.C, bone.A) * 0.5f;
 			return new Quaternion(0, 0, Mathf.Sin(halfRotation), Mathf.Cos(halfRotation));
 		}
 
 		/// <summary>Gets a bone-local space UnityEngine.Quaternion representation of bone.rotation.</summary>
 		public static Quaternion GetLocalQuaternion (this Bone bone) {
-			var halfRotation = bone.Rotation * Mathf.Deg2Rad * 0.5f;
+			float halfRotation = bone.Rotation * Mathf.Deg2Rad * 0.5f;
 			return new Quaternion(0, 0, Mathf.Sin(halfRotation), Mathf.Cos(halfRotation));
 		}
 
@@ -198,7 +202,7 @@ namespace Spine.Unity {
 				bone.SetLocalPosition(skeletonSpacePosition);
 				return skeletonSpacePosition;
 			} else {
-				var parent = bone.Parent;
+				Bone parent = bone.Parent;
 				Vector2 parentLocal = parent.WorldToLocal(skeletonSpacePosition);
 				bone.SetLocalPosition(parentLocal);
 				return parentLocal;
@@ -209,7 +213,7 @@ namespace Spine.Unity {
 		#region Attachments
 		public static Material GetMaterial (this Attachment a) {
 			object rendererObject = null;
-			var renderableAttachment = a as IHasTextureRegion;
+			IHasTextureRegion renderableAttachment = a as IHasTextureRegion;
 			if (renderableAttachment != null)
 				rendererObject = renderableAttachment.Region;
 
@@ -234,13 +238,13 @@ namespace Spine.Unity {
 			if (buffer.Length < bufferTargetSize) throw new System.ArgumentException(string.Format("Vector2 buffer too small. {0} requires an array of size {1}. Use the attachment's .WorldVerticesLength to get the correct size.", va.Name, floatsCount), "buffer");
 
 			if (va.Bones == null && slot.Deform.Count == 0) {
-				var localVerts = va.Vertices;
+				float[] localVerts = va.Vertices;
 				for (int i = 0; i < bufferTargetSize; i++) {
 					int j = i * 2;
 					buffer[i] = new Vector2(localVerts[j], localVerts[j + 1]);
 				}
 			} else {
-				var floats = new float[floatsCount];
+				float[] floats = new float[floatsCount];
 				va.ComputeWorldVertices(slot, floats);
 
 				Bone sb = slot.Bone;
@@ -267,7 +271,7 @@ namespace Spine.Unity {
 			buffer = buffer ?? new Vector2[bufferTargetSize];
 			if (buffer.Length < bufferTargetSize) throw new System.ArgumentException(string.Format("Vector2 buffer too small. {0} requires an array of size {1}. Use the attachment's .WorldVerticesLength to get the correct size.", a.Name, worldVertsLength), "buffer");
 
-			var floats = new float[worldVertsLength];
+			float[] floats = new float[worldVertsLength];
 			a.ComputeWorldVertices(slot, floats);
 
 			for (int i = 0, n = worldVertsLength >> 1; i < n; i++) {
@@ -317,7 +321,7 @@ namespace Spine {
 		}
 
 		static BoneMatrix GetInheritedInternal (BoneData boneData, BoneMatrix parentMatrix) {
-			var parent = boneData.Parent;
+			BoneData parent = boneData.Parent;
 			if (parent == null) return new BoneMatrix(boneData); // isRootBone
 
 			float pa = parentMatrix.a, pb = parentMatrix.b, pc = parentMatrix.c, pd = parentMatrix.d;
@@ -325,8 +329,8 @@ namespace Spine {
 			result.x = pa * boneData.X + pb * boneData.Y + parentMatrix.x;
 			result.y = pc * boneData.X + pd * boneData.Y + parentMatrix.y;
 
-			switch (boneData.TransformMode) {
-			case TransformMode.Normal: {
+			switch (boneData.Inherit) {
+			case Inherit.Normal: {
 				float rotationY = boneData.Rotation + 90 + boneData.ShearY;
 				float la = MathUtils.CosDeg(boneData.Rotation + boneData.ShearX) * boneData.ScaleX;
 				float lb = MathUtils.CosDeg(rotationY) * boneData.ScaleY;
@@ -338,7 +342,7 @@ namespace Spine {
 				result.d = pc * lb + pd * ld;
 				break;
 			}
-			case TransformMode.OnlyTranslation: {
+			case Inherit.OnlyTranslation: {
 				float rotationY = boneData.Rotation + 90 + boneData.ShearY;
 				result.a = MathUtils.CosDeg(boneData.Rotation + boneData.ShearX) * boneData.ScaleX;
 				result.b = MathUtils.CosDeg(rotationY) * boneData.ScaleY;
@@ -346,7 +350,7 @@ namespace Spine {
 				result.d = MathUtils.SinDeg(rotationY) * boneData.ScaleY;
 				break;
 			}
-			case TransformMode.NoRotationOrReflection: {
+			case Inherit.NoRotationOrReflection: {
 				float s = pa * pa + pc * pc, prx;
 				if (s > 0.0001f) {
 					s = Math.Abs(pa * pd - pb * pc) / s;
@@ -370,8 +374,8 @@ namespace Spine {
 				result.d = pc * lb + pd * ld;
 				break;
 			}
-			case TransformMode.NoScale:
-			case TransformMode.NoScaleOrReflection: {
+			case Inherit.NoScale:
+			case Inherit.NoScaleOrReflection: {
 				float cos = MathUtils.CosDeg(boneData.Rotation), sin = MathUtils.SinDeg(boneData.Rotation);
 				float za = pa * cos + pb * sin;
 				float zc = pc * cos + pd * sin;
@@ -388,7 +392,7 @@ namespace Spine {
 				float lb = MathUtils.CosDeg(90 + boneData.ShearY) * boneData.ScaleY;
 				float lc = MathUtils.SinDeg(boneData.ShearX) * boneData.ScaleX;
 				float ld = MathUtils.SinDeg(90 + boneData.ShearY) * boneData.ScaleY;
-				if (boneData.TransformMode != TransformMode.NoScaleOrReflection ? pa * pd - pb * pc < 0 : false) {
+				if (boneData.Inherit != Inherit.NoScaleOrReflection ? pa * pd - pb * pc < 0 : false) {
 					zb = -zb;
 					zd = -zd;
 				}
@@ -446,15 +450,13 @@ namespace Spine {
 			return va.Bones != null && va.Bones.Length > 0;
 		}
 
-		#region Transform Modes
-		public static bool InheritsRotation (this TransformMode mode) {
-			const int RotationBit = 0;
-			return ((int)mode & (1U << RotationBit)) == 0;
+		#region Inherit Modes
+		public static bool InheritsRotation (this Inherit mode) {
+			return mode == Inherit.Normal || mode == Inherit.NoScale || mode == Inherit.NoScaleOrReflection;
 		}
 
-		public static bool InheritsScale (this TransformMode mode) {
-			const int ScaleBit = 1;
-			return ((int)mode & (1U << ScaleBit)) == 0;
+		public static bool InheritsScale (this Inherit mode) {
+			return mode == Inherit.Normal || mode == Inherit.NoRotationOrReflection;
 		}
 		#endregion
 	}

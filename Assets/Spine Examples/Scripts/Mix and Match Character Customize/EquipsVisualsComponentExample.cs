@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -50,7 +50,7 @@ namespace Spine.Unity.Examples {
 			equipsSkin = new Skin("Equips");
 
 			// OPTIONAL: Add all the attachments from the template skin.
-			var templateSkin = skeletonAnimation.Skeleton.Data.FindSkin(templateSkinName);
+			Skin templateSkin = skeletonAnimation.Skeleton.Data.FindSkin(templateSkinName);
 			if (templateSkin != null)
 				equipsSkin.AddSkin(templateSkin);
 
@@ -77,7 +77,7 @@ namespace Spine.Unity.Examples {
 				Destroy(runtimeMaterial);
 			if (runtimeAtlas)
 				Destroy(runtimeAtlas);
-			var repackedSkin = collectedSkin.GetRepackedSkin("Repacked skin", skeletonAnimation.SkeletonDataAsset.atlasAssets[0].PrimaryMaterial,
+			Skin repackedSkin = collectedSkin.GetRepackedSkin("Repacked skin", skeletonAnimation.SkeletonDataAsset.atlasAssets[0].PrimaryMaterial,
 				out runtimeMaterial, out runtimeAtlas, maxAtlasSize: 1024, clearCache: false);
 			collectedSkin.Clear();
 

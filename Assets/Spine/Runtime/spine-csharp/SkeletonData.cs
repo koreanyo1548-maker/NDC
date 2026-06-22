@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -43,21 +43,22 @@ namespace Spine {
 		internal ExposedList<IkConstraintData> ikConstraints = new ExposedList<IkConstraintData>();
 		internal ExposedList<TransformConstraintData> transformConstraints = new ExposedList<TransformConstraintData>();
 		internal ExposedList<PathConstraintData> pathConstraints = new ExposedList<PathConstraintData>();
-		internal ExposedList<SpringConstraintData> springConstraints = new ExposedList<SpringConstraintData>();
-		internal float x, y, width, height;
+		internal ExposedList<PhysicsConstraintData> physicsConstraints = new ExposedList<PhysicsConstraintData>();
+		internal float x, y, width, height, referenceScale = 100;
 		internal string version, hash;
 
 		// Nonessential.
 		internal float fps;
 		internal string imagesPath, audioPath;
 
-		///<summary>The skeleton's name, which by default is the name of the skeleton data file when possible, or null when a name hasn't been
-		///set.</summary>
+		/// <summary>The skeleton's name, which by default is the name of the skeleton data file when possible, or null when a name hasn't been
+		/// set.</summary>
 		public string Name { get { return name; } set { name = value; } }
 
 		/// <summary>The skeleton's bones, sorted parent first. The root bone is always the first bone.</summary>
 		public ExposedList<BoneData> Bones { get { return bones; } }
 
+		/// <summary>The skeleton's slots in the setup pose draw order.</summary>
 		public ExposedList<SlotData> Slots { get { return slots; } }
 
 		/// <summary>All skins, including the default skin.</summary>
@@ -70,21 +71,33 @@ namespace Spine {
 		/// <return>May be null.</return>
 		public Skin DefaultSkin { get { return defaultSkin; } set { defaultSkin = value; } }
 
+		/// <summary>The skeleton's events.</summary>
 		public ExposedList<EventData> Events { get { return events; } set { events = value; } }
+		/// <summary>The skeleton's animations.</summary>
 		public ExposedList<Animation> Animations { get { return animations; } set { animations = value; } }
+		/// <summary>The skeleton's IK constraints.</summary>
 		public ExposedList<IkConstraintData> IkConstraints { get { return ikConstraints; } set { ikConstraints = value; } }
+		/// <summary>The skeleton's transform constraints.</summary>
 		public ExposedList<TransformConstraintData> TransformConstraints { get { return transformConstraints; } set { transformConstraints = value; } }
+		/// <summary>The skeleton's path constraints.</summary>
 		public ExposedList<PathConstraintData> PathConstraints { get { return pathConstraints; } set { pathConstraints = value; } }
+		/// <summary>The skeleton's physics constraints.</summary>
+		public ExposedList<PhysicsConstraintData> PhysicsConstraints { get { return physicsConstraints; } set { physicsConstraints = value; } }
 
 		public float X { get { return x; } set { x = value; } }
 		public float Y { get { return y; } set { y = value; } }
 		public float Width { get { return width; } set { width = value; } }
 		public float Height { get { return height; } set { height = value; } }
+
+		/// <summary> Baseline scale factor for applying distance-dependent effects on non-scalable properties, such as angle or scale. Default
+		/// is 100.</summary>
+		public float ReferenceScale { get { return referenceScale; } set { referenceScale = value; } }
+
 		/// <summary>The Spine version used to export this data, or null.</summary>
 		public string Version { get { return version; } set { version = value; } }
 
-		///<summary>The skeleton data hash. This value will change if any of the skeleton data has changed.
-		///May be null.</summary>
+		/// <summary>The skeleton data hash. This value will change if any of the skeleton data has changed.
+		/// May be null.</summary>
 		public string Hash { get { return hash; } set { hash = value; } }
 
 		public string ImagesPath { get { return imagesPath; } set { imagesPath = value; } }
@@ -104,7 +117,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public BoneData FindBone (string boneName) {
 			if (boneName == null) throw new ArgumentNullException("boneName", "boneName cannot be null.");
-			var bones = this.bones.Items;
+			BoneData[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				BoneData bone = bones[i];
 				if (bone.name == boneName) return bone;
@@ -117,7 +130,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public SlotData FindSlot (string slotName) {
 			if (slotName == null) throw new ArgumentNullException("slotName", "slotName cannot be null.");
-			var slots = this.slots.Items;
+			SlotData[] slots = this.slots.Items;
 			for (int i = 0, n = this.slots.Count; i < n; i++) {
 				SlotData slot = slots[i];
 				if (slot.name == slotName) return slot;
@@ -150,7 +163,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public Animation FindAnimation (string animationName) {
 			if (animationName == null) throw new ArgumentNullException("animationName", "animationName cannot be null.");
-			var animations = this.animations.Items;
+			Animation[] animations = this.animations.Items;
 			for (int i = 0, n = this.animations.Count; i < n; i++) {
 				Animation animation = animations[i];
 				if (animation.name == animationName) return animation;
@@ -163,7 +176,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public IkConstraintData FindIkConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var ikConstraints = this.ikConstraints.Items;
+			IkConstraintData[] ikConstraints = this.ikConstraints.Items;
 			for (int i = 0, n = this.ikConstraints.Count; i < n; i++) {
 				IkConstraintData ikConstraint = ikConstraints[i];
 				if (ikConstraint.name == constraintName) return ikConstraint;
@@ -176,7 +189,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public TransformConstraintData FindTransformConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var transformConstraints = this.transformConstraints.Items;
+			TransformConstraintData[] transformConstraints = this.transformConstraints.Items;
 			for (int i = 0, n = this.transformConstraints.Count; i < n; i++) {
 				TransformConstraintData transformConstraint = transformConstraints[i];
 				if (transformConstraint.name == constraintName) return transformConstraint;
@@ -193,7 +206,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public PathConstraintData FindPathConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var pathConstraints = this.pathConstraints.Items;
+			PathConstraintData[] pathConstraints = this.pathConstraints.Items;
 			for (int i = 0, n = this.pathConstraints.Count; i < n; i++) {
 				PathConstraintData constraint = pathConstraints[i];
 				if (constraint.name.Equals(constraintName)) return constraint;
@@ -201,18 +214,18 @@ namespace Spine {
 			return null;
 		}
 
-		// --- Spring constraints
+		// --- Physics constraints
 
 		/// <summary>
-		/// Finds a spring constraint by comparing each spring constraint's name. It is more efficient to cache the results of this
+		/// Finds a physics constraint by comparing each physics constraint's name. It is more efficient to cache the results of this
 		/// method than to call it multiple times.
 		/// </summary>
 		/// <returns>May be null.</returns>
-		public SpringConstraintData FindSpringConstraint (String constraintName) {
+		public PhysicsConstraintData FindPhysicsConstraint (String constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			Object[] springConstraints = this.springConstraints.Items;
-			for (int i = 0, n = this.springConstraints.Count; i < n; i++) {
-				SpringConstraintData constraint = (SpringConstraintData)springConstraints[i];
+			PhysicsConstraintData[] physicsConstraints = this.physicsConstraints.Items;
+			for (int i = 0, n = this.physicsConstraints.Count; i < n; i++) {
+				PhysicsConstraintData constraint = (PhysicsConstraintData)physicsConstraints[i];
 				if (constraint.name.Equals(constraintName)) return constraint;
 			}
 			return null;

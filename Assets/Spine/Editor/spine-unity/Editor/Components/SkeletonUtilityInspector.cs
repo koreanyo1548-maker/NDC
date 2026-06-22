@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -129,7 +129,7 @@ namespace Spine.Unity.Editor {
 		}
 
 		void SpawnHierarchyContextMenu () {
-			var menu = new GenericMenu();
+			GenericMenu menu = new GenericMenu();
 
 			menu.AddItem(new GUIContent("Follow all bones"), false, SpawnFollowHierarchy);
 			menu.AddItem(new GUIContent("Follow (Root Only)"), false, SpawnFollowHierarchyRootOnly);
@@ -161,8 +161,8 @@ namespace Spine.Unity.Editor {
 
 		static void AttachIconsToChildren (Transform root) {
 			if (root != null) {
-				var utilityBones = root.GetComponentsInChildren<SkeletonUtilityBone>();
-				foreach (var utilBone in utilityBones)
+				SkeletonUtilityBone[] utilityBones = root.GetComponentsInChildren<SkeletonUtilityBone>();
+				foreach (SkeletonUtilityBone utilBone in utilityBones)
 					AttachIcon(utilBone);
 			}
 		}

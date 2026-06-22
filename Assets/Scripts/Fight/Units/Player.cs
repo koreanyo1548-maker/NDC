@@ -54,7 +54,7 @@ namespace Fight.Units
 
         #region Components
 
-        public bool IsLookingLeft => _positioner.localScale == Define.LookLeft;
+        public bool IsLookingLeft => _positioner.localScale == Define.LookRight;
 
         public Vector3 Position() => _root.position;
         public Transform Root => _root;
@@ -75,6 +75,9 @@ namespace Fight.Units
         public Transform GetPetPosition(int idx) => _petPositions[idx];
 
         private GameObject[] _dashes;
+
+        private SimpleSpineSkinAssigner _skinAssigner;
+        private bool _skillAnimAlt;
         
 
         #endregion
@@ -137,6 +140,8 @@ namespace Fight.Units
             _dashes = new GameObject[4];
             for (var idx = 0; idx < 4; ++idx) _dashes[idx] = dashParent.GetChild(idx).gameObject;
             
+            _skinAssigner = GetComponentInChildren<SimpleSpineSkinAssigner>();
+
             Manager.Player = this;
             TotalStatController.I.Init();
 
@@ -158,6 +163,9 @@ namespace Fight.Units
                     break;
                 case PlayerState.Idle:
                     UpdateIdle();
+                    break;
+                case PlayerState.Skill:
+                    UpdateSkillEvents();
                     break;
             }
         }
@@ -190,6 +198,7 @@ namespace Fight.Units
         }
         
         private float _dashMagnitude;
+        private const float DASH_DURATION = 0.3f;
         
         private void UpdateMoving()
         {
@@ -217,23 +226,25 @@ namespace Fight.Units
             {
                 var isDash = !isTargetPlayerSide && !_target.IsBoss() && magnitude <= _dashMagnitude;
                 var moveDist = Mathf.Clamp(TotalStatController.I.GetMoveSpeed(isDash) * Time.deltaTime, 0, dir.magnitude);
-                _animator.Play(moveDist == 0 ? "Idle" : "Walk", 0);
+                _animator.Play(moveDist == 0 ? "Wait1" : "Walk1", 0);
                 _root.position += dir.normalized * moveDist;
             }
         }
 
         private void Attack()
         {
+            _hitFired = false;
             if (_attackCount < 4) _dashes[_attackCount].SetActive(false);
             _attackCount++;
 
-            _animator.Play("Attack", 0, 0);
+            _animator.Play(GetAttackAnimation(), 0, 0);
             _state = PlayerState.Action;
         }
 
         private void Idle()
         {
-            _animator.Play("Idle", 0, 0);
+            _animator.speed = 1f;
+            _animator.Play("Wait1", 0, 0);
             _state = PlayerState.Idle;
         }
 
@@ -245,7 +256,7 @@ namespace Fight.Units
             {
                 SkillDone();
             }
-            _animator.Play("Dead1", 0, 0);
+            _animator.Play("Die", 0, 0);
             _state = PlayerState.Die;
 
             Timing.KillCoroutines(Define.KillWhenPlayerDieTag);
@@ -265,7 +276,7 @@ namespace Fight.Units
         private void Move()
         {
             _canMove = true;
-            _animator.Play("Walk", 0, 0);
+            _animator.Play("Walk1", 0, 0);
             _state = PlayerState.Moving;
         }
         
@@ -285,10 +296,18 @@ namespace Fight.Units
         }
 
         private CoroutineHandle _dashRoutine;
+        private float GetClipLength(string clipName)
+        {
+            foreach (var clip in _animator.runtimeAnimatorController.animationClips)
+                if (clip.name == clipName) return clip.length;
+            return 1f;
+        }
+
         private void Dash(float distance, Effect_Dash effect)
         {
             Manager.Sound.PlaySFX(SFXType.Skill1);
-            _animator.Play("Walk", 0);
+            _animator.speed = GetClipLength("Run1") / DASH_DURATION;
+            _animator.Play("Run1", 0);
             var nearest = Manager.Field.GetNearestMonster(Position(), 0.1f);
             if (nearest == null)
             {
@@ -326,7 +345,7 @@ namespace Fight.Units
         {
             _canMove = false;
             var deltaTime = Time.deltaTime;
-            var count = 0.15f / deltaTime;
+            var count = DASH_DURATION / deltaTime;
             diff /= count;
             while (count-- > 0)
             {
@@ -342,7 +361,7 @@ namespace Fight.Units
         private void UpdateAttackEvents()
         {
             var info = _animator.GetCurrentAnimatorStateInfo(0);
-            if (!info.IsName("Attack")) return;
+            if (!IsAttackAnimationName(info)) return;
             float t = info.normalizedTime % 1f;
             if (!_hitFired && t >= HIT_NORMALIZED_TIME)
             {
@@ -354,6 +373,14 @@ namespace Fight.Units
                 _hitFired = false;
                 OnAttackDone();
             }
+        }
+
+        private void UpdateSkillEvents()
+        {
+            var info = _animator.GetCurrentAnimatorStateInfo(0);
+            if (!IsSkillAnimationName(info)) return;
+            if (info.normalizedTime % 1f >= 0.95f)
+                SkillDone();
         }
 
         private void OnAttackDone()
@@ -421,7 +448,7 @@ namespace Fight.Units
         public void DoSkill(string skillAnimation)
         {
             _state = PlayerState.Skill;
-            _animator.Play("Skill", 0, 0);
+            _animator.Play(GetSkillAnimation(), 0, 0);
         }
 
         public void SkillDone()
@@ -438,7 +465,7 @@ namespace Fight.Units
             }
             if (_state != PlayerState.Die)
             {
-                _animator.Play("Idle");
+                _animator.Play("Wait1");
             }
             _state = PlayerState.Die;
             Manager.Updates.Remove(this);
@@ -490,6 +517,49 @@ namespace Fight.Units
         //     attackBuff = 0;
         // }
         
+        private string GetAttackAnimation()
+        {
+            var suffix = (_attackCount % 2 == 1) ? "1" : "2";
+            if (_skinAssigner == null) return $"Attack_OneHand{suffix}";
+
+            var right = _skinAssigner.rightHandWeaponSkin ?? "";
+            var left  = _skinAssigner.leftHandWeaponSkin  ?? "";
+
+            if (right.Contains("Bow_"))                                    return "Shoot1";
+            if (right.Contains("Scepter_") || right.Contains("Staff_"))   return $"Spell{suffix}";
+            if (right.Contains("TwoHand"))                                 return $"Attack_TwoHand{suffix}";
+
+            var leftIsWeapon = left.Contains("Dagger") || left.Contains("Sword") || left.Contains("Spear");
+            return leftIsWeapon ? $"Attack_DualHand{suffix}" : $"Attack_OneHand{suffix}";
+        }
+
+        private string GetSkillAnimation()
+        {
+            _skillAnimAlt = !_skillAnimAlt;
+            var suffix = _skillAnimAlt ? "2" : "1";
+            if (_skinAssigner == null) return $"Cast{suffix}";
+
+            var right = _skinAssigner.rightHandWeaponSkin ?? "";
+            if (right.Contains("Bow_"))                                  return "Shoot1";
+            if (right.Contains("Scepter_") || right.Contains("Staff_")) return $"Spell{suffix}";
+            return $"Cast{suffix}";
+        }
+
+        private static bool IsAttackAnimationName(AnimatorStateInfo info)
+        {
+            return info.IsName("Attack_OneHand1")  || info.IsName("Attack_OneHand2")  ||
+                   info.IsName("Attack_DualHand1") || info.IsName("Attack_DualHand2") ||
+                   info.IsName("Attack_TwoHand1")  || info.IsName("Attack_TwoHand2")  ||
+                   info.IsName("Shoot1") || info.IsName("Spell1") || info.IsName("Spell2");
+        }
+
+        private static bool IsSkillAnimationName(AnimatorStateInfo info)
+        {
+            return info.IsName("Cast1")  || info.IsName("Cast2")  ||
+                   info.IsName("Spell1") || info.IsName("Spell2") ||
+                   info.IsName("Shoot1");
+        }
+
         private void WhenAttackSpeedChanged(object sender, EventArgs eventArgs)
         {
             _animator.SetFloat("AttackSpeed", TotalStatController.I.AttackSpeed.Value);
@@ -498,7 +568,7 @@ namespace Fight.Units
 
         public void LookAt(bool lookLeft)
         {
-            _positioner.localScale = lookLeft ? Define.LookLeft : Define.LookRight;
+            _positioner.localScale = lookLeft ? Define.LookRight : Define.LookLeft;
         }
 
         public void ShowBubble(string text)

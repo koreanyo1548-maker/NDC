@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -58,7 +58,7 @@ namespace Spine.Unity.Editor {
 			if (!TargetIsValid) return;
 			bool sameData = SpineInspectorUtility.TargetsUseSameData(serializedObject);
 
-			foreach (var o in targets)
+			foreach (UnityEngine.Object o in targets)
 				TrySetAnimation(o as SkeletonAnimation);
 
 			EditorGUILayout.Space();
@@ -74,8 +74,8 @@ namespace Spine.Unity.Editor {
 			EditorGUILayout.PropertyField(loop, LoopLabel);
 			wasAnimationParameterChanged |= EditorGUI.EndChangeCheck(); // Value used in the next update.
 			EditorGUILayout.PropertyField(timeScale, TimeScaleLabel);
-			foreach (var o in targets) {
-				var component = o as SkeletonAnimation;
+			foreach (UnityEngine.Object o in targets) {
+				SkeletonAnimation component = o as SkeletonAnimation;
 				component.timeScale = Mathf.Max(component.timeScale, 0);
 			}
 			EditorGUILayout.PropertyField(unscaledTime, UnscaledTimeLabel);
@@ -99,8 +99,8 @@ namespace Spine.Unity.Editor {
 					((activeAnimation != animationName.stringValue) || (activeLoop != loop.boolValue));
 				if (animationParameterChanged) {
 					this.wasAnimationParameterChanged = false;
-					var skeleton = skeletonAnimation.Skeleton;
-					var state = skeletonAnimation.AnimationState;
+					Skeleton skeleton = skeletonAnimation.Skeleton;
+					AnimationState state = skeletonAnimation.AnimationState;
 
 					if (!Application.isPlaying) {
 						if (state != null) state.ClearTrack(0);

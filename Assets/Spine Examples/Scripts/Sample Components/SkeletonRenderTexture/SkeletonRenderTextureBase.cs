@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2022, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -42,13 +42,20 @@ namespace Spine.Unity.Examples {
 		public Color color = Color.white;
 		public int maxRenderTextureSize = 1024;
 		public GameObject quad;
+		public Material quadMaterial;
 		protected Mesh quadMesh;
 		public RenderTexture renderTexture;
 		public Camera targetCamera;
+		[Tooltip("Shader passes to render to the RenderTexture. E.g. set the first element " +
+			"to -1 to render all shader passes, or set it to 0 to only render the first " +
+			"shader pass, which may be required when using URP or shadow-casting shaders.")]
+		public int[] shaderPasses = new int[1] { 0 };
 
 		protected CommandBuffer commandBuffer;
-		protected Vector2Int requiredRenderTextureSize;
+		protected Vector2Int screenSize;
+		protected Vector2Int usedRenderTextureSize;
 		protected Vector2Int allocatedRenderTextureSize;
+		protected Vector2 downScaleFactor = Vector2.one;
 
 		protected Vector3 worldCornerNoDistortion0;
 		protected Vector3 worldCornerNoDistortion1;
@@ -89,17 +96,22 @@ namespace Spine.Unity.Examples {
 			uvCorner2 = MathUtilities.InverseLerp(screenSpaceMin, screenSpaceMax, screenCorner2);
 			uvCorner3 = MathUtilities.InverseLerp(screenSpaceMin, screenSpaceMax, screenCorner3);
 
-			requiredRenderTextureSize = new Vector2Int(
-				Math.Min(maxRenderTextureSize, Math.Abs((int)screenSpaceMax.x - (int)screenSpaceMin.x)),
-				Math.Min(maxRenderTextureSize, Math.Abs((int)screenSpaceMax.y - (int)screenSpaceMin.y)));
+			screenSize = new Vector2Int(Math.Abs((int)screenSpaceMax.x - (int)screenSpaceMin.x),
+										Math.Abs((int)screenSpaceMax.y - (int)screenSpaceMin.y));
+			usedRenderTextureSize = new Vector2Int(
+				Math.Min(maxRenderTextureSize, screenSize.x),
+				Math.Min(maxRenderTextureSize, screenSize.y));
+			downScaleFactor = new Vector2(
+				(float)usedRenderTextureSize.x / (float)screenSize.x,
+				(float)usedRenderTextureSize.y / (float)screenSize.y);
 
 			PrepareRenderTexture();
 		}
 
 		protected void PrepareRenderTexture () {
 			Vector2Int textureSize = new Vector2Int(
-				Mathf.NextPowerOfTwo(requiredRenderTextureSize.x),
-				Mathf.NextPowerOfTwo(requiredRenderTextureSize.y));
+				Mathf.NextPowerOfTwo(usedRenderTextureSize.x),
+				Mathf.NextPowerOfTwo(usedRenderTextureSize.y));
 
 			if (textureSize != allocatedRenderTextureSize) {
 				if (renderTexture)
@@ -108,6 +120,45 @@ namespace Spine.Unity.Examples {
 				renderTexture.filterMode = FilterMode.Point;
 				allocatedRenderTextureSize = textureSize;
 			}
+		}
+
+		protected Matrix4x4 CalculateProjectionMatrix (Camera targetCamera,
+			Vector3 screenSpaceMin, Vector3 screenSpaceMax, Vector2 fullSizePixels) {
+			if (targetCamera.orthographic)
+				return CalculateOrthoMatrix(targetCamera, screenSpaceMin, screenSpaceMax, fullSizePixels);
+			else
+				return CalculatePerspectiveMatrix(targetCamera, screenSpaceMin, screenSpaceMax, fullSizePixels);
+		}
+
+		protected Matrix4x4 CalculateOrthoMatrix (Camera targetCamera,
+			Vector3 screenSpaceMin, Vector3 screenSpaceMax, Vector2 fullSizePixels) {
+
+			Vector2 cameraSize = new Vector2(
+					targetCamera.orthographicSize * 2.0f * targetCamera.aspect,
+					targetCamera.orthographicSize * 2.0f);
+			Vector2 min = new Vector2(screenSpaceMin.x, screenSpaceMin.y) / fullSizePixels;
+			Vector2 max = new Vector2(screenSpaceMax.x, screenSpaceMax.y) / fullSizePixels;
+			Vector2 centerOffset = new Vector2(-0.5f, -0.5f);
+			min = (min + centerOffset) * cameraSize;
+			max = (max + centerOffset) * cameraSize;
+
+			return Matrix4x4.Ortho(min.x, max.x, min.y, max.y, float.MinValue, float.MaxValue);
+		}
+
+		protected Matrix4x4 CalculatePerspectiveMatrix (Camera targetCamera,
+			Vector3 screenSpaceMin, Vector3 screenSpaceMax, Vector2 fullSizePixels) {
+
+			FrustumPlanes frustumPlanes = targetCamera.projectionMatrix.decomposeProjection;
+			Vector2 planesSize = new Vector2(
+				frustumPlanes.right - frustumPlanes.left,
+				frustumPlanes.top - frustumPlanes.bottom);
+			Vector2 min = new Vector2(screenSpaceMin.x, screenSpaceMin.y) / fullSizePixels * planesSize;
+			Vector2 max = new Vector2(screenSpaceMax.x, screenSpaceMax.y) / fullSizePixels * planesSize;
+			frustumPlanes.right = frustumPlanes.left + max.x;
+			frustumPlanes.top = frustumPlanes.bottom + max.y;
+			frustumPlanes.left += min.x;
+			frustumPlanes.bottom += min.y;
+			return Matrix4x4.Frustum(frustumPlanes);
 		}
 
 		protected void AssignAtQuad () {
@@ -135,8 +186,12 @@ namespace Spine.Unity.Examples {
 			};
 			quadMesh.normals = normals;
 
-			float maxU = (float)requiredRenderTextureSize.x / (float)allocatedRenderTextureSize.x;
-			float maxV = (float)requiredRenderTextureSize.y / (float)allocatedRenderTextureSize.y;
+			float maxU = (float)usedRenderTextureSize.x / (float)allocatedRenderTextureSize.x;
+			float maxV = (float)usedRenderTextureSize.y / (float)allocatedRenderTextureSize.y;
+			if (downScaleFactor.x < 1 || downScaleFactor.y < 1) {
+				maxU = downScaleFactor.x * (float)screenSize.x / (float)allocatedRenderTextureSize.x;
+				maxV = downScaleFactor.y * (float)screenSize.y / (float)allocatedRenderTextureSize.y;
+			}
 			Vector2[] uv = new Vector2[4] {
 				new Vector2(uvCorner0.x * maxU, uvCorner0.y * maxV),
 				new Vector2(uvCorner1.x * maxU, uvCorner1.y * maxV),

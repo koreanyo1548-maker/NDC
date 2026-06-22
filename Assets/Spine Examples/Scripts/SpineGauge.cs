@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -53,10 +53,10 @@ namespace Spine.Unity.Examples {
 
 		public void SetGaugePercent (float percent) {
 			if (skeletonRenderer == null) return;
-			var skeleton = skeletonRenderer.skeleton; if (skeleton == null) return;
+			Skeleton skeleton = skeletonRenderer.skeleton; if (skeleton == null) return;
 
 			fillAnimation.Animation.Apply(skeleton, 0, percent, false, null, 1f, MixBlend.Setup, MixDirection.In);
-			skeleton.UpdateWorldTransform();
+			skeleton.UpdateWorldTransform(Skeleton.Physics.Update);
 		}
 	}
 

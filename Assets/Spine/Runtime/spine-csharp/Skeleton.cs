@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -31,6 +31,7 @@ using System;
 
 namespace Spine {
 	public class Skeleton {
+		static private readonly int[] quadTriangles = { 0, 1, 2, 2, 3, 0 };
 		internal SkeletonData data;
 		internal ExposedList<Bone> bones;
 		internal ExposedList<Slot> slots;
@@ -38,23 +39,36 @@ namespace Spine {
 		internal ExposedList<IkConstraint> ikConstraints;
 		internal ExposedList<TransformConstraint> transformConstraints;
 		internal ExposedList<PathConstraint> pathConstraints;
-		internal ExposedList<SpringConstraint> springConstraints;
+		internal ExposedList<PhysicsConstraint> physicsConstraints;
 		internal ExposedList<IUpdatable> updateCache = new ExposedList<IUpdatable>();
 		internal Skin skin;
 		internal float r = 1, g = 1, b = 1, a = 1;
-		private float scaleX = 1, scaleY = 1;
-		internal float x, y;
+		internal float x, y, scaleX = 1, time;
+		/// <summary>Private to enforce usage of ScaleY getter taking Bone.yDown into account.</summary>
+		private float scaleY = 1;
 
+		/// <summary>The skeleton's setup pose data.</summary>
 		public SkeletonData Data { get { return data; } }
+		/// <summary>The skeleton's bones, sorted parent first. The root bone is always the first bone.</summary>
 		public ExposedList<Bone> Bones { get { return bones; } }
+		/// <summary>The list of bones and constraints, sorted in the order they should be updated,
+		/// as computed by <see cref="UpdateCache()"/>.</summary>
 		public ExposedList<IUpdatable> UpdateCacheList { get { return updateCache; } }
+		/// <summary>The skeleton's slots.</summary>
 		public ExposedList<Slot> Slots { get { return slots; } }
+		/// <summary>The skeleton's slots in the order they should be drawn.
+		/// The returned array may be modified to change the draw order.</summary>
 		public ExposedList<Slot> DrawOrder { get { return drawOrder; } }
+		/// <summary>The skeleton's IK constraints.</summary>
 		public ExposedList<IkConstraint> IkConstraints { get { return ikConstraints; } }
+		/// <summary>The skeleton's path constraints.</summary>
 		public ExposedList<PathConstraint> PathConstraints { get { return pathConstraints; } }
-		public ExposedList<SpringConstraint> SpringConstraints { get { return SpringConstraints; } }
+		/// <summary>The skeleton's physics constraints.</summary>
+		public ExposedList<PhysicsConstraint> PhysicsConstraints { get { return physicsConstraints; } }
+		/// <summary>The skeleton's transform constraints.</summary>
 		public ExposedList<TransformConstraint> TransformConstraints { get { return transformConstraints; } }
 
+		/// <summary>The skeleton's current skin. May be null. See <see cref="SetSkin(Spine.Skin)"/></summary>
 		public Skin Skin {
 			/// <summary>The skeleton's current skin. May be null.</summary>
 			get { return skin; }
@@ -65,9 +79,21 @@ namespace Spine {
 		public float G { get { return g; } set { g = value; } }
 		public float B { get { return b; } set { b = value; } }
 		public float A { get { return a; } set { a = value; } }
+		/// <summary><para>The skeleton X position, which is added to the root bone worldX position.</para>
+		/// <para>
+		/// Bones that do not inherit translation are still affected by this property.</para></summary>
 		public float X { get { return x; } set { x = value; } }
+		/// <summary><para>The skeleton Y position, which is added to the root bone worldY position.</para>
+		/// <para>
+		/// Bones that do not inherit translation are still affected by this property.</para></summary>
 		public float Y { get { return y; } set { y = value; } }
+		/// <summary><para> Scales the entire skeleton on the X axis.</para>
+		/// <para>
+		/// Bones that do not inherit scale are still affected by this property.</para></summary>
 		public float ScaleX { get { return scaleX; } set { scaleX = value; } }
+		/// <summary><para> Scales the entire skeleton on the Y axis.</para>
+		/// <para>
+		/// Bones that do not inherit scale are still affected by this property.</para></summary>
 		public float ScaleY { get { return scaleY * (Bone.yDown ? -1 : 1); } set { scaleY = value; } }
 
 		[Obsolete("Use ScaleX instead. FlipX is when ScaleX is negative.")]
@@ -75,6 +101,9 @@ namespace Spine {
 
 		[Obsolete("Use ScaleY instead. FlipY is when ScaleY is negative.")]
 		public bool FlipY { get { return scaleY < 0; } set { scaleY = value ? -1f : 1f; } }
+		/// <summary>Returns the skeleton's time. This is used for time-based manipulations, such as <see cref="PhysicsConstraint"/>.</summary>
+		/// <seealso cref="Update(float)"/>
+		public float Time { get { return time; } set { time = value; } }
 
 		/// <summary>Returns the root bone, or null if the skeleton has no bones.</summary>
 		public Bone RootBone {
@@ -120,9 +149,9 @@ namespace Spine {
 			foreach (PathConstraintData pathConstraintData in data.pathConstraints)
 				pathConstraints.Add(new PathConstraint(pathConstraintData, this));
 
-			springConstraints = new ExposedList<SpringConstraint>(data.springConstraints.Count);
-			foreach (SpringConstraintData springConstraintData in data.springConstraints)
-				springConstraints.Add(new SpringConstraint(springConstraintData, this));
+			physicsConstraints = new ExposedList<PhysicsConstraint>(data.physicsConstraints.Count);
+			foreach (PhysicsConstraintData physicsConstraintData in data.physicsConstraints)
+				physicsConstraints.Add(new PhysicsConstraint(physicsConstraintData, this));
 
 			UpdateCache();
 		}
@@ -159,27 +188,30 @@ namespace Spine {
 
 			ikConstraints = new ExposedList<IkConstraint>(skeleton.ikConstraints.Count);
 			foreach (IkConstraint ikConstraint in skeleton.ikConstraints)
-				ikConstraints.Add(new IkConstraint(ikConstraint, this));
+				ikConstraints.Add(new IkConstraint(ikConstraint, skeleton));
 
 			transformConstraints = new ExposedList<TransformConstraint>(skeleton.transformConstraints.Count);
 			foreach (TransformConstraint transformConstraint in skeleton.transformConstraints)
-				transformConstraints.Add(new TransformConstraint(transformConstraint, this));
+				transformConstraints.Add(new TransformConstraint(transformConstraint, skeleton));
 
 			pathConstraints = new ExposedList<PathConstraint>(skeleton.pathConstraints.Count);
 			foreach (PathConstraint pathConstraint in skeleton.pathConstraints)
-				pathConstraints.Add(new PathConstraint(pathConstraint, this));
+				pathConstraints.Add(new PathConstraint(pathConstraint, skeleton));
 
-			springConstraints = new ExposedList<SpringConstraint>(skeleton.springConstraints.Count);
-			foreach (SpringConstraint springConstraint in skeleton.springConstraints)
-				springConstraints.Add(new SpringConstraint(springConstraint, this));
+			physicsConstraints = new ExposedList<PhysicsConstraint>(skeleton.physicsConstraints.Count);
+			foreach (PhysicsConstraint physicsConstraint in skeleton.physicsConstraints)
+				physicsConstraints.Add(new PhysicsConstraint(physicsConstraint, skeleton));
 
 			skin = skeleton.skin;
 			r = skeleton.r;
 			g = skeleton.g;
 			b = skeleton.b;
 			a = skeleton.a;
+			x = skeleton.x;
+			y = skeleton.y;
 			scaleX = skeleton.scaleX;
 			scaleY = skeleton.scaleY;
+			time = skeleton.time;
 
 			UpdateCache();
 		}
@@ -187,7 +219,7 @@ namespace Spine {
 		/// <summary>Caches information about bones and constraints. Must be called if the <see cref="Skin"/> is modified or if bones, constraints, or
 		/// constraints, or weighted path attachments are added or removed.</summary>
 		public void UpdateCache () {
-			var updateCache = this.updateCache;
+			ExposedList<IUpdatable> updateCache = this.updateCache;
 			updateCache.Clear();
 
 			int boneCount = this.bones.Count;
@@ -200,7 +232,7 @@ namespace Spine {
 			if (skin != null) {
 				BoneData[] skinBones = skin.bones.Items;
 				for (int i = 0, n = skin.bones.Count; i < n; i++) {
-					var bone = bones[skinBones[i].index];
+					Bone bone = bones[skinBones[i].index];
 					do {
 						bone.sorted = false;
 						bone.active = true;
@@ -210,12 +242,12 @@ namespace Spine {
 			}
 
 			int ikCount = this.ikConstraints.Count, transformCount = this.transformConstraints.Count, pathCount = this.pathConstraints.Count,
-				springCount = this.springConstraints.Count;
+				physicsCount = this.physicsConstraints.Count;
 			IkConstraint[] ikConstraints = this.ikConstraints.Items;
 			TransformConstraint[] transformConstraints = this.transformConstraints.Items;
 			PathConstraint[] pathConstraints = this.pathConstraints.Items;
-			SpringConstraint[] springConstraints = this.springConstraints.Items;
-			int constraintCount = ikCount + transformCount + pathCount + springCount;
+			PhysicsConstraint[] physicsConstraints = this.physicsConstraints.Items;
+			int constraintCount = ikCount + transformCount + pathCount + physicsCount;
 			for (int i = 0; i < constraintCount; i++) {
 				for (int ii = 0; ii < ikCount; ii++) {
 					IkConstraint constraint = ikConstraints[ii];
@@ -238,10 +270,10 @@ namespace Spine {
 						goto continue_outer;
 					}
 				}
-				for (int ii = 0; ii < springCount; ii++) {
-					SpringConstraint constraint = springConstraints[ii];
+				for (int ii = 0; ii < physicsCount; ii++) {
+					PhysicsConstraint constraint = physicsConstraints[ii];
 					if (constraint.data.order == i) {
-						SortSpringConstraint(constraint);
+						SortPhysicsConstraint(constraint);
 						goto continue_outer;
 					}
 				}
@@ -260,7 +292,7 @@ namespace Spine {
 			Bone target = constraint.target;
 			SortBone(target);
 
-			var constrained = constraint.bones;
+			ExposedList<Bone> constrained = constraint.bones;
 			Bone parent = constrained.Items[0];
 			SortBone(parent);
 
@@ -285,7 +317,7 @@ namespace Spine {
 
 			SortBone(constraint.target);
 
-			var constrained = constraint.bones.Items;
+			Bone[] constrained = constraint.bones.Items;
 			int boneCount = constraint.bones.Count;
 			if (constraint.data.local) {
 				for (int i = 0; i < boneCount; i++) {
@@ -321,7 +353,7 @@ namespace Spine {
 			Attachment attachment = slot.attachment;
 			if (attachment is PathAttachment) SortPathConstraintAttachment(attachment, slotBone);
 
-			var constrained = constraint.bones.Items;
+			Bone[] constrained = constraint.bones.Items;
 			int boneCount = constraint.bones.Count;
 			for (int i = 0; i < boneCount; i++)
 				SortBone(constrained[i]);
@@ -335,7 +367,7 @@ namespace Spine {
 		}
 
 		private void SortPathConstraintAttachment (Skin skin, int slotIndex, Bone slotBone) {
-			foreach (var entry in skin.Attachments)
+			foreach (Skin.SkinEntry entry in skin.Attachments)
 				if (entry.SlotIndex == slotIndex) SortPathConstraintAttachment(entry.Attachment, slotBone);
 		}
 
@@ -345,7 +377,7 @@ namespace Spine {
 			if (pathBones == null)
 				SortBone(slotBone);
 			else {
-				var bones = this.bones.Items;
+				Bone[] bones = this.bones.Items;
 				for (int i = 0, n = pathBones.Length; i < n;) {
 					int nn = pathBones[i++];
 					nn += i;
@@ -355,21 +387,18 @@ namespace Spine {
 			}
 		}
 
-		private void SortSpringConstraint (SpringConstraint constraint) {
-			constraint.active = !constraint.data.skinRequired || (skin != null && skin.constraints.Contains(constraint.data));
+		private void SortPhysicsConstraint (PhysicsConstraint constraint) {
+			Bone bone = constraint.bone;
+			constraint.active = bone.active
+				&& (!constraint.data.skinRequired || (skin != null && skin.constraints.Contains(constraint.data)));
 			if (!constraint.active) return;
 
-			Object[] constrained = constraint.bones.Items;
-			int boneCount = constraint.bones.Count;
-			for (int i = 0; i < boneCount; i++)
-				SortBone((Bone)constrained[i]);
+			SortBone(bone);
 
 			updateCache.Add(constraint);
 
-			for (int i = 0; i < boneCount; i++)
-				SortReset(((Bone)constrained[i]).children);
-			for (int i = 0; i < boneCount; i++)
-				((Bone)constrained[i]).sorted = true;
+			SortReset(bone.children);
+			bone.sorted = true;
 		}
 
 		private void SortBone (Bone bone) {
@@ -396,7 +425,7 @@ namespace Spine {
 		/// See <a href="http://esotericsoftware.com/spine-runtime-skeletons#World-transforms">World transforms</a> in the Spine
 		/// Runtimes Guide.</para>
 		/// </summary>
-		public void UpdateWorldTransform () {
+		public void UpdateWorldTransform (Physics physics) {
 			Bone[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				Bone bone = bones[i];
@@ -409,16 +438,16 @@ namespace Spine {
 				bone.ashearY = bone.shearY;
 			}
 
-			var updateCache = this.updateCache.Items;
+			IUpdatable[] updateCache = this.updateCache.Items;
 			for (int i = 0, n = this.updateCache.Count; i < n; i++)
-				updateCache[i].Update();
+				updateCache[i].Update(physics);
 		}
 
 		/// <summary>
 		/// Temporarily sets the root bone as a child of the specified bone, then updates the world transform for each bone and applies
 		/// all constraints.
 		/// </summary>
-		public void UpdateWorldTransform (Bone parent) {
+		public void UpdateWorldTransform (Physics physics, Bone parent) {
 			if (parent == null) throw new ArgumentNullException("parent", "parent cannot be null.");
 
 			// Apply the parent bone transform to the root bone. The root bone always inherits scale, rotation and reflection.
@@ -427,22 +456,46 @@ namespace Spine {
 			rootBone.worldX = pa * x + pb * y + parent.worldX;
 			rootBone.worldY = pc * x + pd * y + parent.worldY;
 
-			float rotationY = rootBone.rotation + 90 + rootBone.shearY;
-			float la = MathUtils.CosDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
-			float lb = MathUtils.CosDeg(rotationY) * rootBone.scaleY;
-			float lc = MathUtils.SinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
-			float ld = MathUtils.SinDeg(rotationY) * rootBone.scaleY;
+			float rx = (rootBone.rotation + rootBone.shearX) * MathUtils.DegRad;
+			float ry = (rootBone.rotation + 90 + rootBone.shearY) * MathUtils.DegRad;
+			float la = (float)Math.Cos(rx) * rootBone.scaleX;
+			float lb = (float)Math.Cos(ry) * rootBone.scaleY;
+			float lc = (float)Math.Sin(rx) * rootBone.scaleX;
+			float ld = (float)Math.Sin(ry) * rootBone.scaleY;
 			rootBone.a = (pa * la + pb * lc) * scaleX;
 			rootBone.b = (pa * lb + pb * ld) * scaleX;
 			rootBone.c = (pc * la + pd * lc) * scaleY;
 			rootBone.d = (pc * lb + pd * ld) * scaleY;
 
 			// Update everything except root bone.
-			var updateCache = this.updateCache.Items;
+			IUpdatable[] updateCache = this.updateCache.Items;
 			for (int i = 0, n = this.updateCache.Count; i < n; i++) {
-				var updatable = updateCache[i];
-				if (updatable != rootBone) updatable.Update();
+				IUpdatable updatable = updateCache[i];
+				if (updatable != rootBone) updatable.Update(physics);
 			}
+		}
+
+		/// <summary>
+		/// Calls <see cref="PhysicsConstraint.Translate(float, float)"/> for each physics constraint.
+		/// </summary>
+		public void PhysicsTranslate (float x, float y) {
+			PhysicsConstraint[] physicsConstraints = this.physicsConstraints.Items;
+			for (int i = 0, n = this.physicsConstraints.Count; i < n; i++)
+				physicsConstraints[i].Translate(x, y);
+		}
+
+		/// <summary>
+		/// Calls <see cref="PhysicsConstraint.Rotate(float, float, float)"/> for each physics constraint.
+		/// </summary>
+		public void PhysicsRotate (float x, float y, float degrees) {
+			PhysicsConstraint[] physicsConstraints = this.physicsConstraints.Items;
+			for (int i = 0, n = this.physicsConstraints.Count; i < n; i++)
+				physicsConstraints[i].Rotate(x, y, degrees);
+		}
+
+		/// <summary>Increments the skeleton's <see cref="time"/>.</summary>
+		public void Update (float delta) {
+			time += delta;
 		}
 
 		/// <summary>Sets the bones, constraints, and slots to their setup pose values.</summary>
@@ -453,61 +506,29 @@ namespace Spine {
 
 		/// <summary>Sets the bones and constraints to their setup pose values.</summary>
 		public void SetBonesToSetupPose () {
-			var bones = this.bones.Items;
+			Bone[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++)
 				bones[i].SetToSetupPose();
 
 			IkConstraint[] ikConstraints = this.ikConstraints.Items;
-			for (int i = 0, n = this.ikConstraints.Count; i < n; i++) {
-				IkConstraint constraint = ikConstraints[i];
-				IkConstraintData data = constraint.data;
-				constraint.mix = data.mix;
-				constraint.softness = data.softness;
-				constraint.bendDirection = data.bendDirection;
-				constraint.compress = data.compress;
-				constraint.stretch = data.stretch;
-			}
+			for (int i = 0, n = this.ikConstraints.Count; i < n; i++)
+				ikConstraints[i].SetToSetupPose();
 
 			TransformConstraint[] transformConstraints = this.transformConstraints.Items;
-			for (int i = 0, n = this.transformConstraints.Count; i < n; i++) {
-				TransformConstraint constraint = transformConstraints[i];
-				TransformConstraintData data = constraint.data;
-				constraint.mixRotate = data.mixRotate;
-				constraint.mixX = data.mixX;
-				constraint.mixY = data.mixY;
-				constraint.mixScaleX = data.mixScaleX;
-				constraint.mixScaleY = data.mixScaleY;
-				constraint.mixShearY = data.mixShearY;
-			}
+			for (int i = 0, n = this.transformConstraints.Count; i < n; i++)
+				transformConstraints[i].SetToSetupPose();
 
 			PathConstraint[] pathConstraints = this.pathConstraints.Items;
-			for (int i = 0, n = this.pathConstraints.Count; i < n; i++) {
-				PathConstraint constraint = pathConstraints[i];
-				PathConstraintData data = constraint.data;
-				constraint.position = data.position;
-				constraint.spacing = data.spacing;
-				constraint.mixRotate = data.mixRotate;
-				constraint.mixX = data.mixX;
-				constraint.mixY = data.mixY;
-			}
+			for (int i = 0, n = this.pathConstraints.Count; i < n; i++)
+				pathConstraints[i].SetToSetupPose();
 
-			SpringConstraint[] springConstraints = this.springConstraints.Items;
-			for (int i = 0, n = this.springConstraints.Count; i < n; i++) {
-				SpringConstraint constraint = springConstraints[i];
-				SpringConstraintData data = constraint.data;
-				constraint.mix = data.mix;
-				constraint.friction = data.friction;
-				constraint.gravity = data.gravity;
-				constraint.wind = data.wind;
-				constraint.stiffness = data.stiffness;
-				constraint.damping = data.damping;
-				constraint.rope = data.rope;
-				constraint.stretch = data.stretch;
-			}
+			PhysicsConstraint[] physicsConstraints = this.physicsConstraints.Items;
+			for (int i = 0, n = this.physicsConstraints.Count; i < n; i++)
+				physicsConstraints[i].SetToSetupPose();
 		}
 
 		public void SetSlotsToSetupPose () {
-			var slots = this.slots.Items;
+			Slot[] slots = this.slots.Items;
 			int n = this.slots.Count;
 			Array.Copy(slots, 0, drawOrder.Items, 0, n);
 			for (int i = 0; i < n; i++)
@@ -519,7 +540,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public Bone FindBone (string boneName) {
 			if (boneName == null) throw new ArgumentNullException("boneName", "boneName cannot be null.");
-			var bones = this.bones.Items;
+			Bone[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				Bone bone = bones[i];
 				if (bone.data.name == boneName) return bone;
@@ -532,7 +553,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public Slot FindSlot (string slotName) {
 			if (slotName == null) throw new ArgumentNullException("slotName", "slotName cannot be null.");
-			var slots = this.slots.Items;
+			Slot[] slots = this.slots.Items;
 			for (int i = 0, n = this.slots.Count; i < n; i++) {
 				Slot slot = slots[i];
 				if (slot.data.name == slotName) return slot;
@@ -540,7 +561,7 @@ namespace Spine {
 			return null;
 		}
 
-		/// <summary>Sets a skin by name (<see cref="SetSkin(Skin)"/>).</summary>
+		/// <summary>Sets a skin by name (see <see cref="SetSkin(Spine.Skin)"/>).</summary>
 		public void SetSkin (string skinName) {
 			Skin foundSkin = data.FindSkin(skinName);
 			if (foundSkin == null) throw new ArgumentException("Skin not found: " + skinName, "skinName");
@@ -623,7 +644,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public IkConstraint FindIkConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var ikConstraints = this.ikConstraints.Items;
+			IkConstraint[] ikConstraints = this.ikConstraints.Items;
 			for (int i = 0, n = this.ikConstraints.Count; i < n; i++) {
 				IkConstraint ikConstraint = ikConstraints[i];
 				if (ikConstraint.data.name == constraintName) return ikConstraint;
@@ -636,7 +657,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public TransformConstraint FindTransformConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var transformConstraints = this.transformConstraints.Items;
+			TransformConstraint[] transformConstraints = this.transformConstraints.Items;
 			for (int i = 0, n = this.transformConstraints.Count; i < n; i++) {
 				TransformConstraint transformConstraint = transformConstraints[i];
 				if (transformConstraint.data.Name == constraintName) return transformConstraint;
@@ -649,7 +670,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public PathConstraint FindPathConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var pathConstraints = this.pathConstraints.Items;
+			PathConstraint[] pathConstraints = this.pathConstraints.Items;
 			for (int i = 0, n = this.pathConstraints.Count; i < n; i++) {
 				PathConstraint constraint = pathConstraints[i];
 				if (constraint.data.Name.Equals(constraintName)) return constraint;
@@ -657,14 +678,14 @@ namespace Spine {
 			return null;
 		}
 
-		/// <summary>Finds a spring constraint by comparing each spring constraint's name. It is more efficient to cache the results of this
+		/// <summary>Finds a physics constraint by comparing each physics constraint's name. It is more efficient to cache the results of this
 		/// method than to call it repeatedly.</summary>
 		/// <returns>May be null.</returns>
-		public SpringConstraint FindSpringConstraint (String constraintName) {
+		public PhysicsConstraint FindPhysicsConstraint (String constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			SpringConstraint[] springConstraints = this.springConstraints.Items;
-			for (int i = 0, n = this.springConstraints.Count; i < n; i++) {
-				SpringConstraint constraint = springConstraints[i];
+			PhysicsConstraint[] physicsConstraints = this.physicsConstraints.Items;
+			for (int i = 0, n = this.physicsConstraints.Count; i < n; i++) {
+				PhysicsConstraint constraint = physicsConstraints[i];
 				if (constraint.data.name.Equals(constraintName)) return constraint;
 			}
 			return null;
@@ -676,16 +697,19 @@ namespace Spine {
 		/// <param name="width">The width of the AABB</param>
 		/// <param name="height">The height of the AABB.</param>
 		/// <param name="vertexBuffer">Reference to hold a float[]. May be a null reference. This method will assign it a new float[] with the appropriate size as needed.</param>
-		public void GetBounds (out float x, out float y, out float width, out float height, ref float[] vertexBuffer) {
+		public void GetBounds (out float x, out float y, out float width, out float height, ref float[] vertexBuffer,
+			SkeletonClipping clipper = null) {
+
 			float[] temp = vertexBuffer;
 			temp = temp ?? new float[8];
-			var drawOrder = this.drawOrder.Items;
+			Slot[] drawOrder = this.drawOrder.Items;
 			float minX = int.MaxValue, minY = int.MaxValue, maxX = int.MinValue, maxY = int.MinValue;
 			for (int i = 0, n = this.drawOrder.Count; i < n; i++) {
 				Slot slot = drawOrder[i];
 				if (!slot.bone.active) continue;
 				int verticesLength = 0;
 				float[] vertices = null;
+				int[] triangles = null;
 				Attachment attachment = slot.attachment;
 				RegionAttachment region = attachment as RegionAttachment;
 				if (region != null) {
@@ -693,18 +717,31 @@ namespace Spine {
 					vertices = temp;
 					if (vertices.Length < 8) vertices = temp = new float[8];
 					region.ComputeWorldVertices(slot, temp, 0, 2);
+					triangles = quadTriangles;
 				} else {
-					var meshAttachment = attachment as MeshAttachment;
-					if (meshAttachment != null) {
-						MeshAttachment mesh = meshAttachment;
+					MeshAttachment mesh = attachment as MeshAttachment;
+					if (mesh != null) {
 						verticesLength = mesh.WorldVerticesLength;
 						vertices = temp;
 						if (vertices.Length < verticesLength) vertices = temp = new float[verticesLength];
 						mesh.ComputeWorldVertices(slot, 0, verticesLength, temp, 0, 2);
+						triangles = mesh.Triangles;
+					} else if (clipper != null) {
+						ClippingAttachment clip = attachment as ClippingAttachment;
+						if (clip != null) {
+							clipper.ClipStart(slot, clip);
+							continue;
+						}
 					}
 				}
 
 				if (vertices != null) {
+					if (clipper != null && clipper.IsClipping) {
+						clipper.ClipTriangles(vertices, triangles, triangles.Length);
+						vertices = clipper.ClippedVertices.Items;
+						verticesLength = clipper.ClippedVertices.Count;
+					}
+
 					for (int ii = 0; ii < verticesLength; ii += 2) {
 						float vx = vertices[ii], vy = vertices[ii + 1];
 						minX = Math.Min(minX, vx);
@@ -713,12 +750,33 @@ namespace Spine {
 						maxY = Math.Max(maxY, vy);
 					}
 				}
+				if (clipper != null) clipper.ClipEnd(slot);
 			}
+			if (clipper != null) clipper.ClipEnd();
 			x = minX;
 			y = minY;
 			width = maxX - minX;
 			height = maxY - minY;
 			vertexBuffer = temp;
+		}
+
+		override public string ToString () {
+			return data.name;
+		}
+
+		/// <summary>Determines how physics and other non-deterministic updates are applied.</summary>
+		public enum Physics {
+			/// <summary>Physics are not updated or applied.</summary>
+			None,
+
+			/// <summary>Physics are reset to the current pose.</summary>
+			Reset,
+
+			/// <summary>Physics are updated and the pose from physics is applied.</summary>
+			Update,
+
+			/// <summary>Physics are not updated but the pose from physics is applied.</summary>
+			Pose
 		}
 	}
 }

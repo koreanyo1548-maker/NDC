@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -75,6 +75,10 @@ namespace Spine.Unity.Editor {
 		public static bool initialized;
 		private static List<string> texturesWithoutMetaFile = new List<string>();
 
+		public static void OnTextureImportedFirstTime (string texturePath) {
+			texturesWithoutMetaFile.Add(texturePath);
+		}
+
 		// Auto-import entry point for textures
 		void OnPreprocessTexture () {
 #if UNITY_2018_1_OR_NEWER
@@ -94,7 +98,7 @@ namespace Spine.Unity.Editor {
 
 			// we copy the list here to prevent nested calls to OnPostprocessAllAssets() triggering a Clear() of the list
 			// in the middle of execution.
-			var texturesWithoutMetaFileCopy = new List<string>(texturesWithoutMetaFile);
+			List<string> texturesWithoutMetaFileCopy = new List<string>(texturesWithoutMetaFile);
 			AssetUtility.HandleOnPostprocessAllAssets(imported, texturesWithoutMetaFileCopy);
 			texturesWithoutMetaFile.Clear();
 		}
@@ -111,23 +115,23 @@ namespace Spine.Unity.Editor {
 		public static bool SetupSpinePrefabMesh (GameObject g, UnityEditor.AssetImporters.AssetImportContext context) {
 			Dictionary<string, int> nameUsageCount = new Dictionary<string, int>();
 			bool wasModified = false;
-			var skeletonRenderers = g.GetComponentsInChildren<SkeletonRenderer>(true);
+			SkeletonRenderer[] skeletonRenderers = g.GetComponentsInChildren<SkeletonRenderer>(true);
 			foreach (SkeletonRenderer renderer in skeletonRenderers) {
 				wasModified = true;
-				var meshFilter = renderer.GetComponent<MeshFilter>();
+				MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
 				if (meshFilter == null)
 					meshFilter = renderer.gameObject.AddComponent<MeshFilter>();
 
 				renderer.EditorUpdateMeshFilterHideFlags();
 				renderer.Initialize(true, true);
 				renderer.LateUpdateMesh();
-				var mesh = meshFilter.sharedMesh;
+				Mesh mesh = meshFilter.sharedMesh;
 				if (mesh == null) continue;
 
-				string meshName = string.Format("Skeleton Prefab Mesh \"{0}\"", renderer.name);
+				string meshName = string.Format("Skeleton Prefab Mesh [{0}]", renderer.name);
 				if (nameUsageCount.ContainsKey(meshName)) {
 					nameUsageCount[meshName]++;
-					meshName = string.Format("Skeleton Prefab Mesh \"{0} ({1})\"", renderer.name, nameUsageCount[meshName]);
+					meshName = string.Format("Skeleton Prefab Mesh [{0} ({1})]", renderer.name, nameUsageCount[meshName]);
 				} else {
 					nameUsageCount.Add(meshName, 0);
 				}
@@ -141,9 +145,9 @@ namespace Spine.Unity.Editor {
 
 		public static bool CleanupSpinePrefabMesh (GameObject g) {
 			bool wasModified = false;
-			var skeletonRenderers = g.GetComponentsInChildren<SkeletonRenderer>(true);
+			SkeletonRenderer[] skeletonRenderers = g.GetComponentsInChildren<SkeletonRenderer>(true);
 			foreach (SkeletonRenderer renderer in skeletonRenderers) {
-				var meshFilter = renderer.GetComponent<MeshFilter>();
+				MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
 				if (meshFilter != null) {
 					if (meshFilter.sharedMesh) {
 						wasModified = true;
@@ -172,18 +176,22 @@ namespace Spine.Unity.Editor {
 
 			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-			string[] folders = { "Assets", "Packages" };
-			string[] assets = AssetDatabase.FindAssets("t:script SpineEditorUtilities", folders);
-			string assetPath = AssetDatabase.GUIDToAssetPath(assets[0]);
-			editorPath = Path.GetDirectoryName(assetPath).Replace('\\', '/');
-
-			assets = AssetDatabase.FindAssets("t:texture icon-subMeshRenderer", folders);
+			string[] assets;
+			string assetPath;
+			assets = AssetDatabase.FindAssets("t:texture icon-subMeshRenderer", null);
 			if (assets.Length > 0) {
 				assetPath = AssetDatabase.GUIDToAssetPath(assets[0]);
 				editorGUIPath = Path.GetDirectoryName(assetPath).Replace('\\', '/');
-			} else {
-				editorGUIPath = editorPath.Replace("/Utility", "/GUI");
 			}
+			assets = AssetDatabase.FindAssets("t:script SpineEditorUtilities", null);
+			if (assets.Length > 0) {
+				assetPath = AssetDatabase.GUIDToAssetPath(assets[0]);
+				editorPath = Path.GetDirectoryName(assetPath).Replace('\\', '/');
+				if (string.IsNullOrEmpty(editorGUIPath))
+					editorGUIPath = editorPath.Replace("/Utility", "/GUI");
+			}
+			if (string.IsNullOrEmpty(editorGUIPath))
+				return;
 			Icons.Initialize();
 
 			// Drag and Drop
@@ -233,7 +241,7 @@ namespace Spine.Unity.Editor {
 		}
 
 		public static void ConfirmInitialization () {
-			if (!initialized || Icons.skeleton == null)
+			if (!initialized)
 				Initialize();
 		}
 
@@ -294,7 +302,7 @@ namespace Spine.Unity.Editor {
 			if (component == null) return;
 			if (!SkeletonDataAssetIsValid(component.SkeletonDataAsset)) return;
 
-			var stateComponent = component as IAnimationStateComponent;
+			IAnimationStateComponent stateComponent = component as IAnimationStateComponent;
 			AnimationState oldAnimationState = null;
 			if (stateComponent != null) {
 				oldAnimationState = stateComponent.AnimationState;
@@ -304,6 +312,12 @@ namespace Spine.Unity.Editor {
 
 			if (oldAnimationState != null) {
 				stateComponent.AnimationState.AssignEventSubscribersFrom(oldAnimationState);
+			}
+			if (stateComponent != null) {
+				// Any set animation needs to be applied as well since it might set attachments,
+				// having an effect on generated SpriteMaskMaterials below.
+				stateComponent.AnimationState.Apply(component.skeleton);
+				component.LateUpdate();
 			}
 
 #if BUILT_IN_SPRITE_MASK_COMPONENT
@@ -474,20 +488,20 @@ namespace Spine.Unity.Editor {
 			internal static void HandleDragAndDrop (int instanceId, Rect selectionRect) {
 				// HACK: Uses EditorApplication.hierarchyWindowItemOnGUI.
 				// Only works when there is at least one item in the scene.
-				var current = UnityEngine.Event.current;
-				var eventType = current.type;
+				UnityEngine.Event current = UnityEngine.Event.current;
+				EventType eventType = current.type;
 				bool isDraggingEvent = eventType == EventType.DragUpdated;
 				bool isDropEvent = eventType == EventType.DragPerform;
 				UnityEditor.DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
 
 				if (isDraggingEvent || isDropEvent) {
-					var mouseOverWindow = EditorWindow.mouseOverWindow;
+					EditorWindow mouseOverWindow = EditorWindow.mouseOverWindow;
 					if (mouseOverWindow != null) {
 
 						// One, existing, valid SkeletonDataAsset
-						var references = UnityEditor.DragAndDrop.objectReferences;
+						Object[] references = UnityEditor.DragAndDrop.objectReferences;
 						if (references.Length == 1) {
-							var skeletonDataAsset = references[0] as SkeletonDataAsset;
+							SkeletonDataAsset skeletonDataAsset = references[0] as SkeletonDataAsset;
 							if (skeletonDataAsset != null && skeletonDataAsset.GetSkeletonData(true) != null) {
 
 								// Allow drag-and-dropping anywhere in the Hierarchy Window.
@@ -496,12 +510,12 @@ namespace Spine.Unity.Editor {
 								const string GenericDataTargetID = "target";
 								if (HierarchyWindow.Equals(mouseOverWindow.GetType().ToString(), System.StringComparison.Ordinal)) {
 									if (isDraggingEvent) {
-										var mouseOverTarget = UnityEditor.EditorUtility.InstanceIDToObject(instanceId);
+										UnityEngine.Object mouseOverTarget = UnityEditor.EditorUtility.InstanceIDToObject(instanceId);
 										if (mouseOverTarget)
 											DragAndDrop.SetGenericData(GenericDataTargetID, mouseOverTarget);
 										// Note: do not call current.Use(), otherwise we get the wrong drop-target parent.
 									} else if (isDropEvent) {
-										var parentGameObject = DragAndDrop.GetGenericData(GenericDataTargetID) as UnityEngine.GameObject;
+										GameObject parentGameObject = DragAndDrop.GetGenericData(GenericDataTargetID) as UnityEngine.GameObject;
 										Transform parent = parentGameObject != null ? parentGameObject.transform : null;
 										// when dragging into empty space in hierarchy below last node, last node would be parent.
 										if (IsLastNodeInHierarchy(parent))
@@ -528,11 +542,21 @@ namespace Spine.Unity.Editor {
 					node = node.parent;
 				}
 
-				var rootNodes = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+				GameObject[] rootNodes = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
 				bool isLastNode = (rootNodes.Length > 0 && rootNodes[rootNodes.Length - 1].transform == node);
 				return isLastNode;
 			}
 #endif
+		}
+	}
+
+	public class SpineAssetModificationProcessor : UnityEditor.AssetModificationProcessor {
+		static void OnWillCreateAsset (string assetName) {
+			// Note: This method seems to be called from the main thread,
+			// not from worker threads when Project Settings - Editor - Parallel Import is enabled.
+			int endIndex = assetName.LastIndexOf(".meta");
+			string assetPath = endIndex < 0 ? assetName : assetName.Substring(0, endIndex);
+			SpineEditorUtilities.OnTextureImportedFirstTime(assetPath);
 		}
 	}
 
@@ -552,6 +576,56 @@ namespace Spine.Unity.Editor {
 				}
 			}
 			return paths;
+		}
+	}
+
+	public class AnimationWindowPreview {
+		static System.Type animationWindowType;
+		public static System.Type AnimationWindowType {
+			get {
+				if (animationWindowType == null)
+					animationWindowType = System.Type.GetType("UnityEditor.AnimationWindow,UnityEditor");
+				return animationWindowType;
+			}
+		}
+
+		public static UnityEngine.Object GetOpenAnimationWindow () {
+			UnityEngine.Object[] openAnimationWindows = Resources.FindObjectsOfTypeAll(AnimationWindowType);
+			return openAnimationWindows.Length == 0 ? null : openAnimationWindows[0];
+		}
+
+		public static AnimationClip GetAnimationClip (UnityEngine.Object animationWindow) {
+			if (animationWindow == null)
+				return null;
+
+			const BindingFlags bindingFlagsInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+			FieldInfo animEditorField = AnimationWindowType.GetField("m_AnimEditor", bindingFlagsInstance);
+
+			PropertyInfo selectionProperty = animEditorField.FieldType.GetProperty("selection", bindingFlagsInstance);
+			object animEditor = animEditorField.GetValue(animationWindow);
+			if (animEditor == null) return null;
+			object selection = selectionProperty.GetValue(animEditor, null);
+			if (selection == null) return null;
+
+			PropertyInfo animationClipProperty = selection.GetType().GetProperty("animationClip");
+			return animationClipProperty.GetValue(selection, null) as AnimationClip;
+		}
+
+		public static float GetAnimationTime (UnityEngine.Object animationWindow) {
+			if (animationWindow == null)
+				return 0.0f;
+
+			const BindingFlags bindingFlagsInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+			FieldInfo animEditorField = AnimationWindowType.GetField("m_AnimEditor", bindingFlagsInstance);
+			object animEditor = animEditorField.GetValue(animationWindow);
+
+			System.Type animEditorFieldType = animEditorField.FieldType;
+			PropertyInfo stateProperty = animEditorFieldType.GetProperty("state", bindingFlagsInstance);
+			System.Type animWindowStateType = stateProperty.PropertyType;
+			PropertyInfo timeProperty = animWindowStateType.GetProperty("currentTime", bindingFlagsInstance);
+
+			object state = stateProperty.GetValue(animEditor, null);
+			return (float)timeProperty.GetValue(state, null);
 		}
 	}
 }

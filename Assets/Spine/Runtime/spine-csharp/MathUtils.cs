@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -35,6 +35,7 @@ namespace Spine {
 	public static class MathUtils {
 		public const float PI = 3.1415927f;
 		public const float PI2 = PI * 2;
+		public const float InvPI2 = 1 / PI2;
 		public const float RadDeg = 180f / PI;
 		public const float DegRad = PI / 180;
 
@@ -77,6 +78,10 @@ namespace Spine {
 			return sin[(int)((degrees + 90) * DegToIndex) & SIN_MASK];
 		}
 
+		static public float Atan2Deg (float y, float x) {
+			return Atan2(y, x) * RadDeg;
+		}
+
 		/// <summary>Returns atan2 in radians, faster but less accurate than Math.Atan2. Average error of 0.00231 radians (0.1323
 		/// degrees), largest error of 0.00488 radians (0.2796 degrees).</summary>
 		static public float Atan2 (float y, float x) {
@@ -114,6 +119,12 @@ namespace Spine {
 		static public float CosDeg (float degrees) {
 			return (float)Math.Cos(degrees * DegRad);
 		}
+
+
+		static public float Atan2Deg (float y, float x) {
+			return (float)Math.Atan2(y, x) * RadDeg;
+		}
+
 
 		/// <summary>Returns the atan2 using Math.Atan2.</summary>
 		static public float Atan2 (float y, float x) {

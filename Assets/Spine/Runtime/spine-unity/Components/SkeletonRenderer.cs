@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -43,11 +43,19 @@
 #define CONFIGURABLE_ENTER_PLAY_MODE
 #endif
 
+#if UNITY_2020_1_OR_NEWER
+#define REVERT_HAS_OVERLOADS
+#endif
+
 #define SPINE_OPTIONAL_RENDEROVERRIDE
 #define SPINE_OPTIONAL_MATERIALOVERRIDE
+#define SPINE_OPTIONAL_ON_DEMAND_LOADING
 
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+#endif
 
 namespace Spine.Unity {
 	/// <summary>Base class of animated Spine skeleton components. This component manages and renders a skeleton.</summary>
@@ -95,12 +103,16 @@ namespace Spine.Unity {
 			if (dontSaveInEditor) {
 #if NEW_PREFAB_SYSTEM
 				if (UnityEditor.PrefabUtility.IsPartOfAnyPrefab(meshFilter)) {
-					var instanceRoot = UnityEditor.PrefabUtility.GetOutermostPrefabInstanceRoot(meshFilter);
+					GameObject instanceRoot = UnityEditor.PrefabUtility.GetOutermostPrefabInstanceRoot(meshFilter);
 					if (instanceRoot != null) {
-						var objectOverrides = UnityEditor.PrefabUtility.GetObjectOverrides(instanceRoot);
-						foreach (UnityEditor.SceneManagement.ObjectOverride objectOverride in objectOverrides) {
+						List<ObjectOverride> objectOverrides = UnityEditor.PrefabUtility.GetObjectOverrides(instanceRoot);
+						foreach (ObjectOverride objectOverride in objectOverrides) {
 							if (objectOverride.instanceObject == meshFilter) {
+#if REVERT_HAS_OVERLOADS
+								objectOverride.Revert(UnityEditor.InteractionMode.AutomatedAction);
+#else
 								objectOverride.Revert();
+#endif
 								break;
 							}
 						}
@@ -227,6 +239,7 @@ namespace Spine.Unity {
 					Initialize(false);
 					if (meshRenderer)
 						meshRenderer.enabled = false;
+					updateMode = UpdateMode.FullUpdate;
 				}
 			}
 			remove {
@@ -258,6 +271,11 @@ namespace Spine.Unity {
 		[System.NonSerialized] readonly SkeletonRendererInstruction currentInstructions = new SkeletonRendererInstruction();
 		readonly MeshGenerator meshGenerator = new MeshGenerator();
 		[System.NonSerialized] readonly MeshRendererBuffers rendererBuffers = new MeshRendererBuffers();
+
+		/// <summary>Returns the <see cref="SkeletonClipping"/> used by this renderer for use with e.g.
+		/// <see cref="Skeleton.GetBounds(out float, out float, out float, out float, ref float[], SkeletonClipping)"/>
+		/// </summary>
+		public SkeletonClipping SkeletonClipping { get { return meshGenerator.SkeletonClipping; } }
 		#endregion
 
 		#region Cached component references
@@ -273,6 +291,75 @@ namespace Spine.Unity {
 				Initialize(false);
 				return skeleton;
 			}
+		}
+		#endregion
+
+		#region Physics
+		/// <seealso cref="PhysicsPositionInheritanceFactor"/>
+		[SerializeField] protected Vector2 physicsPositionInheritanceFactor = Vector2.one;
+		/// <seealso cref="PhysicsRotationInheritanceFactor"/>
+		[SerializeField] protected float physicsRotationInheritanceFactor = 1.0f;
+		/// <summary>Reference transform relative to which physics movement will be calculated, or null to use world location.</summary>
+		[SerializeField] protected Transform physicsMovementRelativeTo = null;
+
+		/// <summary>Used for applying Transform translation to skeleton PhysicsConstraints.</summary>
+		protected Vector3 lastPosition;
+		/// <summary>Used for applying Transform rotation to skeleton PhysicsConstraints.</summary>
+		protected float lastRotation;
+
+		/// <summary>When set to non-zero, Transform position movement in X and Y direction
+		/// is applied to skeleton PhysicsConstraints, multiplied by this scale factor.
+		/// Typical values are <c>Vector2.one</c> to apply XY movement 1:1,
+		/// <c>Vector2(2f, 2f)</c> to apply movement with double intensity,
+		/// <c>Vector2(1f, 0f)</c> to apply only horizontal movement, or
+		/// <c>Vector2.zero</c> to not apply any Transform position movement at all.</summary>
+		public Vector2 PhysicsPositionInheritanceFactor {
+			get {
+				return physicsPositionInheritanceFactor;
+			}
+			set {
+				if (physicsPositionInheritanceFactor == Vector2.zero && value != Vector2.zero) ResetLastPosition();
+				physicsPositionInheritanceFactor = value;
+			}
+		}
+
+		/// <summary>When set to non-zero, Transform rotation movement is applied to skeleton PhysicsConstraints,
+		/// multiplied by this scale factor. Typical values are <c>1</c> to apply movement 1:1,
+		/// <c>2</c> to apply movement with double intensity, or
+		/// <c>0</c> to not apply any Transform rotation movement at all.</summary>
+		public float PhysicsRotationInheritanceFactor {
+			get {
+				return physicsRotationInheritanceFactor;
+			}
+			set {
+				if (physicsRotationInheritanceFactor == 0f && value != 0f) ResetLastRotation();
+				physicsRotationInheritanceFactor = value;
+			}
+		}
+
+		/// <summary>Reference transform relative to which physics movement will be calculated, or null to use world location.</summary>
+		public Transform PhysicsMovementRelativeTo {
+			get {
+				return physicsMovementRelativeTo;
+			}
+			set {
+				physicsMovementRelativeTo = value;
+				if (physicsPositionInheritanceFactor != Vector2.zero) ResetLastPosition();
+				if (physicsRotationInheritanceFactor != 0f) ResetLastRotation();
+			}
+		}
+
+		public void ResetLastPosition () {
+			lastPosition = GetPhysicsTransformPosition();
+		}
+
+		public void ResetLastRotation () {
+			lastRotation = GetPhysicsTransformRotation();
+		}
+
+		public void ResetLastPositionAndRotation () {
+			lastPosition = GetPhysicsTransformPosition();
+			lastRotation = GetPhysicsTransformRotation();
 		}
 		#endregion
 
@@ -295,7 +382,7 @@ namespace Spine.Unity {
 		/// <summary>Add and prepare a Spine component that derives from SkeletonRenderer to a GameObject at runtime.</summary>
 		/// <typeparam name="T">T should be SkeletonRenderer or any of its derived classes.</typeparam>
 		public static T AddSpineComponent<T> (GameObject gameObject, SkeletonDataAsset skeletonDataAsset, bool quiet = false) where T : SkeletonRenderer {
-			var c = gameObject.AddComponent<T>();
+			T c = gameObject.AddComponent<T>();
 			if (skeletonDataAsset != null) {
 				c.skeletonDataAsset = skeletonDataAsset;
 				c.Initialize(false, quiet);
@@ -319,7 +406,8 @@ namespace Spine.Unity {
 
 		public virtual void Awake () {
 			Initialize(false);
-			updateMode = updateWhenInvisible;
+			if (generateMeshOverride == null || !disableRenderingOnOverride)
+				updateMode = updateWhenInvisible;
 		}
 
 #if UNITY_EDITOR && CONFIGURABLE_ENTER_PLAY_MODE
@@ -348,7 +436,7 @@ namespace Spine.Unity {
 		/// <summary>
 		/// Clears the previously generated mesh and resets the skeleton's pose.</summary>
 		public virtual void ClearState () {
-			var meshFilter = GetComponent<MeshFilter>();
+			MeshFilter meshFilter = GetComponent<MeshFilter>();
 			if (meshFilter != null) meshFilter.sharedMesh = null;
 			currentInstructions.Clear();
 			if (skeleton != null) skeleton.SetToSetupPose();
@@ -385,7 +473,7 @@ namespace Spine.Unity {
 			if (skeletonDataAsset == null)
 				return;
 
-			SkeletonData skeletonData = skeletonDataAsset.GetSkeletonData(false);
+			SkeletonData skeletonData = skeletonDataAsset.GetSkeletonData(quiet);
 			if (skeletonData == null) return;
 			valid = true;
 
@@ -401,6 +489,8 @@ namespace Spine.Unity {
 				ScaleY = initialFlipY ? -1 : 1
 			};
 
+			ResetLastPositionAndRotation();
+
 			if (!string.IsNullOrEmpty(initialSkinName) && !string.Equals(initialSkinName, "default", System.StringComparison.Ordinal))
 				skeleton.SetSkin(initialSkinName);
 
@@ -411,7 +501,7 @@ namespace Spine.Unity {
 			// Generate mesh once, required to update mesh bounds for visibility
 			UpdateMode updateModeSaved = updateMode;
 			updateMode = UpdateMode.FullUpdate;
-			skeleton.UpdateWorldTransform();
+			UpdateWorldTransform(Skeleton.Physics.Update);
 			LateUpdate();
 			updateMode = updateModeSaved;
 
@@ -427,6 +517,58 @@ namespace Spine.Unity {
 #endif
 		}
 
+		public virtual void ApplyTransformMovementToPhysics () {
+			if (Application.isPlaying) {
+				if (physicsPositionInheritanceFactor != Vector2.zero) {
+					Vector3 position = GetPhysicsTransformPosition();
+					Vector3 positionDelta = position - lastPosition;
+
+					positionDelta = transform.InverseTransformVector(positionDelta);
+					if (physicsMovementRelativeTo != null) {
+						positionDelta = physicsMovementRelativeTo.TransformVector(positionDelta);
+					}
+					positionDelta.x *= physicsPositionInheritanceFactor.x;
+					positionDelta.y *= physicsPositionInheritanceFactor.y;
+
+					skeleton.PhysicsTranslate(positionDelta.x, positionDelta.y);
+					lastPosition = position;
+				}
+				if (physicsRotationInheritanceFactor != 0f) {
+					float rotation = GetPhysicsTransformRotation();
+					skeleton.PhysicsRotate(0, 0, physicsRotationInheritanceFactor * (rotation - lastRotation));
+					lastRotation = rotation;
+				}
+			}
+		}
+
+		protected Vector3 GetPhysicsTransformPosition () {
+			if (physicsMovementRelativeTo == null) {
+				return transform.position;
+			} else {
+				if (physicsMovementRelativeTo == transform.parent)
+					return transform.localPosition;
+				else
+					return physicsMovementRelativeTo.InverseTransformPoint(transform.position);
+			}
+		}
+
+		protected float GetPhysicsTransformRotation () {
+			if (physicsMovementRelativeTo == null) {
+				return this.transform.rotation.eulerAngles.z;
+			} else {
+				if (physicsMovementRelativeTo == this.transform.parent)
+					return this.transform.localRotation.eulerAngles.z;
+				else {
+					Quaternion relative = Quaternion.Inverse(physicsMovementRelativeTo.rotation) * this.transform.rotation;
+					return relative.eulerAngles.z;
+				}
+			}
+		}
+
+		protected virtual void UpdateWorldTransform (Skeleton.Physics physics) {
+			skeleton.UpdateWorldTransform(physics);
+		}
+
 		/// <summary>
 		/// Generates a new UnityEngine.Mesh from the internal Skeleton.</summary>
 		public virtual void LateUpdate () {
@@ -434,7 +576,7 @@ namespace Spine.Unity {
 
 #if UNITY_EDITOR && NEW_PREFAB_SYSTEM
 			// Don't store mesh or material at the prefab, otherwise it will permanently reload
-			var prefabType = UnityEditor.PrefabUtility.GetPrefabAssetType(this);
+			UnityEditor.PrefabAssetType prefabType = UnityEditor.PrefabUtility.GetPrefabAssetType(this);
 			if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this) &&
 				(prefabType == UnityEditor.PrefabAssetType.Regular || prefabType == UnityEditor.PrefabAssetType.Variant)) {
 				return;
@@ -455,9 +597,9 @@ namespace Spine.Unity {
 			const bool doMeshOverride = false;
 			if (!meshRenderer.enabled) return;
 #endif
-			var currentInstructions = this.currentInstructions;
-			var workingSubmeshInstructions = currentInstructions.submeshInstructions;
-			var currentSmartMesh = rendererBuffers.GetNextMesh(); // Double-buffer for performance.
+			SkeletonRendererInstruction currentInstructions = this.currentInstructions;
+			ExposedList<SubmeshInstruction> workingSubmeshInstructions = currentInstructions.submeshInstructions;
+			MeshRendererBuffers.SmartMesh currentSmartMesh = rendererBuffers.GetNextMesh(); // Double-buffer for performance.
 
 			bool updateTriangles;
 
@@ -526,7 +668,7 @@ namespace Spine.Unity {
 			if (OnPostProcessVertices != null) OnPostProcessVertices.Invoke(this.meshGenerator.Buffers);
 
 			// STEP 3. Move the mesh data into a UnityEngine.Mesh ===========================================================================
-			var currentMesh = currentSmartMesh.mesh;
+			Mesh currentMesh = currentSmartMesh.mesh;
 			meshGenerator.FillVertexData(currentMesh);
 
 			rendererBuffers.UpdateSharedMaterials(workingSubmeshInstructions);
@@ -553,6 +695,10 @@ namespace Spine.Unity {
 			if (meshRenderer != null) {
 				AssignSpriteMaskMaterials();
 			}
+#endif
+#if SPINE_OPTIONAL_ON_DEMAND_LOADING
+			if (Application.isPlaying)
+				HandleOnDemandLoading();
 #endif
 
 #if PER_MATERIAL_PROPERTY_BLOCKS
@@ -595,15 +741,15 @@ namespace Spine.Unity {
 			if (clearExistingSeparators)
 				separatorSlots.Clear();
 
-			var slots = skeleton.Slots;
-			foreach (var slot in slots) {
+			ExposedList<Slot> slots = skeleton.Slots;
+			foreach (Slot slot in slots) {
 				if (slotNamePredicate.Invoke(slot.Data.Name))
 					separatorSlots.Add(slot);
 			}
 
 			if (updateStringArray) {
-				var detectedSeparatorNames = new List<string>();
-				foreach (var slot in skeleton.Slots) {
+				List<string> detectedSeparatorNames = new List<string>();
+				foreach (Slot slot in skeleton.Slots) {
 					string slotName = slot.Data.Name;
 					if (slotNamePredicate.Invoke(slotName))
 						detectedSeparatorNames.Add(slotName);
@@ -625,7 +771,7 @@ namespace Spine.Unity {
 
 			separatorSlots.Clear();
 			for (int i = 0, n = separatorSlotNames.Length; i < n; i++) {
-				var slot = skeleton.FindSlot(separatorSlotNames[i]);
+				Slot slot = skeleton.FindSlot(separatorSlotNames[i]);
 				if (slot != null) {
 					separatorSlots.Add(slot);
 				}
@@ -682,11 +828,15 @@ namespace Spine.Unity {
 				return false;
 			}
 #endif
-
-			var originalMaterials = maskMaterials.materialsMaskDisabled;
+			Material[] originalMaterials = maskMaterials.materialsMaskDisabled;
 			materialsToFill = new Material[originalMaterials.Length];
 			for (int i = 0; i < originalMaterials.Length; i++) {
-				Material newMaterial = new Material(originalMaterials[i]);
+				Material originalMaterial = originalMaterials[i];
+				if (originalMaterial == null) {
+					materialsToFill[i] = null;
+					continue;
+				}
+				Material newMaterial = new Material(originalMaterial);
 				newMaterial.SetFloat(STENCIL_COMP_PARAM_ID, (int)maskFunction);
 				materialsToFill[i] = newMaterial;
 			}
@@ -703,12 +853,12 @@ namespace Spine.Unity {
 
 		private void FixAllProjectMaterialsStencilCompParameters () {
 			string[] materialGUIDS = UnityEditor.AssetDatabase.FindAssets("t:material");
-			foreach (var guid in materialGUIDS) {
+			foreach (string guid in materialGUIDS) {
 				string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
 				if (!string.IsNullOrEmpty(path)) {
-					var mat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(path);
-					if (mat.HasProperty(STENCIL_COMP_PARAM_ID) && mat.GetFloat(STENCIL_COMP_PARAM_ID) == 0) {
-						mat.SetFloat(STENCIL_COMP_PARAM_ID, (int)STENCIL_COMP_MASKINTERACTION_NONE);
+					Material material = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(path);
+					if (material.HasProperty(STENCIL_COMP_PARAM_ID) && material.GetFloat(STENCIL_COMP_PARAM_ID) == 0) {
+						material.SetFloat(STENCIL_COMP_PARAM_ID, (int)STENCIL_COMP_MASKINTERACTION_NONE);
 					}
 				}
 			}
@@ -720,9 +870,9 @@ namespace Spine.Unity {
 			if (meshRenderer == null)
 				return false;
 
-			foreach (var mat in meshRenderer.sharedMaterials) {
-				if (mat != null && mat.HasProperty(STENCIL_COMP_PARAM_ID)) {
-					float currentCompValue = mat.GetFloat(STENCIL_COMP_PARAM_ID);
+			foreach (Material material in meshRenderer.sharedMaterials) {
+				if (material != null && material.HasProperty(STENCIL_COMP_PARAM_ID)) {
+					float currentCompValue = material.GetFloat(STENCIL_COMP_PARAM_ID);
 					if (currentCompValue == 0)
 						return true;
 				}
@@ -732,6 +882,23 @@ namespace Spine.Unity {
 #endif // UNITY_EDITOR
 
 #endif //#if BUILT_IN_SPRITE_MASK_COMPONENT
+
+#if SPINE_OPTIONAL_ON_DEMAND_LOADING
+		void HandleOnDemandLoading () {
+			foreach (AtlasAssetBase atlasAsset in skeletonDataAsset.atlasAssets) {
+				if (atlasAsset.TextureLoadingMode != AtlasAssetBase.LoadingMode.Normal) {
+					atlasAsset.BeginCustomTextureLoading();
+					for (int i = 0, count = meshRenderer.sharedMaterials.Length; i < count; ++i) {
+						Material overrideMaterial = null;
+						atlasAsset.RequireTexturesLoaded(meshRenderer.sharedMaterials[i], ref overrideMaterial);
+						if (overrideMaterial != null)
+							meshRenderer.sharedMaterials[i] = overrideMaterial;
+					}
+					atlasAsset.EndCustomTextureLoading();
+				}
+			}
+		}
+#endif
 
 #if PER_MATERIAL_PROPERTY_BLOCKS
 		private MaterialPropertyBlock reusedPropertyBlock;

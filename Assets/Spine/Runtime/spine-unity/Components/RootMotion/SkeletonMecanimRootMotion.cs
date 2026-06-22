@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -63,9 +63,9 @@ namespace Spine.Unity {
 		}
 
 		public override Vector2 GetRemainingRootMotion (int layerIndex) {
-			var pair = skeletonMecanim.Translator.GetActiveAnimationAndTime(layerIndex);
-			var animation = pair.Key;
-			var time = pair.Value;
+			KeyValuePair<Animation, float> pair = skeletonMecanim.Translator.GetActiveAnimationAndTime(layerIndex);
+			Animation animation = pair.Key;
+			float time = pair.Value;
 			if (animation == null)
 				return Vector2.zero;
 
@@ -75,9 +75,9 @@ namespace Spine.Unity {
 		}
 
 		public override RootMotionInfo GetRootMotionInfo (int layerIndex) {
-			var pair = skeletonMecanim.Translator.GetActiveAnimationAndTime(layerIndex);
-			var animation = pair.Key;
-			var time = pair.Value;
+			KeyValuePair<Animation, float> pair = skeletonMecanim.Translator.GetActiveAnimationAndTime(layerIndex);
+			Animation animation = pair.Key;
+			float time = pair.Value;
 			if (animation == null)
 				return new RootMotionInfo();
 			return GetAnimationRootMotionInfo(animation, time);
@@ -88,8 +88,8 @@ namespace Spine.Unity {
 			mecanimLayerFlags = DefaultMecanimLayerFlags;
 		}
 
-		protected override void Start () {
-			base.Start();
+		public override void Initialize () {
+			base.Initialize();
 			skeletonMecanim = GetComponent<SkeletonMecanim>();
 			if (skeletonMecanim) {
 				skeletonMecanim.Translator.OnClipApplied -= OnClipApplied;

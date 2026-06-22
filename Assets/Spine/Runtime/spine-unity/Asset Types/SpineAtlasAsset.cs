@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -78,16 +78,19 @@ namespace Spine.Unity {
 		/// atlas asset JSON file. When procedurally creating textures, each <c>Texture.name</c>
 		/// needs to be set to the atlas page texture filename without the .png extension,
 		/// e.g. 'my_skeleton' if the png filename listed in the atlas asset file is 'my_skeleton.png'.</param>
+		/// <param name="renameMaterial">If true, newly created materials will be renamed to the atlas texture page name.
+		/// If false, the materials keep the name of the <c>materialPropertySource</c> material they are copied from.</param>
 		/// <seealso cref="SpineAtlasAsset.CreateRuntimeInstance(TextAsset, Material[], bool, Func{SpineAtlasAsset, TextureLoader})"/>
 		public static SpineAtlasAsset CreateRuntimeInstance (TextAsset atlasText, Texture2D[] textures,
 			Material materialPropertySource, bool initialize,
-			Func<SpineAtlasAsset, TextureLoader> newCustomTextureLoader = null) {
+			Func<SpineAtlasAsset, TextureLoader> newCustomTextureLoader = null,
+			bool renameMaterial = false) {
 
 			// Get atlas page names.
 			string atlasString = atlasText.text;
 			atlasString = atlasString.Replace("\r", "");
 			string[] atlasLines = atlasString.Split('\n');
-			var pages = new List<string>();
+			List<string> pages = new List<string>();
 			for (int i = 0; i < atlasLines.Length - 1; i++) {
 				string line = atlasLines[i].Trim();
 				if (line.EndsWith(".png"))
@@ -95,7 +98,7 @@ namespace Spine.Unity {
 			}
 
 			// Populate Materials[] by matching texture names with page names.
-			var materials = new Material[pages.Count];
+			Material[] materials = new Material[pages.Count];
 			for (int i = 0, n = pages.Count; i < n; i++) {
 				Material mat = null;
 
@@ -106,6 +109,8 @@ namespace Spine.Unity {
 						// Match found.
 						mat = new Material(materialPropertySource);
 						mat.mainTexture = textures[j];
+						if (renameMaterial)
+							mat.name = pageName;
 						break;
 					}
 				}
@@ -263,7 +268,10 @@ namespace Spine.Unity {
 					Debug.LogError("Material is missing texture: " + other.name, other);
 					return;
 				}
-				if (other.mainTexture.name == name) {
+				string textureName = other.mainTexture.name;
+				if (textureName == name ||
+					(atlasAsset.OnDemandTextureLoader != null &&
+					textureName == atlasAsset.OnDemandTextureLoader.GetPlaceholderTextureName(name))) {
 					material = other;
 					break;
 				}

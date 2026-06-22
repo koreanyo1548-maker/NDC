@@ -1,7 +1,8 @@
 # 새 게임 전환 마이그레이션 계획
 
 > 분석 기준일: 2026-06-14  
-> 현재 상태: Mushroom Hero → 신규 게임 (스탠드얼론 전환)
+> 최종 업데이트: 2026-06-22  
+> 현재 상태: Mushroom Hero → 신규 게임 (스탠드얼론 전환) / Player Spine 교체 완료, Monster 교체 진행 중
 
 ---
 
@@ -222,15 +223,41 @@ Application.persistentDataPath/save.json 에 동일 구조 JSON 저장
 - [ ] Unity 대시보드에서 새 프로젝트 연결
 
 **2-5. 앱 기본 정보 교체** (`ProjectSettings/ProjectSettings.asset`)
-- [ ] `companyName`: "Ndolphin Connect" → 새 회사명
-- [ ] `productName`: "Mushroom Hero" → 새 게임명
-- [ ] `bundleIdentifier` (Android/iOS) 교체
+- [x] `companyName`: "Ndolphin Connect" → "NDC" ✅
+- [x] `productName`: "Mushroom Hero" → "Webtoon Hero" ✅
+- [ ] `bundleIdentifier` (Android/iOS) 교체 — 현재 `com.NdolphinConnect.MushroomHero` / `mush.room.hero`
 - [ ] 버전 설정 (1.00.000부터 시작)
 
 **2-6. IAP 상품 ID 교체**
 - [ ] 새 Google Play 개발자 계정에서 앱 등록
 - [ ] 상품 ID 등록 후 `IAPManager.cs`의 product ID 교체
 - [ ] App Store Connect 앱 등록 및 상품 ID 교체
+
+---
+
+### Phase 2-B: 비주얼 에셋 교체 (신규 - Phase 1 이후 추가)
+
+> 상세 분석: `_dev/asset-migration-analysis.md`
+
+**2B-1. Player → Shinabro MiniFantasyCharacters** ✅ 코드 완료
+
+- [x] `Assets/Layer Lab/` 삭제 (LayerLab CharacterMaker 완전 제거)
+- [x] `Assets/Downloads/Shinabro/MiniFantasyCharacters/` 에셋 추가
+- [x] `Player.cs` 수정 — Spine 애니메이션명, 무기별 분기(`GetAttackAnimation`, `GetSkillAnimation`)
+- [x] `SimpleSpineSkinAssigner.cs` 수정 (public AssignSkins, Start 추가)
+- [x] `Character_Controller.controller` 수정 (AttackSpeed 파라미터, 전체 상태 추가)
+- [ ] Player.prefab 에디터 작업 확인 (Shinabro Variant 자식 배치, scale 10,10,10)
+
+**2B-2. Monster → 2D SD Monster Pack** ⚠️ 진행 중
+
+- [x] 에셋 분석 완료 (15종 파악, 애니메이션명 불일치 파악)
+- [x] **Monster.cs 코드 수정** — `"Attack"` → `"attack"`, `"Walk"` → `"walk"`, `"Die"` → `"die"`
+- [x] 기존 몬스터 ↔ SD Pack 매핑표 확정 (`_dev/monster-mapping.md`)
+- [x] walk 없는 몬스터(Bat, Beholder) 처리 — idle 폴백 로직
+- [x] 보스 `Attack2` 처리 완료 (단일 보스는 attack 재사용, 이중 보스는 smash/bow 분기)
+- [ ] 프리팹 에디터 작업 (매핑 확정 후 1종씩 교체)
+- [ ] **[버그] Slime2 풀 재활용 시 die 애니메이션으로 시작** — 임시 조치(`animator.Play("idle")` 추가) 완료, 검증 필요
+  - 다음 세션: Init/OnEnable/Clear 시점에 Debug.Log 심고 플레이 확인
 
 ---
 

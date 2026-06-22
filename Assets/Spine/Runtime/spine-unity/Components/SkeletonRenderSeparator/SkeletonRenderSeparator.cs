@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -30,6 +30,11 @@
 #if UNITY_2018_3 || UNITY_2019 || UNITY_2018_3_OR_NEWER
 #define NEW_PREFAB_SYSTEM
 #endif
+
+#if UNITY_2018_1_OR_NEWER
+#define HAS_PROPERTY_BLOCK_QUERY
+#endif
+
 #define SPINE_OPTIONAL_RENDEROVERRIDE
 
 using System.Collections.Generic;
@@ -68,6 +73,7 @@ namespace Spine.Unity {
 		[Tooltip("Copies MeshRenderer flags into each parts renderer")]
 		public bool copyMeshRendererFlags = true;
 		public List<Spine.Unity.SkeletonPartsRenderer> partsRenderers = new List<SkeletonPartsRenderer>();
+		[System.NonSerialized] public bool isVisible = true;
 
 #if UNITY_EDITOR
 		void Reset () {
@@ -98,7 +104,7 @@ namespace Spine.Unity {
 				return null;
 			}
 
-			var srs = skeletonRenderer.gameObject.AddComponent<SkeletonRenderSeparator>();
+			SkeletonRenderSeparator srs = skeletonRenderer.gameObject.AddComponent<SkeletonRenderSeparator>();
 			srs.skeletonRenderer = skeletonRenderer;
 
 			skeletonRenderer.Initialize(false);
@@ -106,12 +112,12 @@ namespace Spine.Unity {
 			if (addMinimumPartsRenderers)
 				count = extraPartsRenderers + skeletonRenderer.separatorSlots.Count + 1;
 
-			var skeletonRendererTransform = skeletonRenderer.transform;
-			var componentRenderers = srs.partsRenderers;
+			Transform skeletonRendererTransform = skeletonRenderer.transform;
+			List<SkeletonPartsRenderer> componentRenderers = srs.partsRenderers;
 
 			for (int i = 0; i < count; i++) {
-				var spr = SkeletonPartsRenderer.NewPartsRendererGameObject(skeletonRendererTransform, i.ToString());
-				var mr = spr.MeshRenderer;
+				SkeletonPartsRenderer spr = SkeletonPartsRenderer.NewPartsRendererGameObject(skeletonRendererTransform, i.ToString());
+				MeshRenderer mr = spr.MeshRenderer;
 				mr.sortingLayerID = sortingLayerID;
 				mr.sortingOrder = baseSortingOrder + (i * sortingOrderIncrement);
 				componentRenderers.Add(spr);
@@ -124,7 +130,7 @@ namespace Spine.Unity {
 			if (!Application.isPlaying) {
 				skeletonRenderer.enabled = false;
 				skeletonRenderer.enabled = true;
-				skeletonRenderer.LateUpdate();
+				skeletonRenderer.LateUpdateMesh();
 			}
 #endif
 
@@ -136,8 +142,8 @@ namespace Spine.Unity {
 			int sortingLayerID = 0;
 			int sortingOrder = 0;
 			if (partsRenderers.Count > 0) {
-				var previous = partsRenderers[partsRenderers.Count - 1];
-				var previousMeshRenderer = previous.MeshRenderer;
+				SkeletonPartsRenderer previous = partsRenderers[partsRenderers.Count - 1];
+				MeshRenderer previousMeshRenderer = previous.MeshRenderer;
 				sortingLayerID = previousMeshRenderer.sortingLayerID;
 				sortingOrder = previousMeshRenderer.sortingOrder + sortingOrderIncrement;
 			}
@@ -145,10 +151,10 @@ namespace Spine.Unity {
 			if (string.IsNullOrEmpty(name))
 				name = partsRenderers.Count.ToString();
 
-			var spr = SkeletonPartsRenderer.NewPartsRendererGameObject(skeletonRenderer.transform, name);
+			SkeletonPartsRenderer spr = SkeletonPartsRenderer.NewPartsRendererGameObject(skeletonRenderer.transform, name);
 			partsRenderers.Add(spr);
 
-			var mr = spr.MeshRenderer;
+			MeshRenderer mr = spr.MeshRenderer;
 			mr.sortingLayerID = sortingLayerID;
 			mr.sortingOrder = sortingOrder;
 
@@ -187,6 +193,13 @@ namespace Spine.Unity {
 					mr.probeAnchor = probeAnchor;
 				}
 			}
+
+			if (skeletonRenderer.updateWhenInvisible != UpdateMode.FullUpdate)
+				skeletonRenderer.LateUpdateMesh();
+		}
+
+		public void Update () {
+			UpdateVisibility();
 		}
 
 		public void OnDisable () {
@@ -194,12 +207,26 @@ namespace Spine.Unity {
 #if SPINE_OPTIONAL_RENDEROVERRIDE
 			skeletonRenderer.GenerateMeshOverride -= HandleRender;
 #endif
+			skeletonRenderer.LateUpdateMesh();
+			ClearPartsRendererMeshes();
+		}
 
-			skeletonRenderer.LateUpdate();
+		public void UpdateVisibility () {
+			if (skeletonRenderer == null) return;
+			foreach (SkeletonPartsRenderer partsRenderer in partsRenderers) {
+				if (partsRenderer == null) continue;
 
-			foreach (var partsRenderer in partsRenderers) {
-				if (partsRenderer != null)
-					partsRenderer.ClearMesh();
+				if (partsRenderer.MeshRenderer.isVisible) {
+					if (!isVisible) {
+						skeletonRenderer.OnBecameVisible();
+						isVisible = true;
+					}
+					return;
+				}
+			}
+			if (isVisible) {
+				isVisible = false;
+				skeletonRenderer.OnBecameInvisible();
 			}
 		}
 
@@ -209,10 +236,15 @@ namespace Spine.Unity {
 			int rendererCount = partsRenderers.Count;
 			if (rendererCount <= 0) return;
 
-			if (copyPropertyBlock)
+#if HAS_PROPERTY_BLOCK_QUERY
+			bool assignPropertyBlock = this.copyPropertyBlock && mainMeshRenderer.HasPropertyBlock();
+#else
+			bool assignPropertyBlock = this.copyPropertyBlock;
+#endif
+			if (assignPropertyBlock)
 				mainMeshRenderer.GetPropertyBlock(copiedBlock);
 
-			var settings = new MeshGenerator.Settings {
+			MeshGenerator.Settings settings = new MeshGenerator.Settings {
 				addNormals = skeletonRenderer.addNormals,
 				calculateTangents = skeletonRenderer.calculateTangents,
 				immutableTriangles = false, // parts cannot do immutable triangles.
@@ -222,23 +254,22 @@ namespace Spine.Unity {
 				zSpacing = skeletonRenderer.zSpacing
 			};
 
-			var submeshInstructions = instruction.submeshInstructions;
-			var submeshInstructionsItems = submeshInstructions.Items;
+			ExposedList<SubmeshInstruction> submeshInstructions = instruction.submeshInstructions;
+			SubmeshInstruction[] submeshInstructionsItems = submeshInstructions.Items;
 			int lastSubmeshInstruction = submeshInstructions.Count - 1;
 
 			int rendererIndex = 0;
-			var currentRenderer = partsRenderers[rendererIndex];
+			SkeletonPartsRenderer currentRenderer = partsRenderers[rendererIndex];
 			for (int si = 0, start = 0; si <= lastSubmeshInstruction; si++) {
 				if (currentRenderer == null)
 					continue;
 				if (submeshInstructionsItems[si].forceSeparate || si == lastSubmeshInstruction) {
 					// Apply properties
-					var meshGenerator = currentRenderer.MeshGenerator;
+					MeshGenerator meshGenerator = currentRenderer.MeshGenerator;
 					meshGenerator.settings = settings;
 
-					if (copyPropertyBlock)
+					if (assignPropertyBlock)
 						currentRenderer.SetPropertyBlock(copiedBlock);
-
 					// Render
 					currentRenderer.RenderParts(instruction.submeshInstructions, start, si + 1);
 
@@ -262,8 +293,13 @@ namespace Spine.Unity {
 				if (currentRenderer != null)
 					partsRenderers[rendererIndex].ClearMesh();
 			}
-
 		}
 
+		protected void ClearPartsRendererMeshes () {
+			foreach (SkeletonPartsRenderer partsRenderer in partsRenderers) {
+				if (partsRenderer != null)
+					partsRenderer.ClearMesh();
+			}
+		}
 	}
 }

@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -45,7 +45,7 @@ namespace Spine {
 		internal readonly ExposedList<ConstraintData> constraints = new ExposedList<ConstraintData>();
 
 		public string Name { get { return name; } }
-		///<summary>Returns all attachments contained in this skin.</summary>
+		/// <summary>Returns all attachments contained in this skin.</summary>
 		public ICollection<SkinEntry> Attachments { get { return attachments.Values; } }
 		public ExposedList<BoneData> Bones { get { return bones; } }
 		public ExposedList<ConstraintData> Constraints { get { return constraints; } }
@@ -62,7 +62,7 @@ namespace Spine {
 			attachments[new SkinKey(slotIndex, name)] = new SkinEntry(slotIndex, name, attachment);
 		}
 
-		///<summary>Adds all attachments, bones, and constraints from the specified skin to this skin.</summary>
+		/// <summary>Adds all attachments, bones, and constraints from the specified skin to this skin.</summary>
 		public void AddSkin (Skin skin) {
 			foreach (BoneData data in skin.bones)
 				if (!bones.Contains(data)) bones.Add(data);
@@ -70,13 +70,13 @@ namespace Spine {
 			foreach (ConstraintData data in skin.constraints)
 				if (!constraints.Contains(data)) constraints.Add(data);
 
-			foreach (var item in skin.attachments) {
+			foreach (KeyValuePair<SkinKey, SkinEntry> item in skin.attachments) {
 				SkinEntry entry = item.Value;
 				SetAttachment(entry.slotIndex, entry.name, entry.attachment);
 			}
 		}
 
-		///<summary>Adds all attachments from the specified skin to this skin. Attachments are deep copied.</summary>
+		/// <summary>Adds all attachments from the specified skin to this skin. Attachments are deep copied.</summary>
 		public void CopySkin (Skin skin) {
 			foreach (BoneData data in skin.bones)
 				if (!bones.Contains(data)) bones.Add(data);
@@ -84,7 +84,7 @@ namespace Spine {
 			foreach (ConstraintData data in skin.constraints)
 				if (!constraints.Contains(data)) constraints.Add(data);
 
-			foreach (var item in skin.attachments) {
+			foreach (KeyValuePair<SkinKey, SkinEntry> item in skin.attachments) {
 				SkinEntry entry = item.Value;
 				if (entry.attachment is MeshAttachment) {
 					SetAttachment(entry.slotIndex, entry.name,
@@ -108,17 +108,17 @@ namespace Spine {
 		}
 
 		/// <summary>Returns all attachments in this skin for the specified slot index.</summary>
-		/// <param name="slotIndex">The target slotIndex. To find the slot index, use <see cref="Spine.SkeletonData.FindSlot"/> and <see cref="Spine.SlotData.Index"/>.
+		/// <param name="slotIndex">The target slotIndex. To find the slot index, use <see cref="Spine.SkeletonData.FindSlot"/> and <see cref="Spine.SlotData.Index"/></param>.
 		public void GetAttachments (int slotIndex, List<SkinEntry> attachments) {
 			if (slotIndex < 0) throw new ArgumentException("slotIndex must be >= 0.");
 			if (attachments == null) throw new ArgumentNullException("attachments", "attachments cannot be null.");
-			foreach (var item in this.attachments) {
+			foreach (KeyValuePair<SkinKey, SkinEntry> item in this.attachments) {
 				SkinEntry entry = item.Value;
 				if (entry.slotIndex == slotIndex) attachments.Add(entry);
 			}
 		}
 
-		///<summary>Clears all attachments, bones, and constraints.</summary>
+		/// <summary>Clears all attachments, bones, and constraints.</summary>
 		public void Clear () {
 			attachments.Clear();
 			bones.Clear();
@@ -132,7 +132,7 @@ namespace Spine {
 		/// <summary>Attach all attachments from this skin if the corresponding attachment from the old skin is currently attached.</summary>
 		internal void AttachAll (Skeleton skeleton, Skin oldSkin) {
 			Slot[] slots = skeleton.slots.Items;
-			foreach (var item in oldSkin.attachments) {
+			foreach (KeyValuePair<SkinKey, SkinEntry> item in oldSkin.attachments) {
 				SkinEntry entry = item.Value;
 				int slotIndex = entry.slotIndex;
 				Slot slot = slots[slotIndex];

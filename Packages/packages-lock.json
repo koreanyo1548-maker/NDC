@@ -1,10 +1,13 @@
 {
   "dependencies": {
     "com.coffee.ui-particle": {
-      "version": "4.1.7",
+      "version": "5.0.0-preview.17",
       "depth": 0,
       "source": "registry",
-      "dependencies": {},
+      "dependencies": {
+        "com.unity.modules.particlesystem": "1.0.0",
+        "com.unity.ugui": "1.0.0"
+      },
       "url": "https://package.openupm.com"
     },
     "com.coffee.unmask": {
@@ -15,11 +18,11 @@
       "hash": "33356da2c43fa28397192baee70910c978e3169f"
     },
     "com.unity.2d.animation": {
-      "version": "9.2.0",
+      "version": "9.2.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "8.1.0",
+        "com.unity.2d.common": "8.1.1",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.collections": "1.1.0",
         "com.unity.modules.animation": "1.0.0",
@@ -28,7 +31,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "8.1.0",
+      "version": "8.1.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {

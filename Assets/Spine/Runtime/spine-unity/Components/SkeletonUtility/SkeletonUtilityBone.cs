@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -110,7 +110,7 @@ namespace Spine.Unity {
 				return;
 			}
 
-			var skeleton = hierarchy.Skeleton;
+			Skeleton skeleton = hierarchy.Skeleton;
 
 			if (bone == null) {
 				if (string.IsNullOrEmpty(boneName)) return;
@@ -124,16 +124,17 @@ namespace Spine.Unity {
 
 			float positionScale = hierarchy.PositionScale;
 
-			var thisTransform = cachedTransform;
+			Transform thisTransform = cachedTransform;
 			float skeletonFlipRotation = Mathf.Sign(skeleton.ScaleX * skeleton.ScaleY);
 			if (mode == Mode.Follow) {
 				switch (phase) {
 				case UpdatePhase.Local:
 					if (position)
-						thisTransform.localPosition = new Vector3(bone.X * positionScale, bone.Y * positionScale, 0);
+						thisTransform.localPosition = new Vector3(bone.X * positionScale, bone.Y * positionScale,
+							zPosition ? 0 : thisTransform.localPosition.z);
 
 					if (rotation) {
-						if (bone.Data.TransformMode.InheritsRotation()) {
+						if (bone.Data.Inherit.InheritsRotation()) {
 							thisTransform.localRotation = Quaternion.Euler(0, 0, bone.Rotation);
 						} else {
 							Vector3 euler = skeletonTransform.rotation.eulerAngles;
@@ -149,10 +150,11 @@ namespace Spine.Unity {
 				case UpdatePhase.World:
 				case UpdatePhase.Complete:
 					if (position)
-						thisTransform.localPosition = new Vector3(bone.AX * positionScale, bone.AY * positionScale, 0);
+						thisTransform.localPosition = new Vector3(bone.AX * positionScale, bone.AY * positionScale,
+							zPosition ? 0 : thisTransform.localPosition.z);
 
 					if (rotation) {
-						if (bone.Data.TransformMode.InheritsRotation()) {
+						if (bone.Data.Inherit.InheritsRotation()) {
 							thisTransform.localRotation = Quaternion.Euler(0, 0, bone.AppliedRotation);
 						} else {
 							Vector3 euler = skeletonTransform.rotation.eulerAngles;
@@ -220,7 +222,7 @@ namespace Spine.Unity {
 		}
 
 		public static bool BoneTransformModeIncompatible (Bone bone) {
-			return !bone.Data.TransformMode.InheritsScale();
+			return !bone.Data.Inherit.InheritsScale();
 		}
 
 		public void AddBoundingBox (string skinName, string slotName, string attachmentName) {

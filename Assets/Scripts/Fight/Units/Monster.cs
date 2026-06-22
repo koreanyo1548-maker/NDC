@@ -56,6 +56,7 @@ namespace Fight.Units
         private Vector3 _originalPosition;
         private Vector3 _scaleVector = new();
         private SFXType _deadSound;
+        private bool _dieCallbackFired;
 
         #endregion
 
@@ -141,8 +142,10 @@ namespace Fight.Units
             _field = Manager.Field.CurField.Value;
             _stage = Manager.Field.CurStage;
             _isTraining = _field == FieldType.Training;
-            // _targetOn = false;
-            // _targetOn = true;
+            _dieCallbackFired = false;
+            animator.Rebind();
+            animator.Play("idle", 0, 0);
+            animator.Update(0f);
         }
         
         public void OnUpdate()
@@ -178,30 +181,30 @@ namespace Fight.Units
         public void Attack()
         {
             if (IsDead) return;
-            
+
             if (isBoss)
             {
                 var isTwo = Random.Range(0, 2) == 0;
-                animator.Play(isTwo ? "Attack2" : "Attack", 0, 0);
+                animator.Play(isTwo ? "attack2" : "attack", 0, 0);
                 LookAt((target.Position() - root.position).x > 0);
             }
             else
             {
-                animator.Play("Attack", 0, 0);
+                animator.Play("attack", 0, 0);
             }
             _state = MonsterState.Action;
         }
 
         public void Idle()
         {
-            animator.Play("Walk", 0, 0);
+            animator.Play("walk", 0, 0);
             _state = MonsterState.Idle;
         }
 
         public void Move()
         {
             if (id == 0) Debug.Log(".");
-            animator.Play("Walk", 0, 0);
+            animator.Play("walk", 0, 0);
             _state = MonsterState.Moving;
         }
         
@@ -257,13 +260,15 @@ namespace Fight.Units
             Manager.Sound.PlaySFX(_deadSound);
             animator.speed = 1;
             _state = MonsterState.Die;
-            animator.Play("Die");
+            animator.Play("die");
 
             Timing.RunCoroutine(_FadeRoutine(), _killWhenDieTag);
         }
 
         private void WhenDieAnimationDone()
         {
+            if (_dieCallbackFired) return;
+            _dieCallbackFired = true;
             Manager.Field.MonsterDie(id);
             PlayController.I.KillMonster(_field, _stage);
             Clear();
@@ -299,6 +304,7 @@ namespace Fight.Units
                 _materialSetter.ChangeColor(Color.Lerp(Color.black, Define.BlackClear, time));
                 yield return Timing.DeltaTime;
             }
+            WhenDieAnimationDone();
         }
 
         public void Stun(float time)

@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -42,7 +42,6 @@ namespace Spine {
 	public abstract class SkeletonLoader {
 		protected readonly AttachmentLoader attachmentLoader;
 		protected float scale = 1;
-		protected readonly List<LinkedMesh> linkedMeshes = new List<LinkedMesh>();
 
 		/// <summary>Creates a skeleton loader that loads attachments using an <see cref="AtlasAttachmentLoader"/> with the specified atlas.
 		/// </summary>
@@ -72,21 +71,5 @@ namespace Spine {
 		}
 
 		public abstract SkeletonData ReadSkeletonData (string path);
-
-		protected class LinkedMesh {
-			internal string parent, skin;
-			internal int slotIndex;
-			internal MeshAttachment mesh;
-			internal bool inheritTimelines;
-
-			public LinkedMesh (MeshAttachment mesh, string skin, int slotIndex, string parent, bool inheritTimelines) {
-				this.mesh = mesh;
-				this.skin = skin;
-				this.slotIndex = slotIndex;
-				this.parent = parent;
-				this.inheritTimelines = inheritTimelines;
-			}
-		}
-
 	}
 }

@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2022, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -52,7 +52,6 @@ namespace Spine.Unity.Examples {
 	[RequireComponent(typeof(SkeletonRenderer))]
 	public class SkeletonRenderTexture : SkeletonRenderTextureBase {
 #if HAS_GET_SHARED_MATERIALS
-		public Material quadMaterial;
 		protected SkeletonRenderer skeletonRenderer;
 		protected MeshRenderer meshRenderer;
 		protected MeshFilter meshFilter;
@@ -73,9 +72,21 @@ namespace Spine.Unity.Examples {
 			CreateQuadChild();
 		}
 
+#if UNITY_EDITOR
+		protected void Reset () {
+			string[] folders = { "Assets", "Packages" };
+			string[] assets = UnityEditor.AssetDatabase.FindAssets("t:material RenderQuadMaterial", folders);
+			if (assets.Length > 0) {
+				string materialPath = UnityEditor.AssetDatabase.GUIDToAssetPath(assets[0]);
+				quadMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+			}
+		}
+#endif
+
 		void CreateQuadChild () {
 			quad = new GameObject(this.name + " RenderTexture", typeof(MeshRenderer), typeof(MeshFilter));
 			quad.transform.SetParent(this.transform.parent, false);
+			quad.layer = meshRenderer.gameObject.layer;
 			quadMeshRenderer = quad.GetComponent<MeshRenderer>();
 			quadMeshFilter = quad.GetComponent<MeshFilter>();
 
@@ -118,6 +129,13 @@ namespace Spine.Unity.Examples {
 		}
 
 		void RenderOntoQuad (SkeletonRenderer skeletonRenderer) {
+			if (meshFilter == null)
+				meshFilter = this.GetComponent<MeshFilter>();
+			Vector3 size = meshFilter.sharedMesh.bounds.size;
+			if (size.x == 0f || size.y == 0f) {
+				AssignNullMeshAtQuad();
+				return;
+			}
 			PrepareForMesh();
 			RenderToRenderTexture();
 			AssignAtQuad();
@@ -164,19 +182,28 @@ namespace Spine.Unity.Examples {
 			commandBuffer.SetRenderTarget(renderTexture);
 			commandBuffer.ClearRenderTarget(true, true, Color.clear);
 
-			commandBuffer.SetProjectionMatrix(targetCamera.projectionMatrix);
 			commandBuffer.SetViewMatrix(targetCamera.worldToCameraMatrix);
-			Vector2 targetCameraViewportSize = targetCamera.pixelRect.size;
-			commandBuffer.SetViewport(new Rect(-screenSpaceMin, targetCameraViewportSize));
+
+			Matrix4x4 projectionMatrix = CalculateProjectionMatrix(targetCamera,
+				screenSpaceMin, screenSpaceMax, targetCamera.pixelRect.size);
+			commandBuffer.SetProjectionMatrix(projectionMatrix);
+
+			Vector2 targetViewportSize = new Vector2(
+				screenSpaceMax.x - screenSpaceMin.x,
+				screenSpaceMax.y - screenSpaceMin.y);
+			Rect viewportRect = new Rect(Vector2.zero, targetViewportSize * downScaleFactor);
+			commandBuffer.SetViewport(viewportRect);
 		}
 
 		protected void RenderToRenderTexture () {
 			meshRenderer.GetPropertyBlock(propertyBlock);
 			meshRenderer.GetSharedMaterials(materials);
 
-			for (int i = 0; i < materials.Count; i++)
-				commandBuffer.DrawMesh(meshFilter.sharedMesh, transform.localToWorldMatrix,
-					materials[i], meshRenderer.subMeshStartIndex + i, -1, propertyBlock);
+			for (int i = 0; i < materials.Count; i++) {
+				foreach (int shaderPass in shaderPasses)
+					commandBuffer.DrawMesh(meshFilter.sharedMesh, transform.localToWorldMatrix,
+						materials[i], meshRenderer.subMeshStartIndex + i, shaderPass, propertyBlock);
+			}
 			Graphics.ExecuteCommandBuffer(commandBuffer);
 		}
 
@@ -184,6 +211,10 @@ namespace Spine.Unity.Examples {
 			quadMeshFilter.mesh = quadMesh;
 			quadMeshRenderer.sharedMaterial.mainTexture = this.renderTexture;
 			quadMeshRenderer.sharedMaterial.color = color;
+		}
+
+		protected void AssignNullMeshAtQuad () {
+			quadMeshFilter.mesh = null;
 		}
 #endif
 	}

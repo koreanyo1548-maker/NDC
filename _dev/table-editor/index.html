@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Table Editor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; background: #1e1e2e; color: #cdd6f4; }
+
+  #sidebar {
+    width: 210px; min-width: 210px; background: #181825; padding: 12px 0;
+    display: flex; flex-direction: column; border-right: 1px solid #313244;
+  }
+  #sidebar h2 { font-size: 11px; color: #6c7086; padding: 0 12px 8px; text-transform: uppercase; letter-spacing: 1px; }
+  #sidebar nav { list-style: none; flex: 1; overflow-y: auto; }
+
+  .file-group {}
+  .file-header {
+    padding: 6px 12px; font-size: 12px; font-weight: 700; color: #89b4fa;
+    cursor: pointer; display: flex; align-items: center; gap: 5px;
+    user-select: none;
+  }
+  .file-header:hover { background: #1e1e2e; }
+  .file-header .arrow { font-size: 10px; transition: transform 0.15s; display: inline-block; }
+  .file-header.collapsed .arrow { transform: rotate(-90deg); }
+  .sheet-list { list-style: none; }
+  .sheet-list.hidden { display: none; }
+  .sheet-list li {
+    padding: 5px 12px 5px 24px; cursor: pointer; font-size: 12px;
+    border-left: 3px solid transparent; color: #a6adc8;
+    transition: background 0.1s;
+  }
+  .sheet-list li:hover { background: #313244; color: #cdd6f4; }
+  .sheet-list li.active { background: #313244; border-left-color: #cba6f7; color: #cba6f7; }
+
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  #toolbar {
+    padding: 10px 16px; background: #181825; border-bottom: 1px solid #313244;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #toolbar h1 { font-size: 15px; flex: 1; }
+  #toolbar button {
+    padding: 6px 14px; border: none; border-radius: 5px; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+  }
+  #btn-save { background: #a6e3a1; color: #1e1e2e; }
+  #btn-save:hover { background: #94e2d5; }
+  #btn-save:disabled { background: #45475a; color: #6c7086; cursor: default; }
+  #btn-add-row { background: #313244; color: #cdd6f4; }
+  #btn-add-row:hover { background: #45475a; }
+
+  #status { font-size: 12px; color: #6c7086; }
+
+  #table-container { flex: 1; overflow: auto; padding: 12px 16px; }
+
+  table { border-collapse: collapse; font-size: 13px; white-space: nowrap; }
+  th {
+    background: #313244; color: #cba6f7; padding: 6px 10px;
+    border: 1px solid #45475a; position: sticky; top: 0; z-index: 1;
+    font-weight: 600; text-align: left;
+  }
+  td { border: 1px solid #313244; padding: 0; }
+  td input {
+    width: 100%; padding: 5px 8px; background: transparent; border: none;
+    color: #cdd6f4; font-size: 13px; outline: none;
+  }
+  td input:focus { background: #313244; }
+  tr:nth-child(even) td { background: #181825; }
+  tr:nth-child(even) td input:focus { background: #313244; }
+
+  td.row-num {
+    background: #181825 !important; color: #6c7086; text-align: center;
+    padding: 5px 8px; font-size: 11px; min-width: 36px;
+  }
+  td.del-btn { width: 28px; text-align: center; }
+  td.del-btn button {
+    background: none; border: none; color: #f38ba8; cursor: pointer; font-size: 14px; padding: 2px 6px;
+  }
+  td.del-btn button:hover { color: #eba0ac; }
+
+  #empty { padding: 40px; color: #6c7086; text-align: center; }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h2>Tables</h2>
+  <nav id="table-list"></nav>
+</div>
+
+<div id="main">
+  <div id="toolbar">
+    <h1 id="table-title">—</h1>
+    <span id="status"></span>
+    <button id="btn-add-row" onclick="addRow()" style="display:none">+ 행 추가</button>
+    <button id="btn-save" onclick="saveTable()" disabled>저장</button>
+  </div>
+  <div id="table-container">
+    <div id="empty">테이블을 선택하세요</div>
+    <table id="data-table" style="display:none">
+      <thead><tr id="header-row"></tr></thead>
+      <tbody id="data-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let currentFile = null;
+let currentSheet = null;
+let headers = [];
+let rows = [];
+let dirty = false;
+
+async function loadTableList() {
+  const res = await fetch('/api/tables');
+  const sheets = await res.json();
+  const nav = document.getElementById('table-list');
+  nav.innerHTML = '';
+
+  // 파일별로 그룹핑
+  const groups = {};
+  sheets.forEach(s => {
+    if (!groups[s.file]) groups[s.file] = [];
+    groups[s.file].push(s.sheet);
+  });
+
+  Object.entries(groups).forEach(([file, sheetNames]) => {
+    const group = document.createElement('div');
+    group.className = 'file-group';
+
+    const header = document.createElement('div');
+    header.className = 'file-header';
+    header.innerHTML = `<span class="arrow">▼</span> ${file}`;
+    header.onclick = () => {
+      const ul = group.querySelector('.sheet-list');
+      ul.classList.toggle('hidden');
+      header.classList.toggle('collapsed');
+    };
+    group.appendChild(header);
+
+    const ul = document.createElement('ul');
+    ul.className = 'sheet-list';
+    sheetNames.forEach(sheet => {
+      const li = document.createElement('li');
+      li.textContent = sheet;
+      li.dataset.file = file;
+      li.dataset.sheet = sheet;
+      li.onclick = () => selectTable(file, sheet, li);
+      ul.appendChild(li);
+    });
+    group.appendChild(ul);
+    nav.appendChild(group);
+  });
+}
+
+async function selectTable(file, sheet, li) {
+  if (dirty && !confirm('저장하지 않은 변경이 있습니다. 계속할까요?')) return;
+
+  document.querySelectorAll('.sheet-list li').forEach(el => el.classList.remove('active'));
+  li.classList.add('active');
+
+  currentFile = file;
+  currentSheet = sheet;
+  document.getElementById('table-title').textContent = `${file} / ${sheet}`;
+  setStatus('로딩 중...');
+
+  const res = await fetch(`/api/table/${file}/${sheet}`);
+  const data = await res.json();
+  if (data.error) { setStatus('오류: ' + data.error); return; }
+  headers = data.headers;
+  rows = data.rows.map(r => ({ ...r }));
+  dirty = false;
+
+  renderTable();
+  setStatus(`${rows.length}행`);
+  document.getElementById('btn-save').disabled = true;
+  document.getElementById('btn-add-row').style.display = '';
+}
+
+function renderTable() {
+  const table = document.getElementById('data-table');
+  const empty = document.getElementById('empty');
+  table.style.display = '';
+  empty.style.display = 'none';
+
+  // Header
+  const hr = document.getElementById('header-row');
+  hr.innerHTML = '<th style="width:36px">#</th>';
+  headers.forEach(h => {
+    const th = document.createElement('th');
+    th.textContent = h;
+    hr.appendChild(th);
+  });
+  hr.innerHTML += '<th style="width:28px"></th>';
+
+  // Body
+  const tbody = document.getElementById('data-body');
+  tbody.innerHTML = '';
+  rows.forEach((row, ri) => appendRowEl(tbody, row, ri));
+}
+
+function appendRowEl(tbody, row, ri) {
+  const tr = document.createElement('tr');
+
+  const numTd = document.createElement('td');
+  numTd.className = 'row-num';
+  numTd.textContent = ri + 1;
+  tr.appendChild(numTd);
+
+  headers.forEach(h => {
+    const td = document.createElement('td');
+    const input = document.createElement('input');
+    input.value = row[h] ?? '';
+    input.oninput = () => {
+      rows[ri][h] = input.value;
+      markDirty();
+    };
+    td.appendChild(input);
+    tr.appendChild(td);
+  });
+
+  const delTd = document.createElement('td');
+  delTd.className = 'del-btn';
+  const delBtn = document.createElement('button');
+  delBtn.textContent = '×';
+  delBtn.title = '행 삭제';
+  delBtn.onclick = () => deleteRow(ri);
+  delTd.appendChild(delBtn);
+  tr.appendChild(delTd);
+
+  tbody.appendChild(tr);
+}
+
+function addRow() {
+  const newRow = {};
+  headers.forEach(h => newRow[h] = '');
+  rows.push(newRow);
+  const tbody = document.getElementById('data-body');
+  appendRowEl(tbody, newRow, rows.length - 1);
+  markDirty();
+}
+
+function deleteRow(ri) {
+  rows.splice(ri, 1);
+  renderTable();
+  markDirty();
+}
+
+function markDirty() {
+  dirty = true;
+  document.getElementById('btn-save').disabled = false;
+  setStatus('저장되지 않은 변경 있음');
+}
+
+async function saveTable() {
+  if (!currentFile || !currentSheet) return;
+  document.getElementById('btn-save').disabled = true;
+  setStatus('저장 중...');
+
+  const res = await fetch(`/api/table/${currentFile}/${currentSheet}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ headers, rows })
+  });
+  const data = await res.json();
+
+  if (data.ok) {
+    dirty = false;
+    setStatus(`저장 완료 — ${rows.length}행`);
+  } else {
+    setStatus('오류: ' + data.error);
+    document.getElementById('btn-save').disabled = false;
+  }
+}
+
+function setStatus(msg) {
+  document.getElementById('status').textContent = msg;
+}
+
+window.onbeforeunload = () => dirty ? true : undefined;
+
+loadTableList();
+</script>
+</body>
+</html>

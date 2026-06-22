@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -39,6 +39,9 @@ namespace Spine {
 		internal bool hasSecondColor = false;
 		internal string attachmentName;
 		internal BlendMode blendMode;
+
+		// Nonessential.
+		// bool visible = true;
 
 		/// <summary>The index of the slot in <see cref="Skeleton.Slots"/>.</summary>
 		public int Index { get { return index; } }

@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -45,8 +45,8 @@ namespace Spine.Unity.AttachmentTools {
 		public static RegionAttachment ToRegionAttachment (this Sprite sprite, AtlasPage page, float rotation = 0f) {
 			if (sprite == null) throw new System.ArgumentNullException("sprite");
 			if (page == null) throw new System.ArgumentNullException("page");
-			var region = sprite.ToAtlasRegion(page);
-			var unitsPerPixel = 1f / sprite.pixelsPerUnit;
+			AtlasRegion region = sprite.ToAtlasRegion(page);
+			float unitsPerPixel = 1f / sprite.pixelsPerUnit;
 			return region.ToRegionAttachment(sprite.name, unitsPerPixel, rotation);
 		}
 
@@ -58,8 +58,8 @@ namespace Spine.Unity.AttachmentTools {
 		public static RegionAttachment ToRegionAttachmentPMAClone (this Sprite sprite, Shader shader, TextureFormat textureFormat = AtlasUtilities.SpineTextureFormat, bool mipmaps = AtlasUtilities.UseMipMaps, Material materialPropertySource = null, float rotation = 0f) {
 			if (sprite == null) throw new System.ArgumentNullException("sprite");
 			if (shader == null) throw new System.ArgumentNullException("shader");
-			var region = sprite.ToAtlasRegionPMAClone(shader, textureFormat, mipmaps, materialPropertySource);
-			var unitsPerPixel = 1f / sprite.pixelsPerUnit;
+			AtlasRegion region = sprite.ToAtlasRegionPMAClone(shader, textureFormat, mipmaps, materialPropertySource);
+			float unitsPerPixel = 1f / sprite.pixelsPerUnit;
 			return region.ToRegionAttachment(sprite.name, unitsPerPixel, rotation);
 		}
 
@@ -74,7 +74,7 @@ namespace Spine.Unity.AttachmentTools {
 			if (region == null) throw new System.ArgumentNullException("region");
 
 			// (AtlasAttachmentLoader.cs)
-			var attachment = new RegionAttachment(attachmentName);
+			RegionAttachment attachment = new RegionAttachment(attachmentName);
 
 			attachment.Region = region;
 			attachment.Path = region.name;
@@ -88,8 +88,8 @@ namespace Spine.Unity.AttachmentTools {
 			attachment.A = 1;
 
 			// pass OriginalWidth and OriginalHeight because UpdateOffset uses it in its calculation.
-			var textreRegion = attachment.Region;
-			var atlasRegion = textreRegion as AtlasRegion;
+			TextureRegion textreRegion = attachment.Region;
+			AtlasRegion atlasRegion = textreRegion as AtlasRegion;
 			float originalWidth = atlasRegion != null ? atlasRegion.originalWidth : textreRegion.width;
 			float originalHeight = atlasRegion != null ? atlasRegion.originalHeight : textreRegion.height;
 			attachment.Width = originalWidth * scale;

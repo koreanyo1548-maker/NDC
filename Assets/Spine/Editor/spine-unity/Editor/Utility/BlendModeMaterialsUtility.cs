@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated September 24, 2021. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2021, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -37,34 +37,28 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Spine.Unity.Editor {
+	using TemplateMaterials = BlendModeMaterials.TemplateMaterials;
 
 	public class BlendModeMaterialsUtility {
 
-		public const string MATERIAL_SUFFIX_MULTIPLY = "-Multiply";
-		public const string MATERIAL_SUFFIX_SCREEN = "-Screen";
-		public const string MATERIAL_SUFFIX_ADDITIVE = "-Additive";
+		public const string MATERIAL_SUFFIX_MULTIPLY = BlendModeMaterials.MATERIAL_SUFFIX_MULTIPLY;
+		public const string MATERIAL_SUFFIX_SCREEN = BlendModeMaterials.MATERIAL_SUFFIX_SCREEN;
+		public const string MATERIAL_SUFFIX_ADDITIVE = BlendModeMaterials.MATERIAL_SUFFIX_ADDITIVE;
 
 #if UPGRADE_ALL_BLEND_MODE_MATERIALS
 		public const bool ShallUpgradeBlendModeMaterials = true;
 #else
 		public const bool ShallUpgradeBlendModeMaterials = false;
 #endif
-
-		protected class TemplateMaterials {
-			public Material multiplyTemplate;
-			public Material screenTemplate;
-			public Material additiveTemplate;
-		};
-
 		public static void UpgradeBlendModeMaterials (SkeletonDataAsset skeletonDataAsset) {
-			var skeletonData = skeletonDataAsset.GetSkeletonData(true);
+			SkeletonData skeletonData = skeletonDataAsset.GetSkeletonData(true);
 			if (skeletonData == null)
 				return;
 			UpdateBlendModeMaterials(skeletonDataAsset, ref skeletonData, true);
 		}
 
 		public static void UpdateBlendModeMaterials (SkeletonDataAsset skeletonDataAsset) {
-			var skeletonData = skeletonDataAsset.GetSkeletonData(true);
+			SkeletonData skeletonData = skeletonDataAsset.GetSkeletonData(true);
 			if (skeletonData == null)
 				return;
 			UpdateBlendModeMaterials(skeletonDataAsset, ref skeletonData, false);
@@ -76,7 +70,7 @@ namespace Spine.Unity.Editor {
 			TemplateMaterials templateMaterials = new TemplateMaterials();
 			bool anyMaterialsChanged = ClearUndesiredMaterialEntries(skeletonDataAsset);
 
-			var blendModesModifierAsset = FindBlendModeMaterialsModifierAsset(skeletonDataAsset);
+			BlendModeMaterialsAsset blendModesModifierAsset = FindBlendModeMaterialsModifierAsset(skeletonDataAsset);
 			if (blendModesModifierAsset) {
 				if (upgradeFromModifierAssets) {
 					TransferSettingsFromModifierAsset(blendModesModifierAsset,
@@ -118,7 +112,7 @@ namespace Spine.Unity.Editor {
 		}
 
 		protected static BlendModeMaterialsAsset FindBlendModeMaterialsModifierAsset (SkeletonDataAsset skeletonDataAsset) {
-			foreach (var modifierAsset in skeletonDataAsset.skeletonDataModifiers) {
+			foreach (SkeletonDataModifierAsset modifierAsset in skeletonDataAsset.skeletonDataModifiers) {
 				if (modifierAsset is BlendModeMaterialsAsset)
 					return (BlendModeMaterialsAsset)modifierAsset;
 			}
@@ -158,88 +152,45 @@ namespace Spine.Unity.Editor {
 		protected static bool CreateAndAssignMaterials (SkeletonDataAsset skeletonDataAsset,
 			TemplateMaterials templateMaterials, ref bool anyReplacementMaterialsChanged) {
 
+			return BlendModeMaterials.CreateAndAssignMaterials(skeletonDataAsset,
+				templateMaterials, ref anyReplacementMaterialsChanged,
+				SpineEditorUtilities.ClearSkeletonDataAsset,
+				EditorUtility.SetDirty,
+				CreateForRegion);
+		}
+
+		protected static bool CreateForRegion (ref List<BlendModeMaterials.ReplacementMaterial> replacementMaterials,
+			ref bool anyReplacementMaterialsChanged,
+			AtlasRegion originalRegion, Material materialTemplate, string materialSuffix,
+			SkeletonDataAsset skeletonDataAsset) {
+
 			bool anyCreationFailed = false;
-			var blendModeMaterials = skeletonDataAsset.blendModeMaterials;
-			bool applyAdditiveMaterial = blendModeMaterials.applyAdditiveMaterial;
-
-			var skinEntries = new List<Skin.SkinEntry>();
-
-			SpineEditorUtilities.ClearSkeletonDataAsset(skeletonDataAsset);
-			skeletonDataAsset.isUpgradingBlendModeMaterials = true;
-			SkeletonData skeletonData = skeletonDataAsset.GetSkeletonData(true);
-
-			var slotsItems = skeletonData.Slots.Items;
-			for (int slotIndex = 0, slotCount = skeletonData.Slots.Count; slotIndex < slotCount; slotIndex++) {
-				var slot = slotsItems[slotIndex];
-				if (slot.BlendMode == BlendMode.Normal) continue;
-				if (!applyAdditiveMaterial && slot.BlendMode == BlendMode.Additive) continue;
-
-				List<BlendModeMaterials.ReplacementMaterial> replacementMaterials = null;
-				Material materialTemplate = null;
-				string materialSuffix = null;
-				switch (slot.BlendMode) {
-				case BlendMode.Multiply:
-					replacementMaterials = blendModeMaterials.multiplyMaterials;
-					materialTemplate = templateMaterials.multiplyTemplate;
-					materialSuffix = MATERIAL_SUFFIX_MULTIPLY;
-					break;
-				case BlendMode.Screen:
-					replacementMaterials = blendModeMaterials.screenMaterials;
-					materialTemplate = templateMaterials.screenTemplate;
-					materialSuffix = MATERIAL_SUFFIX_SCREEN;
-					break;
-				case BlendMode.Additive:
-					replacementMaterials = blendModeMaterials.additiveMaterials;
-					materialTemplate = templateMaterials.additiveTemplate;
-					materialSuffix = MATERIAL_SUFFIX_ADDITIVE;
-					break;
-				}
-
-				skinEntries.Clear();
-				foreach (var skin in skeletonData.Skins)
-					skin.GetAttachments(slotIndex, skinEntries);
-
-				foreach (var entry in skinEntries) {
-					var renderableAttachment = entry.Attachment as IHasTextureRegion;
-					if (renderableAttachment != null) {
-						var originalRegion = (AtlasRegion)renderableAttachment.Region;
-						Sequence sequence = null;
-						if (originalRegion == null && (sequence = renderableAttachment.Sequence) != null) {
-							if (sequence.Regions != null && sequence.Regions.Length > 0)
-								originalRegion = (AtlasRegion)sequence.Regions[0];
-						}
-						bool replacementExists = replacementMaterials.Exists(
-							replacement => replacement.pageName == originalRegion.page.name);
-						if (!replacementExists) {
-							bool createdNewMaterial;
-							var replacement = CreateOrLoadReplacementMaterial(originalRegion, materialTemplate, materialSuffix, out createdNewMaterial);
-							if (replacement != null) {
-								replacementMaterials.Add(replacement);
-								anyReplacementMaterialsChanged = true;
-								if (createdNewMaterial) {
-									Debug.Log(string.Format("Created blend mode Material '{0}' for SkeletonData asset '{1}'.",
-										replacement.material.name, skeletonDataAsset), replacement.material);
-								}
-							} else {
-								Debug.LogError(string.Format("Failed creating blend mode Material for SkeletonData asset '{0}'," +
-									" atlas page '{1}', template '{2}'.",
-									skeletonDataAsset.name, originalRegion.page.name, materialTemplate.name),
-									skeletonDataAsset);
-								anyCreationFailed = true;
-							}
-						}
+			bool replacementExists = replacementMaterials.Exists(
+				replacement => replacement.pageName == originalRegion.page.name);
+			if (!replacementExists) {
+				bool createdNewMaterial;
+				BlendModeMaterials.ReplacementMaterial replacement = CreateOrLoadReplacementMaterial(originalRegion, materialTemplate, materialSuffix, out createdNewMaterial);
+				if (replacement != null) {
+					replacementMaterials.Add(replacement);
+					anyReplacementMaterialsChanged = true;
+					if (createdNewMaterial) {
+						Debug.Log(string.Format("Created blend mode Material '{0}' for SkeletonData asset '{1}'.",
+							replacement.material.name, skeletonDataAsset), replacement.material);
 					}
+				} else {
+					Debug.LogError(string.Format("Failed creating blend mode Material for SkeletonData asset '{0}'," +
+						" atlas page '{1}', template '{2}'.",
+						skeletonDataAsset.name, originalRegion.page.name, materialTemplate.name),
+						skeletonDataAsset);
+					anyCreationFailed = true;
 				}
 			}
-
-			skeletonDataAsset.isUpgradingBlendModeMaterials = false;
-			EditorUtility.SetDirty(skeletonDataAsset);
-			return !anyCreationFailed;
+			return anyCreationFailed;
 		}
 
 		protected static string GetBlendModeMaterialPath (AtlasPage originalPage, string materialSuffix) {
-			var originalMaterial = originalPage.rendererObject as Material;
-			var originalPath = AssetDatabase.GetAssetPath(originalMaterial);
+			Material originalMaterial = originalPage.rendererObject as Material;
+			string originalPath = AssetDatabase.GetAssetPath(originalMaterial);
 			return originalPath.Replace(".mat", materialSuffix + ".mat");
 		}
 
@@ -247,16 +198,28 @@ namespace Spine.Unity.Editor {
 			AtlasRegion originalRegion, Material materialTemplate, string materialSuffix, out bool createdNewMaterial) {
 
 			createdNewMaterial = false;
-			var newReplacement = new BlendModeMaterials.ReplacementMaterial();
-			var originalPage = originalRegion.page;
-			var originalMaterial = originalPage.rendererObject as Material;
-			var blendMaterialPath = GetBlendModeMaterialPath(originalPage, materialSuffix);
+			BlendModeMaterials.ReplacementMaterial newReplacement = new BlendModeMaterials.ReplacementMaterial();
+			AtlasPage originalPage = originalRegion.page;
+			Material originalMaterial = originalPage.rendererObject as Material;
+			string blendMaterialPath = GetBlendModeMaterialPath(originalPage, materialSuffix);
 
 			newReplacement.pageName = originalPage.name;
 			if (File.Exists(blendMaterialPath)) {
 				newReplacement.material = AssetDatabase.LoadAssetAtPath<Material>(blendMaterialPath);
 			} else {
-				var blendModeMaterial = new Material(materialTemplate) {
+				if (materialTemplate == null) {
+					Debug.LogError(string.Format("Failed to create blend mode material: Material template for " +
+						"blend mode '{0}' was null. Re-importing might fix this issue.",
+						materialSuffix), originalMaterial);
+					return null;
+				}
+				if (originalMaterial == null) {
+					Debug.LogError(string.Format("Failed to create blend mode material for atlas page '{0}': Original material for " +
+						"blend mode '{1}' was null. Re-importing might fix this issue.",
+						originalPage.name, materialSuffix));
+					return null;
+				}
+				Material blendModeMaterial = new Material(materialTemplate) {
 					name = originalMaterial.name + " " + materialTemplate.name,
 					mainTexture = originalMaterial.mainTexture
 				};

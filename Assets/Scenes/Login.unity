@@ -889,40 +889,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   webClientId: 872197505304-i9fncnp8dd67j5mrkfco1r5kmvn737ta.apps.googleusercontent.com
-  playfabParams:
-    GetCharacterInventories: 0
-    GetCharacterList: 0
-    GetPlayerProfile: 0
-    GetPlayerStatistics: 0
-    GetTitleData: 1
-    GetUserAccountInfo: 0
-    GetUserData: 0
-    GetUserInventory: 0
-    GetUserReadOnlyData: 0
-    GetUserVirtualCurrency: 0
-    PlayerStatisticNames: []
-    ProfileConstraints:
-      ShowAvatarUrl: 0
-      ShowBannedUntil: 0
-      ShowCampaignAttributions: 0
-      ShowContactEmailAddresses: 0
-      ShowCreated: 0
-      ShowDisplayName: 0
-      ShowExperimentVariants: 0
-      ShowLastLogin: 0
-      ShowLinkedAccounts: 0
-      ShowLocations: 0
-      ShowMemberships: 0
-      ShowOrigination: 0
-      ShowPushNotificationRegistrations: 0
-      ShowStatistics: 0
-      ShowTags: 0
-      ShowTotalValueToDateInUsd: 0
-      ShowValuesToDate: 0
-    TitleDataKeys:
-    - ClientVer
-    UserDataKeys: []
-    UserReadOnlyDataKeys: []
 --- !u!1 &257327153
 GameObject:
   m_ObjectHideFlags: 0
@@ -1931,7 +1897,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &498096951
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2358,8 +2324,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 67}
-  m_SizeDelta: {x: 575.79, y: 539.75}
+  m_AnchoredPosition: {x: 0, y: -236}
+  m_SizeDelta: {x: 955.72, y: 695.4}
   m_Pivot: {x: 0.5, y: 1.3}
 --- !u!95 &768659617
 Animator:
@@ -2425,7 +2391,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8839fcd0d468dff448110d2fe09033b5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 07edc14b7095e6e4abb0336b7f8102ce, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2513,7 +2479,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Mushroom Hero. Copyright 2024 \nNdolphin Connect All Right Reserved."
+  m_Text: "NDC Copyright 2024 \nNDC All Right Reserved."
 --- !u!222 &784516982
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2539,7 +2505,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &803640305
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9741,7 +9707,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1434803173
 RectTransform:
   m_ObjectHideFlags: 0
