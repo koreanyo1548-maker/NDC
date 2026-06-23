@@ -57,6 +57,8 @@ namespace Fight.Units
         private Vector3 _scaleVector = new();
         private SFXType _deadSound;
         private bool _dieCallbackFired;
+        private bool _hitFired;
+        private const float HIT_NORMALIZED_TIME = 0.5f;
 
         #endregion
 
@@ -133,6 +135,7 @@ namespace Fight.Units
             _actor.SetMonster(this);
             target = _targetSelector.GetTarget();
             _state = MonsterState.Idle;
+            _hitFired = false;
             stat.SetMonster(monster, isBoss);
             this.id = id;
             _killWhenDieTag = "killWhenDieMonster" + id;
@@ -160,6 +163,26 @@ namespace Fight.Units
                 case MonsterState.Moving:
                     _actor.UpdateMoving();
                     break;
+                case MonsterState.Action:
+                    _UpdateAttackEvents();
+                    break;
+                case MonsterState.Stun:
+                    break;
+            }
+        }
+
+        private void _UpdateAttackEvents()
+        {
+            var info = animator.GetCurrentAnimatorStateInfo(0);
+            if (!_hitFired && info.normalizedTime >= HIT_NORMALIZED_TIME)
+            {
+                _hitFired = true;
+                OnAttackHit();
+            }
+            if (info.normalizedTime >= 1f)
+            {
+                _hitFired = false;
+                OnAttackDone();
             }
         }
         public void Spawn(float posX, float posY)
@@ -182,11 +205,13 @@ namespace Fight.Units
         {
             if (IsDead) return;
 
+            _hitFired = false;
             if (isBoss)
             {
                 var isTwo = Random.Range(0, 2) == 0;
                 animator.Play(isTwo ? "attack2" : "attack", 0, 0);
-                LookAt((target.Position() - root.position).x > 0);
+                if (target != null && target.IsValid())
+                    LookAt((target.Position() - root.position).x > 0);
             }
             else
             {
@@ -334,6 +359,7 @@ namespace Fight.Units
         private void OnAttackDone()
         {
             if (_state == MonsterState.Die) return;
+            if (target == null || !target.IsValid()) { Move(); return; }
             if ((target.Position() - root.position).sqrMagnitude < stat.SqrAttackRange) Attack();
             else Move();
         }
@@ -341,6 +367,7 @@ namespace Fight.Units
         private void OnAttackHit()
         {
             if (_state == MonsterState.Die) return;
+            if (target == null || !target.IsValid()) return;
             target.Attacked(stat.Attack);
         }
 
@@ -358,6 +385,11 @@ namespace Fight.Units
         private void OnEnable()
         {
             stat.OnEnable();
+            if (animator != null)
+            {
+                animator.Rebind();
+                animator.Update(0f);
+            }
         }
     }
 }
