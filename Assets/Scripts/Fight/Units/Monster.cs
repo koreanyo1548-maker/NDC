@@ -57,6 +57,8 @@ namespace Fight.Units
         private Vector3 _scaleVector = new();
         private SFXType _deadSound;
         private bool _dieCallbackFired;
+        private bool _hitFired;
+        private const float HIT_NORMALIZED_TIME = 0.5f;
 
         #endregion
 
@@ -160,6 +162,24 @@ namespace Fight.Units
                 case MonsterState.Moving:
                     _actor.UpdateMoving();
                     break;
+                case MonsterState.Action:
+                    _UpdateAttackEvents();
+                    break;
+            }
+        }
+
+        private void _UpdateAttackEvents()
+        {
+            var info = animator.GetCurrentAnimatorStateInfo(0);
+            if (!_hitFired && info.normalizedTime >= HIT_NORMALIZED_TIME)
+            {
+                _hitFired = true;
+                OnAttackHit();
+            }
+            if (info.normalizedTime >= 1f)
+            {
+                _hitFired = false;
+                OnAttackDone();
             }
         }
         public void Spawn(float posX, float posY)
@@ -182,6 +202,7 @@ namespace Fight.Units
         {
             if (IsDead) return;
 
+            _hitFired = false;
             if (isBoss)
             {
                 var isTwo = Random.Range(0, 2) == 0;
@@ -358,6 +379,11 @@ namespace Fight.Units
         private void OnEnable()
         {
             stat.OnEnable();
+            if (animator != null)
+            {
+                animator.Rebind();
+                animator.Update(0f);
+            }
         }
     }
 }
