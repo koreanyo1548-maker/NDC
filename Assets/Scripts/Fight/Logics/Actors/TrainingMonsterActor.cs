@@ -35,11 +35,13 @@ namespace Fight.Logics.Actors
 
         public void UpdateMoving()
         {
+            if (_monster.target == null || !_monster.target.IsValid()) return;
             _monster.LookAt(_monster.target.Position().x > _monster.root.position.x);
         }
-        
+
         public void UpdateIdle()
         {
+            if (_monster.target == null || !_monster.target.IsValid()) return;
             _monster.LookAt(_monster.target.Position().x > _monster.root.position.x);
         }
 

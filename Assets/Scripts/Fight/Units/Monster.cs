@@ -135,6 +135,7 @@ namespace Fight.Units
             _actor.SetMonster(this);
             target = _targetSelector.GetTarget();
             _state = MonsterState.Idle;
+            _hitFired = false;
             stat.SetMonster(monster, isBoss);
             this.id = id;
             _killWhenDieTag = "killWhenDieMonster" + id;
@@ -164,6 +165,8 @@ namespace Fight.Units
                     break;
                 case MonsterState.Action:
                     _UpdateAttackEvents();
+                    break;
+                case MonsterState.Stun:
                     break;
             }
         }
@@ -207,7 +210,8 @@ namespace Fight.Units
             {
                 var isTwo = Random.Range(0, 2) == 0;
                 animator.Play(isTwo ? "attack2" : "attack", 0, 0);
-                LookAt((target.Position() - root.position).x > 0);
+                if (target != null && target.IsValid())
+                    LookAt((target.Position() - root.position).x > 0);
             }
             else
             {
@@ -355,6 +359,7 @@ namespace Fight.Units
         private void OnAttackDone()
         {
             if (_state == MonsterState.Die) return;
+            if (target == null || !target.IsValid()) { Move(); return; }
             if ((target.Position() - root.position).sqrMagnitude < stat.SqrAttackRange) Attack();
             else Move();
         }
@@ -362,6 +367,7 @@ namespace Fight.Units
         private void OnAttackHit()
         {
             if (_state == MonsterState.Die) return;
+            if (target == null || !target.IsValid()) return;
             target.Attacked(stat.Attack);
         }
 
