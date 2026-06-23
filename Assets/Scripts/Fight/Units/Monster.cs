@@ -149,6 +149,8 @@ namespace Fight.Units
             animator.Rebind();
             animator.Play("idle", 0, 0);
             animator.Update(0f);
+            var info = animator.GetCurrentAnimatorStateInfo(0);
+            Debug.Log($"[Monster.Init] id={id} isIdle={info.IsName("idle")} isDie={info.IsName("die")} normalizedTime={info.normalizedTime:F2}");
         }
         
         public void OnUpdate()
