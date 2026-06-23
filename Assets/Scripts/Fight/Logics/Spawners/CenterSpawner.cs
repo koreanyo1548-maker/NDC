@@ -4,8 +4,6 @@ namespace Fight.Logics.Spawners
 {
     public class CenterSpawner: Spawner, ISpawner
     {
-        private int _spawnPos = 0;
-
         public CenterSpawner(float boundaryX, float boundaryY)
         {
             _boundaryX = boundaryX;

@@ -35,6 +35,7 @@ using Data.Editor.Excel;
 using Data.Stores;
 using Data.Utils;
 using Newtonsoft.Json;
+using ThirdParty;
 using UnityEditor;
 using UnityEngine;
 
@@ -42,21 +43,6 @@ namespace Data.Editor
 {
     public class DataManageMenu : MonoBehaviour
     {
-        /*
-        [MenuItem("Data/Reset User Data")]
-        static void ResetUserData()
-        {
-            var path = Application.persistentDataPath + "/save";
-            if (File.Exists(path)) File.Delete( path );
-            Debug.Log("유저 플레이 데이터 초기화 완료");
-        }
-        */
-        static void SetIdVersion(string version)
-        {
-			PlayerPrefs.SetString("idVersion", version);
-        }
-        
-
         [MenuItem("Data/엑셀을 데이터로")]
         static void ExcelToData()
         {
@@ -187,41 +173,32 @@ namespace Data.Editor
             Debug.Log("엑셀 업데이트 완료");
         }
 
-
-        [MenuItem("Data/서버선택 초기화")]
-        static void ChangeServer()
+        [MenuItem("Data/세이브 데이터 삭제")]
+        static void DeleteSaveData()
         {
-            PlayerPrefs.DeleteKey("server");
-        }
+            var savePath = LocalSaveManager.SavePath;
+            if (!LocalSaveManager.HasSave())
+            {
+                EditorUtility.DisplayDialog("세이브 데이터 삭제", $"삭제할 세이브 파일이 없습니다.\n\n{savePath}", "확인");
+                return;
+            }
 
+            if (!EditorUtility.DisplayDialog(
+                    "세이브 데이터 삭제",
+                    $"로컬 세이브 파일을 삭제합니다.\n\n{savePath}\n\n삭제 후 되돌릴 수 없습니다.",
+                    "삭제",
+                    "취소"))
+            {
+                return;
+            }
 
-        [MenuItem("Data/아이디 1번")]
-        static void SetIdVersionTo1()
-        {
-            SetIdVersion(string.Empty);
-            Debug.Log("1번 아이디로 세팅되었습니다.");
-        }
+            LocalSaveManager.DeleteAll();
+            Debug.Log($"세이브 데이터 삭제 완료: {savePath}");
 
-        [MenuItem("Data/아이디 2번")]
-        static void SetIdVersionTo2()
-        {
-            SetIdVersion("1");
-            Debug.Log("2번 아이디로 세팅되었습니다.");
-        }
-
-        [MenuItem("Data/아이디 3번")]
-        static void SetIdVersionTo3()
-        {
-            SetIdVersion("2");
-            Debug.Log("3번 아이디로 세팅되었습니다.");
-        }
-
-
-        [MenuItem("Data/아이디 4번")]
-        static void SetIdVersionTo4()
-        {
-            SetIdVersion("3");
-            Debug.Log("4번 아이디로 세팅되었습니다.");
+            if (EditorApplication.isPlaying)
+            {
+                EditorApplication.isPlaying = false;
+            }
         }
 
         static void Save<T,G>(List<T> meta, string path)

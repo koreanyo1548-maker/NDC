@@ -177,8 +177,7 @@ public class SimpleSpineSkinAssigner : MonoBehaviour
             }
             else if (skeletonComponent is SkeletonMecanim skeletonMecanim)
             {
-                skeletonMecanim.Update();  // ������ ������Ʈ
-                skeletonMecanim.LateUpdate();  // LateUpdate ȣ��� ���̷��� ���¸� ����
+                skeletonMecanim.Skeleton.SetToSetupPose();
             }
         }
     }

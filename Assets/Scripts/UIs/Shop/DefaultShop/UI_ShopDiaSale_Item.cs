@@ -8,11 +8,9 @@ namespace UIs.Shop.DefaultShop
 {
     public class UI_ShopDiaSale_Item: UI_Shop_Item, ILanguageSet
     {
-        private IDbShop _item;
         public override void SetInfo(IDbShop item)
         {
             base.SetInfo(item);
-            _item = item;
             Util.FindChild<TextMeshProUGUI>(gameObject, "T_Sale", true).text = string.Format(LocalString.Get(210307), item.GetValue());
             LocalizationSettings.SelectedLocaleChanged += OnLanguageChanged;
         }

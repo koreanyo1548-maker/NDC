@@ -146,9 +146,7 @@ namespace Fight.Units
             _stage = Manager.Field.CurStage;
             _isTraining = _field == FieldType.Training;
             _dieCallbackFired = false;
-            animator.Rebind();
-            animator.Play("idle", 0, 0);
-            animator.Update(0f);
+            ResetAnimatorToIdle();
         }
         
         public void OnUpdate()
@@ -206,16 +204,11 @@ namespace Fight.Units
             if (IsDead) return;
 
             _hitFired = false;
+            animator.Play("attack", 0, 0);
             if (isBoss)
             {
-                var isTwo = Random.Range(0, 2) == 0;
-                animator.Play(isTwo ? "attack2" : "attack", 0, 0);
                 if (target != null && target.IsValid())
                     LookAt((target.Position() - root.position).x > 0);
-            }
-            else
-            {
-                animator.Play("attack", 0, 0);
             }
             _state = MonsterState.Action;
         }
@@ -385,11 +378,17 @@ namespace Fight.Units
         private void OnEnable()
         {
             stat.OnEnable();
-            if (animator != null)
-            {
-                animator.Rebind();
-                animator.Update(0f);
-            }
+            ResetAnimatorToIdle();
         }
+
+        private void ResetAnimatorToIdle()
+        {
+            if (animator == null) return;
+            
+            animator.Rebind();
+            animator.Play("idle", 0, 0);
+            animator.Update(0f);
+        }
+
     }
 }

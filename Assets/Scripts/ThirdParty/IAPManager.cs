@@ -86,6 +86,7 @@ namespace ThirdParty
 
             storeController = controller;
             storeExtensionProvider = extensions;
+            _isConnected = true;
 
             DbInAppShop.ForEach((product) => {
                 var val = storeController.products.WithID(product.ProductId);
@@ -176,6 +177,11 @@ namespace ThirdParty
                 Debug.LogError("현재 구매 진행중: " + JsonConvert.SerializeObject(item));
                 return;
             }
+            if (!_isConnected)
+            {
+                Debug.LogError("IAP 초기화 미완료 상태에서 구매 시도: " + JsonConvert.SerializeObject(item));
+                return;
+            }
 
              Debug.Log(">>>>>>>> [구매시작] " + JsonConvert.SerializeObject(item));
             
@@ -208,6 +214,11 @@ namespace ThirdParty
             if (_buyingItem != null)
             {
                 Debug.LogError("현재 구매 진행중: " + JsonConvert.SerializeObject(item));
+                return;
+            }
+            if (!_isConnected)
+            {
+                Debug.LogError("IAP 초기화 미완료 상태에서 구매 시도: " + JsonConvert.SerializeObject(item));
                 return;
             }
 

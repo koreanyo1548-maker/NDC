@@ -36,6 +36,7 @@ namespace UIs.Dungeon.TrainingGround
 
         public override void UpdateScrollObject(TrainingGroundRewardItem rewardItem, int index)
         {
+            if (!_isInit) Init();
             base.UpdateScrollObject(rewardItem, index);
 
             var level = LevelController.data.TrainingGroundStage.Value;
