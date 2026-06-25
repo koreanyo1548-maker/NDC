@@ -37,6 +37,7 @@ namespace Fight.Units
         private Action _hitAction;
         private bool _hitFired;
         private const float HIT_NORMALIZED_TIME = 0.5f;
+        private const float NORMAL_ATTACK_POSITION_SQR_EPSILON = 0.01f;
         public bool IsBoss() => false;
 
         public int attackBuff;
@@ -215,10 +216,11 @@ namespace Fight.Units
             }
         
             var isTargetPlayerSide = _target.IsPlayerSide();
-            var dir = isTargetPlayerSide ? _target.Position() - _root.position + Define.SlightDown : _target.Position() - _root.position;
+            var targetPosition = GetAttackTargetPosition();
+            var dir = isTargetPlayerSide ? targetPosition - _root.position + Define.SlightDown : targetPosition - _root.position;
             var magnitude = dir.sqrMagnitude;
             LookAt(dir.x < 0);
-            if (!isTargetPlayerSide && magnitude < _stat.SqrAttackRange)
+            if (!isTargetPlayerSide && magnitude < NORMAL_ATTACK_POSITION_SQR_EPSILON)
             {
                 Attack();
             }
@@ -233,6 +235,7 @@ namespace Fight.Units
 
         private void Attack()
         {
+            LookAtAttackTarget();
             _hitFired = false;
             if (_attackCount < 4) _dashes[_attackCount].SetActive(false);
             _attackCount++;
@@ -404,7 +407,7 @@ namespace Fight.Units
             
             if (_target != null && _target.IsValid())
             {
-                if ((_target.Position() - _root.position).sqrMagnitude < _stat.SqrAttackRange) Attack();
+                if ((GetAttackTargetPosition() - _root.position).sqrMagnitude < NORMAL_ATTACK_POSITION_SQR_EPSILON) Attack();
                 else Move();
             }
             else Idle();
@@ -435,7 +438,7 @@ namespace Fight.Units
             if (_state == PlayerState.Skill) return;// || _state == PlayerState.SkillTime) return;
 
             if (_target == null) return;
-            Manager.Field.ForEachMonstersInNormalAttackRange(Position(), _target.Position().x > Position().x,
+            Manager.Field.ForEachMonstersInNormalAttackRange(Position(), !IsLookingLeft,
                 _stat.SqrHitRange,
                 monster =>
                 {
@@ -443,6 +446,19 @@ namespace Fight.Units
                     var damage = TotalStatController.I.GetAttack(isCritical, monster.isBoss, attackBuff);
                     monster.Attacked(damage, isCritical ? AttackType.Critical : AttackType.Normal);
                 });
+        }
+
+        private Vector3 GetAttackTargetPosition()
+        {
+            return _target is Monster monster ? monster.GetNormalAttackPosition(Position()) : _target.Position();
+        }
+
+        private void LookAtAttackTarget()
+        {
+            if (_target == null) return;
+            LookAt(_target is Monster monster
+                ? monster.ShouldAttackerLookLeft(Position())
+                : _target.Position().x < Position().x);
         }
 
         public void DoSkill(string skillAnimation)

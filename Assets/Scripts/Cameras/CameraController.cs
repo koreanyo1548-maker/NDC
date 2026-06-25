@@ -63,8 +63,8 @@ namespace Cameras
 
             _minX = Screen.width * cameraSizeY / Screen.height+0.3f;
             _maxX = Manager.Field.MaxX - _minX;
-            _maxY = 5.39f - cameraSizeY;
-            _minY = Manager.Field.MinY + cameraSizeY - 1.4f;
+            _maxY = -0.61f;
+            _minY = -1.8f;
             
             _position.x = _player.position.x;
             _position.y =  _player.position.y;

@@ -16,6 +16,7 @@ using Managers.Base;
 using MEC;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Utils;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
@@ -59,6 +60,7 @@ namespace Fight.Units
         private bool _dieCallbackFired;
         private bool _hitFired;
         private const float HIT_NORMALIZED_TIME = 0.5f;
+        private const float MAX_DAMAGE_TEXT_HEIGHT = 3f;
 
         #endregion
 
@@ -71,8 +73,10 @@ namespace Fight.Units
         public Transform targetingPosition { get; private set; }
         public Transform root { get; private set; }
         private Transform _damagePosition;
+        private SpriteRenderer _squareRenderer;
         public Animator animator { get; private set; }
         private SpriteMaterialSetter _materialSetter;
+        private MonsterPartSorter _partSorter;
 
         #endregion
 
@@ -111,6 +115,7 @@ namespace Fight.Units
             animator = transform.GetComponent<Animator>();
             targetingPosition = root.Find("TargetingPosition");
             _damagePosition = root.Find("DamagePosition");
+            _squareRenderer = FindSquareRenderer();
             var scale = root.localScale.x;
             _lookLeft = Define.LookLeft * scale;
             _lookRight = Define.LookRight * scale;
@@ -118,6 +123,10 @@ namespace Fight.Units
             
             stat = new MonsterStat(this);
             _materialSetter = root.gameObject.GetOrAddComponent<SpriteMaterialSetter>();
+            var sortingGroup = root.gameObject.GetOrAddComponent<SortingGroup>();
+            sortingGroup.sortingOrder = 5;
+            _partSorter = root.gameObject.GetOrAddComponent<MonsterPartSorter>();
+            _partSorter.Init(transform);
         }
         
         // #if UNITY_EDITOR
@@ -255,7 +264,7 @@ namespace Fight.Units
                 }
                 
                 if (attackType != AttackType.Normal) CameraController.I.Shake();
-                var dm = Manager.Pool.damage.Spawn(_damagePosition.position, attack);
+                var dm = Manager.Pool.damage.Spawn(GetDamageTextPosition(), attack);
                 dm.SetSize(Define.DamageSize(true));
                 dm.SetGradient(Define.DamageColor(true, attackType));
             }
@@ -349,6 +358,46 @@ namespace Fight.Units
         {
             _actor.Gather(position);
         }
+
+        public Vector3 GetNormalAttackPosition(Vector3 attackerPosition)
+        {
+            if (_squareRenderer == null) return root.position;
+
+            var bounds = _squareRenderer.bounds;
+            var position = bounds.center;
+            position.x = attackerPosition.x < bounds.center.x ? bounds.min.x : bounds.max.x;
+            position.z = root.position.z;
+            return position;
+        }
+
+        public bool ShouldAttackerLookLeft(Vector3 attackerPosition)
+        {
+            var centerX = _squareRenderer == null ? root.position.x : _squareRenderer.bounds.center.x;
+            return attackerPosition.x > centerX;
+        }
+
+        private Vector3 GetDamageTextPosition()
+        {
+            var position = _damagePosition != null ? _damagePosition.position : root.position;
+            var maxY = root.position.y + MAX_DAMAGE_TEXT_HEIGHT;
+            if (position.y > maxY) position.y = maxY;
+            return position;
+        }
+
+        private SpriteRenderer FindSquareRenderer()
+        {
+            for (var idx = 0; idx < root.childCount; ++idx)
+            {
+                var child = root.GetChild(idx);
+                if (!child.name.StartsWith("Square", StringComparison.Ordinal)) continue;
+
+                var renderer = child.GetComponent<SpriteRenderer>();
+                if (renderer != null) return renderer;
+            }
+
+            return null;
+        }
+
         private void OnAttackDone()
         {
             if (_state == MonsterState.Die) return;
@@ -372,6 +421,15 @@ namespace Fight.Units
 
         public void PlayAnimation(string animationName)
         {
+            animationName = animationName switch
+            {
+                "Die" => "die",
+                "Walk" => "walk",
+                "Idle" => "idle",
+                "Attack" => "attack",
+                "Attack2" => "attack2",
+                _ => animationName
+            };
             animator.Play(animationName, 0, 0);
         }
 
@@ -388,6 +446,7 @@ namespace Fight.Units
             animator.Rebind();
             animator.Play("idle", 0, 0);
             animator.Update(0f);
+            _partSorter?.Apply();
         }
 
     }

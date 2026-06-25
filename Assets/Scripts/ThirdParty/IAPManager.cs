@@ -49,6 +49,9 @@ namespace ThirdParty
         private bool _isRestoreInit = false;
         private bool _isConnected = false;
 
+        [Header("Test Purchase")]
+        [SerializeField] private bool _useTestPurchaseFallback = true;
+
         /// <summary>
         /// 구매중인 아이템 정보
         /// </summary>
@@ -90,12 +93,12 @@ namespace ThirdParty
 
             DbInAppShop.ForEach((product) => {
                 var val = storeController.products.WithID(product.ProductId);
-                if (product != null)
+                if (val != null)
                     product.DisplayPrice = val.metadata.localizedPriceString;
             });
             DbPassShop.ForEach((product) => {
                 var val = storeController.products.WithID(product.ProductId);
-                if (product != null)
+                if (val != null)
                     product.DisplayPrice = val.metadata.localizedPriceString;
             });
             Debug.Log("IAP 상품 가격 설정 완료");
@@ -120,24 +123,14 @@ namespace ThirdParty
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
         {
             Debug.Log($"결제 완료: {purchaseEvent.purchasedProduct}");
-            if (_buyingItem.shopItem != null)
+            var buyingItem = _buyingItem;
+            if (buyingItem == null)
             {
-                CurrencyController.I.Buy(_buyingItem.shopItem, string.Empty, () =>
-                {
-                    Manager.UI.CloseSingleUI(_buyingItem.showLoading);
-                });
-                _buyingItem.onCompleteBuy();
-                _buyingItem = null;
+                Debug.LogWarning("구매 완료 콜백이 왔지만 진행 중인 구매 정보가 없습니다.");
+                return PurchaseProcessingResult.Complete;
             }
-            else
-            {
-                CurrencyController.I.Buy(_buyingItem.passItem);
-                PlayFabManager.Store.ForceSave(() =>
-                {
-                    _buyingItem.onCompleteBuy();
-                    _buyingItem = null;
-                });
-            }
+
+            CompletePurchase(buyingItem, purchaseEvent.purchasedProduct.receipt);
 
             AppsFlyerEven_Purchase(
                     purchaseEvent.purchasedProduct.metadata.isoCurrencyCode,
@@ -186,25 +179,22 @@ namespace ThirdParty
              Debug.Log(">>>>>>>> [구매시작] " + JsonConvert.SerializeObject(item));
             
             var loading = Manager.UI.ShowSingleUI<UI_Loading>();
-
-#if UNITY_EDITOR
-            Debug.Log("에디터 결제");
-            CurrencyController.I.Buy(item, string.Empty, () =>
-            {
-                Manager.UI.CloseSingleUI(loading);
-            });
-            afterSuccess();
-#else
-            Debug.Log($"구매 IAP - IDbShop {item.GetProductId()}");
-            // 구매 상품
             _buyingItem = new BuyingItem(item, loading, afterSuccess);
+
+            if (!_isConnected)
+            {
+                if (TryCompleteTestPurchase("IAP 초기화 미완료")) return;
+                FailCurrentPurchase("IAP 초기화 미완료 상태에서 구매 시도: " + JsonConvert.SerializeObject(item));
+                return;
+            }
+
+            Debug.Log($"구매 IAP - IDbShop {item.GetProductId()}");
             Product product = storeController.products.WithID(item.GetProductId());
-            // 상품이 존재하며 구매 가능하면
+
             if (product != null && product.availableToPurchase)
                 storeController.InitiatePurchase(product);
-            else
-                Debug.LogError("상품이 없거나 현재 구매가 불가능합니다");
-#endif
+            else if (!TryCompleteTestPurchase($"상품 없음 또는 구매 불가: {item.GetProductId()}"))
+                FailCurrentPurchase("상품이 없거나 현재 구매가 불가능합니다: " + item.GetProductId());
         }
         /// <summary>
         /// 패스 구매
@@ -223,26 +213,69 @@ namespace ThirdParty
             }
 
             var loading = Manager.UI.ShowSingleUI<UI_Loading>();
-#if UNITY_EDITOR
-            Debug.Log("에디터 결제");
-            CurrencyController.I.Buy(item, () =>
-            {
-                Manager.UI.CloseSingleUI(loading);
-            });
-            afterSuccess();
-#else
-            Debug.Log($"구매 IAP - IDbShop {item.ProductId}");
-            // 구매 상품
             _buyingItem = new BuyingItem(item, loading, afterSuccess);
+
+            if (!_isConnected)
+            {
+                if (TryCompleteTestPurchase("IAP 초기화 미완료")) return;
+                FailCurrentPurchase("IAP 초기화 미완료 상태에서 구매 시도: " + JsonConvert.SerializeObject(item));
+                return;
+            }
+
+            Debug.Log($"구매 IAP - IDbShop {item.ProductId}");
             Product product = storeController.products.WithID(item.ProductId);
-            // 상품이 존재하며 구매 가능하면
+
             if (product != null && product.availableToPurchase)
                 storeController.InitiatePurchase(product);
-            else
-                Debug.LogError("상품이 없거나 현재 구매가 불가능합니다");
-#endif
+            else if (!TryCompleteTestPurchase($"상품 없음 또는 구매 불가: {item.ProductId}"))
+                FailCurrentPurchase("상품이 없거나 현재 구매가 불가능합니다: " + item.ProductId);
         }
         #endregion
+
+        private bool TryCompleteTestPurchase(string reason)
+        {
+            if (!_useTestPurchaseFallback) return false;
+
+            Debug.LogWarning($"테스트 구매 성공 처리: {reason}");
+            CompletePurchase(_buyingItem, string.Empty);
+            return true;
+        }
+
+        private void CompletePurchase(BuyingItem buyingItem, string receipt)
+        {
+            if (buyingItem == null) return;
+
+            if (buyingItem.shopItem != null)
+            {
+                CurrencyController.I.Buy(buyingItem.shopItem, receipt, () =>
+                {
+                    CloseLoading(buyingItem);
+                });
+                buyingItem.onCompleteBuy?.Invoke();
+                if (_buyingItem == buyingItem) _buyingItem = null;
+            }
+            else
+            {
+                CurrencyController.I.Buy(buyingItem.passItem);
+                CloseLoading(buyingItem);
+                buyingItem.onCompleteBuy?.Invoke();
+                if (_buyingItem == buyingItem) _buyingItem = null;
+                PlayFabManager.Store.ForceSave();
+            }
+        }
+
+        private void FailCurrentPurchase(string message)
+        {
+            Debug.LogError(message);
+            CloseLoading(_buyingItem);
+            _buyingItem = null;
+        }
+
+        private void CloseLoading(BuyingItem buyingItem)
+        {
+            if (buyingItem?.showLoading != null)
+                Manager.UI.CloseSingleUI(buyingItem.showLoading);
+        }
 
         void AppsFlyerEven_Purchase(string currency, string value)
         {

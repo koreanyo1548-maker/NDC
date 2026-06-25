@@ -1,14 +1,14 @@
 # 새 게임 전환 마이그레이션 계획
 
 > 분석 기준일: 2026-06-14  
-> 최종 업데이트: 2026-06-22  
-> 현재 상태: Mushroom Hero → 신규 게임 (스탠드얼론 전환) / Player Spine 교체 완료, Monster 교체 진행 중
+> 최종 업데이트: 2026-06-24
+> 현재 상태: Mushroom Hero → Webtoon Hero 스탠드얼론 전환 진행 중 / PlayFab 서버 의존 런타임 로컬화 완료, Player Spine 교체 코드 완료(외부 파츠 API 미완료), Monster 교체 코드와 SD Pack 파츠 정렬 보정 완료 후 프리팹/플레이 검증 대기
 
 ---
 
 ## 1. 현재 외부 의존성 전체 현황
 
-### 1-A. PlayFab (제거 대상)
+### 1-A. PlayFab (서버 의존 제거 완료 / 호환 레이어 이름 유지)
 
 | 기능 | 현재 구현 | 대체 방안 |
 |------|-----------|-----------|
@@ -27,7 +27,18 @@
 | 백그라운드 시간 | PlayFab 서버 시간 기준 | 로컬 시간 기준 |
 | AppStore 리뷰 모드 | PlayFab TitleData `AppStoreReview` | 제거 |
 
-**영향받는 파일 수: 51개**
+**현재 코드 기준**
+
+- `Assets/Plugins/PlayFabSDK/`는 제거됨.
+- `Assets/Scripts/ThirdParty/PlayFabFunctions.cs`는 제거됨.
+- `PlayFabManager.cs`, `PlayFabStore.cs`, `PlayFabLeaderboard.cs`, `PlayFabTitleData.cs`는 이름을 유지한 호환 레이어다.
+  - `PlayFabManager`: 게스트 로그인/Google/Apple 로그인 요청을 모두 로컬 `AfterLogin()`으로 연결
+  - `PlayFabStore`: `LocalSaveManager` 기반 `save.json` 저장/로드
+  - `PlayFabLeaderboard`: 랭킹/치트/친구 조회 스텁
+  - `PlayFabTitleData`: 쿠폰/메일/점검 등 서버 설정값 스텁
+- `IAPManager.cs`의 `#if APPSFLYER_ENBALE` 블록 안에는 `PlayFabClientAPI.GetUserData/UpdateUserData` 직접 호출이 남아 있음. 현재 심볼 오타로 비활성화 상태지만, AppsFlyer 이벤트를 활성화할 때 반드시 교체 필요.
+
+**초기 영향받은 파일 수: 51개**
 
 ThirdParty (5개):
 - `PlayFabManager.cs` - 로그인/초기화 허브
@@ -76,11 +87,13 @@ UI (약 15개):
 
 - Unity Package: `com.unity.purchasing 4.12.2` (manifest.json)
 - Google Play Store 상품 ID 사용 중
-- `IAPManager.cs` - 구매 처리, 패스 구매 후 PlayFab ForceSave 호출
+- `IAPManager.cs` - 구매 처리, 패스 구매 후 `PlayFabManager.Store.ForceSave()` 호출
+- 현재 `PlayFabManager.Store`는 서버 SDK가 아니라 로컬 저장 호환 레이어이므로 패스 구매 후 저장 호출 자체는 동작 가능하다.
+- `Use Test Purchase Fallback` 옵션이 추가되어 IAP 연결 후 상품 없음/구매 불가 상황에서는 테스트 성공 처리 가능. 단, 현재 코드상 `_isConnected == false`인 미초기화 상태에서는 초반 guard에서 바로 return하므로 fallback까지 도달하지 않는다.
 - **해야 할 일**:
   - 새 Google Play 개발자 계정에서 상품 등록
-  - `IAPManager.cs`에서 `PlayFabManager.Store.ForceSave()` 호출 → 로컬 저장으로 교체
-  - 현재 AppsFlyer 이벤트 코드는 `#if APPSFLYER_ENABLE` 조건으로 비활성화 상태 (그대로 유지 가능)
+  - 실제 서비스 결제 연결 전 `Use Test Purchase Fallback` 운영 비활성화 체크 추가 검토
+  - 현재 AppsFlyer 이벤트 코드는 `#if APPSFLYER_ENBALE` 오타 조건으로 비활성화 상태. 활성화 전 `PlayFabClientAPI` 잔여 호출을 로컬 저장/분석 이벤트로 교체 필요.
 
 ---
 
@@ -129,14 +142,14 @@ UI (약 15개):
 
 ---
 
-## 2. 크래시 원인 (현재)
+## 2. 크래시 원인 (해결됨)
 
 ```
 PlayFabManager.cs:124 - Debug.LogError("최신 버전으로 업데이트 해주세요. 최신: 1.03.044")
 ```
 
-PlayFab 서버의 `ClientVer`(1.03.044) > 로컬 앱 버전 → 서버가 강제 차단 중.  
-PlayFab을 제거하면 자동 해결됨.
+PlayFab 서버의 `ClientVer`(1.03.044) > 로컬 앱 버전 → 서버가 강제 차단하던 문제가 있었다.
+현재 `PlayFabManager`가 서버 버전 체크를 하지 않고 로컬 `AfterLogin()`으로 바로 진입하므로 이 크래시는 해소된 상태다.
 
 ---
 
@@ -162,7 +175,7 @@ PlayFab을 제거하면 자동 해결됨.
 ```
 Application.persistentDataPath/save.json 에 동일 구조 JSON 저장
 - 기존 UserInfo 클래스 구조 그대로 활용 가능
-- 서버 시간 → DateTime.UtcNow
+- 서버 시간 → `LocalSaveManager.Now()` (`DateTime.Now` 계열 로컬 시간)
 - 오토세이브 5초 → 로컬 파일 write
 ```
 
@@ -207,6 +220,7 @@ Application.persistentDataPath/save.json 에 동일 구조 JSON 저장
 - [ ] `Assets/AppleAuth/` — **유지 결정** (동일 이유)
 - [x] `Assets/Scripts/ThirdParty/HiveManager.cs` 삭제
 - [x] `Assets/Scripts/ThirdParty/PlayFabFunctions.cs` 삭제
+- [ ] `IAPManager.cs`의 비활성 `PlayFabClientAPI` 잔여 호출 제거 또는 로컬/분석 이벤트로 교체
 
 **2-2. AdMob 계정 교체** (`AdManager.cs`)
 - [ ] 새 AdMob 계정에서 앱 등록 및 광고 유닛 ID 발급
@@ -225,8 +239,8 @@ Application.persistentDataPath/save.json 에 동일 구조 JSON 저장
 **2-5. 앱 기본 정보 교체** (`ProjectSettings/ProjectSettings.asset`)
 - [x] `companyName`: "Ndolphin Connect" → "NDC" ✅
 - [x] `productName`: "Mushroom Hero" → "Webtoon Hero" ✅
-- [ ] `bundleIdentifier` (Android/iOS) 교체 — 현재 `com.NdolphinConnect.MushroomHero` / `mush.room.hero`
-- [ ] 버전 설정 (1.00.000부터 시작)
+- [ ] `bundleIdentifier` (Android/iOS) 교체 — 현재 Android `com.thumpquest.thumpquest`, iOS `mush.room.hero`
+- [ ] 버전 설정 — 현재 `bundleVersion: 0.1.2`, `AndroidBundleVersionCode: 3`
 
 **2-6. IAP 상품 ID 교체**
 - [ ] 새 Google Play 개발자 계정에서 앱 등록
@@ -239,24 +253,27 @@ Application.persistentDataPath/save.json 에 동일 구조 JSON 저장
 
 > 상세 분석: `_dev/asset-migration-analysis.md`
 
-**2B-1. Player → Shinabro MiniFantasyCharacters** ✅ 코드 완료
+**2B-1. Player → Shinabro MiniFantasyCharacters** ✅ 코드 완료 / 파츠 외부 제어 API 미완료
 
 - [x] `Assets/Layer Lab/` 삭제 (LayerLab CharacterMaker 완전 제거)
 - [x] `Assets/Downloads/Shinabro/MiniFantasyCharacters/` 에셋 추가
 - [x] `Player.cs` 수정 — Spine 애니메이션명, 무기별 분기(`GetAttackAnimation`, `GetSkillAnimation`)
-- [x] `SimpleSpineSkinAssigner.cs` 수정 (public AssignSkins, Start 추가)
+- [x] `SimpleSpineSkinAssigner.cs` 수정 (Start 추가)
+- [ ] `SimpleSpineSkinAssigner.AssignSkins()` public 전환
+- [ ] `Player.SkinAssigner` public getter 추가
 - [x] `Character_Controller.controller` 수정 (AttackSpeed 파라미터, 전체 상태 추가)
 - [ ] Player.prefab 에디터 작업 확인 (Shinabro Variant 자식 배치, scale 10,10,10)
 
-**2B-2. Monster → 2D SD Monster Pack** ⚠️ 진행 중
+**2B-2. Monster → 2D SD Monster Pack** ⚠️ 코드/컨트롤러 처리 완료, 프리팹/플레이 검증 대기
 
 - [x] 에셋 분석 완료 (15종 파악, 애니메이션명 불일치 파악)
 - [x] **Monster.cs 코드 수정** — `"Attack"` → `"attack"`, `"Walk"` → `"walk"`, `"Die"` → `"die"`
 - [x] 기존 몬스터 ↔ SD Pack 매핑표 확정 (`_dev/monster-mapping.md`)
 - [x] walk 없는 몬스터(Bat, Beholder) 처리 — idle 폴백 로직
 - [x] 보스 `Attack2` 처리 완료 (단일 보스는 attack 재사용, 이중 보스는 smash/bow 분기)
+- [x] SD Pack 내부 파츠 정렬 보정 추가 — `MonsterPartSorter` + 런타임 `SortingGroup`
 - [ ] 프리팹 에디터 작업 (매핑 확정 후 1종씩 교체)
-- [ ] **[버그] Slime2 풀 재활용 시 die 애니메이션으로 시작** — 임시 조치(`animator.Play("idle")` 추가) 완료, 검증 필요
+- [ ] **[버그] Slime2 풀 재활용 시 die 애니메이션으로 시작** — 임시 조치(`ResetAnimatorToIdle()`에서 `Rebind` + `Play("idle")` + `Update(0f)`) 완료, 검증 필요
   - 다음 세션: Init/OnEnable/Clear 시점에 Debug.Log 심고 플레이 확인
 
 ---
@@ -330,10 +347,12 @@ Application.persistentDataPath/save.json 에 동일 구조 JSON 저장
 
 ---
 
-## 7. 현재 당장 실행할 수 있는 것 (Phase 1 착수 순서 제안)
+## 7. 현재 당장 실행할 수 있는 것
 
-1. **`PlayFabManager.cs`** - `OnPlayFabLoginSuccess()` 에서 버전 체크를 없애고, 바로 로컬 모드로 AfterLogin을 호출하도록 수정 → **크래시 즉시 해결**
-2. **`LocalSaveManager.cs`** 신규 작성 → 로컬 파일 저장 시스템 구축
-3. **`PlayFabStore.cs`** → 로컬 저장으로 내부 교체
-4. 컴파일 오류가 나는 파일부터 순서대로 정리
-5. 랭킹 스텁 처리 → 게임 전체 실행 확인
+1. **Slime2 die 시작 버그 검증**: `Monster.Init()` / `OnEnable()` / `Clear()` 호출 순서와 실제 재생 상태 확인
+2. **Monster 프리팹 교체 검증**: `_dev/monster-mapping.md` 기준으로 `Resources/Prefabs/Characters/` 프리팹의 비주얼 자식, `DamagePosition`, `TargetingPosition`, `HpBar` 위치 확인
+3. **Monster 파츠 정렬 Play Mode 검증**: 일반 몬스터/보스/이펙트 겹침 상황에서 `MonsterPartSorter` 결과 확인
+4. **Player 파츠 외부 제어 API 마무리**: `AssignSkins()` public 전환, `Player.SkinAssigner` getter 추가
+5. **IAP 잔여 PlayFab 호출 정리**: `IAPManager.cs`의 비활성 AppsFlyer 블록 내 첫 구매 기록 로직 교체
+6. **IAP fallback 동작 정리**: 미초기화 상태에서도 테스트 성공 처리가 필요하면 초반 `_isConnected` guard 위치 조정
+7. **Bundle ID/광고/Firebase/IAP 계정 값 교체**

@@ -202,7 +202,7 @@ namespace Controller.Play
                     Manager.Field.GameOver(GameOverType.DungeonFail, 3.25f, curField);
                     break;
                 case FieldType.Training:
-                    Manager.Field.GetFirst().PlayAnimation("Die");
+                    Manager.Field.GetFirst().PlayAnimation("die");
                     Manager.Player.SetWait();
                     Manager.UI.GetSceneUI<UI_MainSkill>().StopSkillTimers();
                     Timing.CallDelayed(2f, () => Manager.Field.GameOver(GameOverType.Success, -1, curField));

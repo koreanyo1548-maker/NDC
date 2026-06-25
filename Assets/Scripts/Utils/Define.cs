@@ -10,6 +10,7 @@ using MEC;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
@@ -226,6 +227,8 @@ namespace Utils
         private static Dictionary<int, string> zeros = new() {{1, "0"}, {2, "00"}, {3, "000"}, {4, "0000"}};
         public static string AddUnit(BigInteger number, int digit, int behindPoint)
         {
+            if (IsKoreanLocale()) return AddKoreanUnit(number);
+
             var num = number.ToString();
             var realDigit = num.Length;
             
@@ -246,6 +249,46 @@ namespace Utils
             if (behinds.Equals(zeros[realBehindPoint])) return AddChunkSeparator(num.Substring(0, realDigit)) + tmp;
 
             return AddChunkSeparator(num.Substring(0, realDigit)) + point + behinds + tmp;
+        }
+
+        private static bool IsKoreanLocale()
+        {
+            var locale = LocalizationSettings.SelectedLocale;
+            return locale != null && locale.Identifier.Code.StartsWith("ko");
+        }
+
+        private static string[] koreanUnits = {"", "만", "억", "조", "경", "해"};
+        private static string AddKoreanUnit(BigInteger number)
+        {
+            if (number < 0) return "-" + AddKoreanUnit(BigInteger.Abs(number));
+            if (number < 1000) return number.ToString();
+            if (number < 10000)
+            {
+                var thousand = number / 1000;
+                var rest = number % 1000;
+                return rest == 0 ? $"{thousand}천" : $"{thousand}천{rest}";
+            }
+
+            var groups = new List<int>();
+            while (number > 0)
+            {
+                groups.Add((int)(number % 10000));
+                number /= 10000;
+            }
+
+            var builder = new StringBuilder();
+            var visibleGroups = 0;
+            for (var idx = groups.Count - 1; idx >= 0 && visibleGroups < 2; --idx)
+            {
+                var group = groups[idx];
+                if (group == 0) continue;
+
+                builder.Append(group);
+                builder.Append(idx < koreanUnits.Length ? koreanUnits[idx] : "??");
+                visibleGroups++;
+            }
+
+            return builder.ToString();
         }
 
         public static float GetCanvasRatio()

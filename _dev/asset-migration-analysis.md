@@ -2,6 +2,8 @@
 
 > 작성일: 2026-06-21  
 > 대상: Player (Shinabro), Monster (2D SD Monster Pack)
+> 최종 업데이트: 2026-06-24
+> 현재 상태: Player 애니메이션/스킨 판별 코드는 적용됨. 런타임 외부 파츠 교체 API는 아직 미구현. Monster 코드는 SD Pack 상태명/정렬 보정까지 적용됨. 프리팹/플레이 검증은 대기.
 
 ---
 
@@ -163,10 +165,7 @@ bool IsSkillAnimationName(AnimatorStateInfo info)
 #### SimpleSpineSkinAssigner.cs
 
 ```csharp
-// 1. AssignSkins() public으로 변경 (런타임 파츠 교체 API용)
-void AssignSkins()  →  public void AssignSkins()
-
-// 2. Start() 추가 — 플레이 모드에서 스킨 적용
+// Start() 추가 — 플레이 모드에서 스킨 적용
 // OnEnable()은 Application.isPlaying이면 return하므로 런타임 스킨 미적용 → 캐릭터 투명
 void Start()
 {
@@ -176,6 +175,8 @@ void Start()
 }
 ```
 
+> 현재 코드 기준 `AssignSkins()`는 아직 `private` 메서드다. 런타임 중 외부 시스템에서 파츠를 바꾸려면 `public void AssignSkins()` 전환과 `Player.SkinAssigner` getter 추가가 별도로 필요하다.
+
 #### Character_Controller.controller
 
 - `AttackSpeed` float 파라미터 추가 (default 1)
@@ -183,7 +184,7 @@ void Start()
   Walk1, Run1, Die, Attack_OneHand1/2, Attack_TwoHand1/2, Attack_DualHand1/2, Shoot1, Spell1/2, Cast1/2
 - Attack/Skill 계열 상태에 `SpeedParameter: AttackSpeed` 연결
 
-#### 런타임 파츠 교체 API
+#### 런타임 파츠 교체 API - 미구현
 
 ```csharp
 var assigner = GetComponentInChildren<SimpleSpineSkinAssigner>();
@@ -191,9 +192,11 @@ assigner.rightHandWeaponSkin = "RIGHTHAND/Sword_OneHand_Epic1";
 assigner.AssignSkins();
 ```
 
+위 코드는 `AssignSkins()` public 전환 후 사용 가능하다. 현재는 `Player.cs` 내부 애니메이션 분기에서만 `_skinAssigner`를 읽는다.
+
 ---
 
-### 1-6. 프리팹 제작 절차 (에디터) ✅ 완료
+### 1-6. 프리팹 제작 절차 (에디터)
 
 1. 임시 씬에 `Simple Spine Character Sample.prefab` 배치
 2. Inspector → `SimpleSpineSkinAssigner`에서 5개 슬롯 드롭다운으로 선택  
@@ -206,12 +209,16 @@ assigner.AssignSkins();
 
 > **스케일 주의**: Player body localScale이 0.1이므로 Shinabro Variant의 localScale을 (10,10,10)으로 설정해야 실제 크기 1.0.  
 > **기본 방향 주의**: Shinabro는 기본 방향이 왼쪽 — LookAt 반전으로 코드에서 처리 완료, 에디터 작업 불필요.
+> 현재 문서 기준으로는 Player.prefab의 최종 배치/스케일은 에디터에서 재확인이 필요하다.
 
 ---
 
 ### 1-7. 미결 사항
 
 - [x] `Dash()` 처리 방법 — `"Run1"` 재생으로 결정
+- [ ] `SimpleSpineSkinAssigner.AssignSkins()` public 전환
+- [ ] `Player.SkinAssigner` public getter 추가
+- [ ] Player.prefab의 Shinabro Variant 배치와 scale `(10,10,10)` 확인
 
 ---
 
@@ -267,6 +274,9 @@ root = transform.parent;                        // root = 프리팹 루트
 animator = transform.GetComponent<Animator>(); // 자신(첫 번째 자식)의 Animator
 targetingPosition = root.Find("TargetingPosition");
 _damagePosition = root.Find("DamagePosition");
+root.gameObject.GetOrAddComponent<SortingGroup>();
+_partSorter = root.gameObject.GetOrAddComponent<MonsterPartSorter>();
+_partSorter.Init(transform);
 ```
 
 ---
@@ -317,7 +327,7 @@ _damagePosition = root.Find("DamagePosition");
 
 ---
 
-### 2-5. 수정이 필요한 코드 (Monster.cs)
+### 2-5. 완료된 코드 수정 (Monster.cs)
 
 ```csharp
 // [1] Attack() — 일반 공격
@@ -335,7 +345,18 @@ animator.Play("Walk", 0, 0)   →   animator.Play("walk", 0, 0)
 
 // [5] Die()
 animator.Play("Die")   →   animator.Play("die")
+
+// [6] 풀 재활용 초기화
+animator.Rebind();
+animator.Play("idle", 0, 0);
+animator.Update(0f);
+
+// [7] SD Pack 내부 파츠 정렬
+// root에는 SortingGroup을 붙이고, 자식 SpriteRenderer의 local Z를 sortingOrder로 변환한다.
+MonsterPartSorter.Init(transform);
 ```
+
+`MonsterPartSorter`는 SD Monster Pack의 부위별 local Z 레이어를 프로젝트의 Y축 투명 정렬 설정과 충돌하지 않게 보정한다. 전역 GraphicsSettings는 변경하지 않는다.
 
 ---
 
@@ -352,12 +373,9 @@ animator.Play("Die")   →   animator.Play("die")
 
 ### 2-7. 미결 사항
 
-- [ ] 현재 몬스터 ↔ SD Pack 매핑표 작성
-  ```
-  Slime1~5   → ?
-  Mushroom1~4 → ?
-  BossSlime  → ?
-  BossSlime2 → ?
-  ```
-- [ ] `walk` 없는 몬스터(Bat, Beholder, Crow, Slime) 처리 방법
-- [ ] 보스 `Attack2` 처리 방법
+- [x] 현재 몬스터 ↔ SD Pack 매핑표 작성 (`_dev/monster-mapping.md`)
+- [x] `walk` 없는 몬스터 처리: Bat은 `idle`, Beholder는 `fly`를 `walk` 상태에 연결
+- [x] 보스 `Attack2` 처리: 단일 공격 보스는 `attack` 재사용, 이중 공격 보스는 `attack-bow` 연결
+- [x] SD Pack 내부 파츠 정렬 보정: `MonsterPartSorter` 추가
+- [ ] Monster 프리팹 배치/위치 조정 확인
+- [ ] Slime2 풀 재활용 후 `die`로 시작하는지 Play Mode 검증

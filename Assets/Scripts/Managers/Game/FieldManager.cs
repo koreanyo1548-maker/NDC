@@ -643,7 +643,7 @@ namespace Managers.Game
             }
         }
         
-        public void ForEachMonstersInNormalAttackRange(Vector3 myPosition, bool isTargetXLarge, float range, Action<Monster> toDo)
+        public void ForEachMonstersInNormalAttackRange(Vector3 myPosition, bool isAttackRight, float range, Action<Monster> toDo)
         {
             lock (_monsters)
             {
@@ -651,7 +651,11 @@ namespace Managers.Game
                 foreach (var monster in _monsters)
                 {
                     if (monster.Value.IsDead) continue;
-                    if ((isTargetXLarge == monster.Value.Position().x > myPosition.x) && (monster.Value.Position() - myPosition).sqrMagnitude <= range)
+                    var attackPosition = monster.Value.GetNormalAttackPosition(myPosition);
+                    var xDiff = attackPosition.x - myPosition.x;
+                    var isSameX = Mathf.Abs(xDiff) < 0.001f;
+                    var isInAttackDirection = isSameX || isAttackRight == xDiff > 0;
+                    if (isInAttackDirection && (attackPosition - myPosition).sqrMagnitude <= range)
                     {
                         count++;
                         toDo(monster.Value);

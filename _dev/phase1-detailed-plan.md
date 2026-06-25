@@ -1,6 +1,7 @@
 # Phase 1 상세 실행 계획: PlayFab 완전 제거 + 로컬 저장 전환
 
 > 분석일: 2026-06-14
+> 문서 상태: 보존용 실행 계획. Phase 1은 완료되었으며, 현재 상태는 `_dev/new-game-migration-plan.md`와 `_dev/history.md`를 기준으로 볼 것.
 
 ## 0. 핵심 발견 (Executive Summary)
 

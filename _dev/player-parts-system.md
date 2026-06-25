@@ -1,14 +1,17 @@
 # 플레이어 파츠 교체 시스템
 
 > 작성일: 2026-06-23  
-> 상태: 설계 완료 / 미구현
+> 최종 업데이트: 2026-06-24
+> 상태: 설계 완료 / Player 애니메이션 분기용 스킨 읽기 구현 / 외부 제어 API 미구현
 
 ---
 
 ## 개요
 
 Shinabro 캐릭터(Spine 기반)는 5개 슬롯을 독립적으로 교체할 수 있다.  
-`SimpleSpineSkinAssigner.AssignSkins()`를 호출하는 것만으로 즉시 비주얼이 바뀐다.
+현재 `SimpleSpineSkinAssigner`는 Start/OnEnable/OnValidate에서 내부적으로 `AssignSkins()`를 호출한다.
+
+런타임 중 다른 시스템이 파츠를 바꾸려면 아직 아래 두 API 노출 작업이 필요하다. 현재는 `Player.cs` 내부에서 공격/스킬 애니메이션 분기용으로만 스킨 문자열을 읽는다.
 
 ---
 
@@ -28,7 +31,7 @@ Shinabro 캐릭터(Spine 기반)는 5개 슬롯을 독립적으로 교체할 수
 
 ## 구현 시 필요한 코드 변경 (2곳)
 
-### 1. `SimpleSpineSkinAssigner.cs:114`
+### 1. `Assets/Downloads/Shinabro/MiniFantasyCharacters/Scripts/SimpleSpineSkinAssigner.cs`
 ```csharp
 // 변경 전
 void AssignSkins()
@@ -37,11 +40,25 @@ void AssignSkins()
 public void AssignSkins()
 ```
 
-### 2. `Player.cs`
+### 2. `Assets/Scripts/Fight/Units/Player.cs`
 ```csharp
 // _skinAssigner 필드 아래에 추가
 public SimpleSpineSkinAssigner SkinAssigner => _skinAssigner;
 ```
+
+## 현재 실제 코드 상태
+
+- `Player.cs`는 `_skinAssigner = GetComponentInChildren<SimpleSpineSkinAssigner>()`로 Shinabro 파츠 정보를 읽는다.
+- 공격 애니메이션은 `rightHandWeaponSkin`/`leftHandWeaponSkin` 문자열로 분기한다.
+  - Bow → `Shoot1`
+  - Scepter/Staff → `Spell1`/`Spell2`
+  - TwoHand → `Attack_TwoHand1`/`Attack_TwoHand2`
+  - 왼손 무기(Dagger/Sword/Spear) → `Attack_DualHand1`/`Attack_DualHand2`
+  - 그 외 → `Attack_OneHand1`/`Attack_OneHand2`
+- 스킬 애니메이션은 Bow → `Shoot1`, Scepter/Staff → `Spell1`/`Spell2`, 그 외 → `Cast1`/`Cast2`.
+- `SimpleSpineSkinAssigner.AssignSkins()`는 아직 private이라 외부 시스템에서 직접 호출할 수 없다.
+- `Player.SkinAssigner` public getter는 아직 없다.
+- `_dev/asset-migration-analysis.md`의 과거 완료 기록보다 이 문서의 상태가 현재 코드 기준이다.
 
 ---
 
@@ -57,6 +74,8 @@ s.leftHandWeaponSkin  = "LEFTHAND/Shield_Small_Common1";
 // 마지막에 한 번만 호출
 s.AssignSkins();
 ```
+
+위 예시는 API 노출 작업 후 사용 가능하다.
 
 ---
 
