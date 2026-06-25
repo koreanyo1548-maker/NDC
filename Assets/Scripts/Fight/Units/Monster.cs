@@ -364,8 +364,7 @@ namespace Fight.Units
             if (_squareRenderer == null) return root.position;
 
             var bounds = _squareRenderer.bounds;
-            var position = bounds.center;
-            position.x = attackerPosition.x < bounds.center.x ? bounds.min.x : bounds.max.x;
+            var position = bounds.ClosestPoint(attackerPosition);
             position.z = root.position.z;
             return position;
         }

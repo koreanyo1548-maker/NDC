@@ -446,40 +446,40 @@ Python 경량 서버(Flask 등)로 전환. 요청 시 파일을 읽어 렌더링
 
 ## 2026-06-24 (Monster part sorting)
 
-### SD Monster Pack monster part sorting fix
+### SD Monster Pack 몬스터 파츠 정렬 보정
 
-**Background**
-- All monster visuals except Player are based on the SD Monster Pack.
-- The SD Monster Pack expresses internal part depth with each part transform's local Z.
-- The project uses a global transparency sort axis based on Y, so SD monster internal parts can be sorted differently from the pack's intended Z-based layering.
-- Changing the global GraphicsSettings transparency sorting mode/axis can affect field-wide rendering, so it was rejected as the first fix.
+**배경**
+- Player를 제외한 몬스터 비주얼은 SD Monster Pack 기반이다.
+- SD Monster Pack은 각 파츠 Transform의 local Z로 내부 앞뒤 깊이를 표현한다.
+- 현재 프로젝트는 Y축 기준 전역 투명도 정렬을 사용하므로, 몬스터 내부 파츠가 에셋 의도와 다르게 정렬될 수 있었다.
+- `GraphicsSettings`의 전역 투명도 정렬 모드/축을 바꾸면 필드 전체 렌더링에 영향이 크므로 1차 해결책에서 제외.
 
-**Decision**
-- Keep the global transparency sorting settings unchanged.
-- Treat each monster visual as one external sorting unit with `SortingGroup`.
-- Rebuild only the monster's internal part order by converting each child `SpriteRenderer` relative Z into `sortingOrder`.
-- Do not add name-based per-part overrides in v1, because that can conflict with artist intent.
+**결정**
+- 전역 투명도 정렬 설정은 유지한다.
+- 몬스터 하나를 외부 정렬 단위로 묶기 위해 루트에 `SortingGroup`을 붙인다.
+- 몬스터 내부 파츠만 visual root 기준 relative Z를 `sortingOrder`로 변환해 재정렬한다.
+- 파츠 이름 기반 예외 처리는 v1에서 넣지 않는다. 아티스트가 잡아둔 Z 의도와 충돌할 수 있기 때문.
 
-**Implementation**
-- Added `Assets/Scripts/Utils/MonsterPartSorter.cs`.
-  - Collects child `SpriteRenderer` components from the visual root.
-  - Applies `sortingOrder = baseOrder + round(-relativeZ * zStep)`.
-  - Uses default `zStep = 100`.
-  - Updates in `LateUpdate()` so animated part transforms are reflected after Animator evaluation.
-- Updated `Assets/Scripts/Fight/Units/Monster.cs`.
-  - Automatically ensures `SortingGroup` on the monster root.
-  - Automatically ensures and initializes `MonsterPartSorter`.
-  - Calls `_partSorter.Apply()` after `ResetAnimatorToIdle()` forces an animator update.
+**구현**
+- `Assets/Scripts/Utils/MonsterPartSorter.cs` 추가.
+  - visual root 하위 `SpriteRenderer`를 수집.
+  - `sortingOrder = baseOrder + round(-relativeZ * zStep)` 적용.
+  - 기본 `zStep = 100`.
+  - Animator 평가 후 파츠 위치 변화를 반영하기 위해 `LateUpdate()`에서 갱신.
+- `Assets/Scripts/Fight/Units/Monster.cs` 수정.
+  - 몬스터 루트에 `SortingGroup` 자동 보장.
+  - `MonsterPartSorter` 자동 보장 및 `Init(transform)` 호출.
+  - `ResetAnimatorToIdle()`에서 Animator 강제 갱신 후 `_partSorter.Apply()` 호출.
 
-**Verification**
-- Unity `2022.3.62f2` batchmode compile check completed with exit code 0.
-- `Logs/codex-compile-check.log` had no C# compiler errors.
-- New `MonsterPartSorter.cs.meta` GUID was checked for collisions and was unique.
+**검증**
+- Unity `2022.3.62f2` batchmode compile check 완료, exit code 0.
+- `Logs/codex-compile-check.log` 기준 C# 컴파일 에러 없음.
+- `MonsterPartSorter.cs.meta` GUID 충돌 없음 확인.
 
-**Notes**
-- Prefab YAML was not edited directly; the component is attached at runtime through `Monster.cs`.
-- This applies to monsters that use `Monster.cs` and the SD Monster Pack visual hierarchy.
-- Visual QA is still needed in Play Mode for normal monsters, bosses, and effect overlap cases.
+**메모**
+- Prefab YAML은 직접 수정하지 않았다. 컴포넌트는 `Monster.cs`에서 런타임에 자동 부착한다.
+- 이 처리는 `Monster.cs`와 SD Monster Pack 비주얼 계층을 사용하는 몬스터에 적용된다.
+- 일반 몬스터, 보스, 이펙트 겹침 케이스는 Play Mode 시각 검증이 아직 필요하다.
 
 ---
 
@@ -510,7 +510,7 @@ Python 경량 서버(Flask 등)로 전환. 요청 시 파일을 읽어 렌더링
 
 **현재 기준으로 이어할 것**
 - Player 런타임 파츠 교체가 필요하면 `AssignSkins()` public 전환과 `Player.SkinAssigner` getter 추가.
-- IAP 미초기화 상태에서도 테스트 fallback을 쓰려면 `Buy()` 초반 `_isConnected` guard 위치를 조정.
+- IAP 미초기화 상태 테스트 fallback은 이후 `IAPManager.cs`에서 처리됨. 실제 빌드 검증과 운영 비활성화 체크가 남아 있다.
 - Monster 파츠 정렬은 컴파일 검증만 완료된 상태이므로 Play Mode에서 일반/보스/이펙트 겹침을 확인.
 - Bundle ID, AdMob, Firebase, IAP 계정값 교체는 아직 남아 있다.
 
@@ -595,3 +595,148 @@ SD Monster Pack의 Animator 상태명은 소문자(`idle`, `walk`, `attack`, `di
 **Notes**
 - The Korean formatter is centralized in `Define.AddUnit(...)`, so existing UI call sites do not need individual changes.
 - Existing visible text refresh still depends on each UI's normal value/language refresh path.
+
+---
+
+## 2026-06-25
+
+### 현재 프로젝트 기준 히스토리 재확인
+
+**확인한 기준**
+- 현재 HEAD: `23d410f6 260624`
+- Unity 버전: `2022.3.62f2`
+- `_dev/history.md`는 2026-06-24 작업 기록까지 남아 있었고, 현재 프로젝트 상태와 큰 방향은 일치한다.
+
+**현재 코드 상태**
+- Player는 `Assets/Scripts/Fight/Units/Player.cs`에서 Shinabro `SkeletonMecanim` 기반 애니메이션을 사용한다.
+  - 대기/이동: `Wait1`, `Walk1`
+  - 사망: `Die`
+  - 일반 공격: `GetAttackAnimation()`으로 무기 스킨 문자열 기준 분기
+  - 스킬: `GetSkillAnimation()`과 `_skillAnimAlt`로 1/2 교차 재생
+- `SimpleSpineSkinAssigner.AssignSkins()`는 여전히 private이다.
+  - Start/OnEnable/OnValidate에서는 내부 적용됨.
+  - 런타임 외부 파츠 교체 API로 쓰려면 `AssignSkins()` public 전환 또는 별도 public 메서드 추가 필요.
+- Monster는 `Assets/Scripts/Fight/Units/Monster.cs`에서 SD Pack 소문자 상태명 기준으로 동작한다.
+  - `idle`, `walk`, `attack`, `attack2`, `die`
+  - `Init()`과 `OnEnable()`에서 `ResetAnimatorToIdle()` 호출.
+  - `ResetAnimatorToIdle()`은 `Rebind()` → `Play("idle")` → `Update(0f)` → `_partSorter.Apply()` 순서.
+  - `PlayAnimation()`에는 기존 대문자 상태명 방어 매핑이 들어가 있다.
+- 몬스터 루트에는 런타임에 `SortingGroup.sortingOrder = 5`와 `MonsterPartSorter`가 자동 적용된다.
+- `Define.AddUnit(...)`는 한국어 locale에서 `천/만/억` 단위 포맷을 사용하고, 그 외 locale은 기존 `A/B/C` 단위 포맷을 유지한다.
+- IAP는 `IAPManager.cs`에 테스트 구매 fallback과 실패 시 로딩 닫기 처리가 들어가 있다.
+  - IAP 미초기화, 상품 없음, 구매 불가 상황에서 `Use Test Purchase Fallback`이 켜져 있으면 테스트 성공 처리로 빠진다.
+  - 옵션을 끄면 `FailCurrentPurchase()`로 로딩 UI와 구매 상태를 정리한다.
+
+**문서 정리 내용**
+- `Monster part sorting` 섹션을 한국어로 정리하고 기존 히스토리 문체에 맞춤.
+- 2026-06-25 기준 확인한 Player/Monster/IAP/숫자 포맷 상태를 추가.
+
+### 다음 세션에 이어할 것
+
+- Unity에서 Slime2 및 SD Pack 몬스터가 풀 재활용 후 `die` 상태로 시작하지 않는지 플레이 검증.
+- 몬스터 파츠 정렬과 root `SortingGroup` order 5가 일반/보스/이펙트 겹침 상황에서 의도대로 보이는지 확인.
+- Player 파츠 런타임 교체가 필요하면 `SimpleSpineSkinAssigner` 외부 제어 API를 먼저 설계/추가.
+- 실제 서비스 결제 연결 전 `Use Test Purchase Fallback`을 꺼야 하는 운영 체크를 코드 또는 빌드 절차에 추가 검토.
+
+---
+
+## 2026-06-25 (2차 세션)
+
+### 플레이어 일반 공격 위치 판정 보정
+
+**배경**
+- 몬스터와 플레이어가 화면상 거의 겹쳐 있는데도 몬스터는 플레이어를 공격하고, 플레이어는 일반 공격을 시작하지 못하는 상황이 있었다.
+- 원인 분석 결과 몬스터 공격 판정은 `monster.root.position`과 `player.Position()`의 거리 기준이지만, 플레이어 일반 공격 진입 판정은 `Monster.GetNormalAttackPosition()`이 반환하는 `Square` 좌/우 중앙점 기준이었다.
+- SD Monster Pack 교체 후 `Square`의 bounds 중심/좌우 edge가 실제 화면상 접촉감과 어긋나면, 겹쳐 보이는데도 플레이어가 아직 공격 위치가 아니라고 판단할 수 있다.
+
+**수정 내용**
+- `Assets/Scripts/Fight/Units/Monster.cs`
+  - `GetNormalAttackPosition(Vector3 attackerPosition)`을 수정.
+  - 기존: `Square.bounds.center`의 Y와 좌/우 edge X를 조합한 고정 지점 반환.
+  - 변경: `bounds.ClosestPoint(attackerPosition)`로 플레이어 위치에서 몬스터 bounds에 가장 가까운 지점 반환.
+
+**판단**
+- `NORMAL_ATTACK_POSITION_SQR_EPSILON = 0.01f`는 유지했다.
+- 실제 거리 기준 0.1을 줄이는 것은 문제를 더 빡빡하게 만들 수 있으므로, 숫자 보정보다 목표 지점 계산 방식을 바꾸는 쪽을 선택했다.
+
+### 한국어 숫자 단위 절삭 규칙 추가
+
+**배경**
+- 한국어 locale에서는 `Define.AddUnit(...)`이 `천/만/억/조` 계열 단위를 사용한다.
+- 큰 숫자에서 하위 단위가 길게 붙어 UI 가독성이 떨어질 수 있어 절삭 규칙을 추가했다.
+
+**수정 내용**
+- `Assets/Scripts/Utils/Define.cs`
+  - `AddKoreanUnit(BigInteger number)`에 절삭 규칙 추가.
+  - `10,000,000` 이상이면 `천` 이하 절삭 (`number % 10000` 제거).
+  - `100,000,000,000` 이상이면 `만` 이하 절삭 (`number % 100000000` 제거).
+
+**예시**
+- `12,345,678` → `1234만`
+- `123,456,789` → `1억2345만`
+- `123,456,789,000` → `1234억`
+
+### 데미지 폰트 한국어 단위 적용 여부 조사
+
+**확인 결과**
+- 데미지 텍스트는 일반 UI의 `Define.AddUnit(...)`을 사용하지 않는다.
+- `Assets/Downloads/DamageNumbersPro/Scripts/Internal/DamageNumber.cs` 내부의 자체 `AddUnit(number, 7)`을 사용하며, 현재 단위는 `A/B/C/...` 기준이다.
+- `DamageText.prefab`이 사용하는 TMP FontAsset은 `Assets/Fonts/TMPFonts/DamageFont.asset`이다.
+- `DamageFont.asset`의 character table에는 숫자, `A~H`, `+`, `*`, `_`, `...` 정도만 있고 `천/만/억/조` 글리프가 없다.
+- `m_FallbackFontAssetTable`도 비어 있어, 현재 상태에서 데미지 폰트에 한국어 단위를 바로 적용하면 글자가 누락될 가능성이 높다.
+
+**결정**
+- 데미지 폰트 한국어 단위 적용은 보류.
+- 추후 적용하려면 먼저 `DamageFont`에 `천/만/억/조` 글리프를 추가하거나 한국어 TMP FontAsset fallback을 연결해야 한다.
+
+### 데미지 텍스트 정렬 순서 조정
+
+**배경**
+- 데미지 텍스트가 게임 상에서 캐릭터보다 앞에 뜨는 문제가 있었다.
+- `DamageText.prefab`의 `SortingGroup.sortingOrder`가 `1000`으로 설정되어 있었다.
+- 현재 기준 정렬값은 몬스터 루트 `5`, 데미지 텍스트 `1000`, 플레이어 `8`이었다.
+
+**수정 내용**
+- `Assets/Resources/Prefabs/Fonts/DamageText.prefab`
+  - `SortingGroup.m_SortingOrder`를 `1000`에서 `7`로 변경.
+
+**판단**
+- 변경 후 정렬 관계는 몬스터 `5` < 데미지 텍스트 `7` < 플레이어 `8`이다.
+- 데미지 텍스트가 몬스터보다는 앞에 보이되, 플레이어보다는 뒤로 가도록 조정했다.
+
+### 몬스터 죽음 애니메이션 루프 해제
+
+**배경**
+- SD Monster Pack의 몬스터 죽음 애니메이션 `die.anim`에 loop 설정이 켜져 있었다.
+- `Monster.Die()`는 `animator.Play("die")` 후 `_FadeRoutine()`에서 1초 대기/페이드 후 정리하므로, 현재 코드 흐름은 죽음 애니메이션 루프에 의존하지 않는다.
+
+**수정 내용**
+- 아래 `die.anim` 파일의 `m_LoopTime`을 `1`에서 `0`으로 변경.
+  - `Assets/Downloads/2D SD Monster Pack/Animations/Slime/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Bat/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Beholder/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Bigguy/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Crow/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Ghost/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Goblin/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Rat/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Skeleton/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Spider/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Worm/die.anim`
+  - `Assets/Downloads/2D SD Monster Pack/MonsterAnimations/Zombie/die.anim`
+
+**검증**
+- 12개 `die.anim` 모두 `m_LoopTime: 0`으로 변경된 것을 확인.
+- `Assets/Downloads/2D SD Monster Pack` 범위에 대해 `git diff --check` 완료.
+
+**검증**
+- `Monster.cs`, `Define.cs` 변경에 대해 `git diff --check` 완료.
+- Unity 컴파일/Play Mode 검증은 아직 수행하지 않았다.
+
+### 다음 세션에 이어할 것
+
+- Play Mode에서 플레이어와 몬스터가 겹치는 상황의 일반 공격 진입 여부 확인.
+- 한국어 locale에서 일반 UI 숫자 절삭 표시 확인.
+- 데미지 폰트에 한국어 단위를 적용하려면 폰트 글리프/fallback 구성부터 결정.
+- Play Mode에서 데미지 텍스트가 몬스터보다 앞, 플레이어보다 뒤에 보이는지 확인.
+- 몬스터 사망 시 `die` 애니메이션이 반복되지 않고 페이드 정리되는지 확인.

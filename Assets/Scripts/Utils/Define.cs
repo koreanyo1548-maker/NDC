@@ -269,6 +269,15 @@ namespace Utils
                 return rest == 0 ? $"{thousand}천" : $"{thousand}천{rest}";
             }
 
+            if (number >= 100000000000)
+            {
+                number -= number % 100000000;
+            }
+            else if (number >= 10000000)
+            {
+                number -= number % 10000;
+            }
+
             var groups = new List<int>();
             while (number > 0)
             {
