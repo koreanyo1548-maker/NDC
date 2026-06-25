@@ -6,6 +6,7 @@ using Controller.Currency;
 using Controller.Have;
 using Controller.Infos;
 using Controller.Play;
+using Costume;
 using Data;
 using Data.DbUser;
 using Data.DbUser.Currency;
@@ -71,7 +72,9 @@ namespace Scenes
             Manager.Field.Init();
 
             var player = Manager.Resource.Instantiate("Characters/Player").transform.GetChild(0).GetChild(0).gameObject;
-            player.GetOrAddComponent<Player>().Spawn(Manager.Field.CenterX, Manager.Field.CenterY+1.4f);
+            var playerUnit = player.GetOrAddComponent<Player>();
+            player.GetOrAddComponent<SpineEquipmentSetter>();
+            playerUnit.Spawn(Manager.Field.CenterX, Manager.Field.CenterY+1.4f);
 
             Manager.Resource.Instantiate("Characters/Bible").GetOrAddComponent<Bible>().gameObject.SetActive(false);
             

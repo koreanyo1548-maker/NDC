@@ -10,6 +10,10 @@ namespace Costume
 {
     public class CostumeSetter: MonoBehaviour
     {
+        // Spine 캐릭터로 전환하면서 기존 2D SpriteRenderer 외형은 사용하지 않는다.
+        // 추후 Spine 코스튬 Skin 컬럼이 준비되면 SpineEquipmentSetter 쪽에서 슬롯별로 처리한다.
+        private const bool UseSpineAppearance = true;
+
         // Base sprites (항상 표시되는 기본 파트)
         private SpriteRenderer _head;
         private SpriteRenderer _baseEyes;
@@ -29,6 +33,13 @@ namespace Costume
 
         private void Awake()
         {
+            if (UseSpineAppearance)
+            {
+                DisableLegacySpriteRenderers();
+                enabled = false;
+                return;
+            }
+
             _head = Util.FindChild<SpriteRenderer>(gameObject, "head", true);
             _baseEyes = Util.FindChild<SpriteRenderer>(gameObject, "eyes", true);
             _baseFace = Util.FindChild<SpriteRenderer>(gameObject, "face", true);
@@ -47,6 +58,28 @@ namespace Costume
             EquipController.data.Weapon.ValueChanged += (_, _) => SetWeapon();
             SetBody();
             SetWeapon();
+        }
+
+        private void DisableLegacySpriteRenderers()
+        {
+            DisableRenderer("head");
+            DisableRenderer("eyes");
+            DisableRenderer("face");
+            DisableRenderer("Hair");
+            DisableRenderer("mouth");
+            DisableRenderer("Body");
+            DisableRenderer("cloak");
+            DisableRenderer("Costume_eyes");
+            DisableRenderer("Costume_headF");
+            DisableRenderer("Costume_headB");
+            DisableRenderer("Costume_face");
+            DisableRenderer("Weapon");
+        }
+
+        private void DisableRenderer(string childName)
+        {
+            var renderer = Util.FindChild<SpriteRenderer>(gameObject, childName, true);
+            if (renderer != null) renderer.enabled = false;
         }
 
         private void SetBody()

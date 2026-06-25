@@ -111,7 +111,7 @@ public class SimpleSpineSkinAssigner : MonoBehaviour
         combinedSkin = new Skin("combinedSkin");
     }
 
-    void AssignSkins()
+    public void AssignSkins()
     {
         if (skeletonDataAsset == null)
         {

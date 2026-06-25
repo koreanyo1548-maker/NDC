@@ -18,6 +18,7 @@ namespace Data.DbEquipment
         public int OwnHp;
         public int OwnGrowthHp;
         public string Resource;
+        public string SpineLeftHandSkin;
         public int Awakening;
         public int AwakeningMaterial;
         public int PrevId;
@@ -107,6 +108,11 @@ namespace Data.DbEquipment
         public string GetResource()
         {
             return Resource;
+        }
+
+        public string GetSpineLeftHandSkin()
+        {
+            return SpineLeftHandSkin;
         }
         
         public int GetPrev()

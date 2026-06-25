@@ -740,3 +740,95 @@ SD Monster Pack의 Animator 상태명은 소문자(`idle`, `walk`, `attack`, `di
 - 데미지 폰트에 한국어 단위를 적용하려면 폰트 글리프/fallback 구성부터 결정.
 - Play Mode에서 데미지 텍스트가 몬스터보다 앞, 플레이어보다 뒤에 보이는지 확인.
 - 몬스터 사망 시 `die` 애니메이션이 반복되지 않고 페이드 정리되는지 확인.
+# 2026-06-25 Spine 장비 Skin 테이블 분리 및 런타임 적용
+
+## 배경
+
+- 기존 `DbWeapon.Resource`, `DbAccessory.Resource`는 UI 아이콘 Sprite 로드에 사용되고 있었다.
+- Spine 외형 Skin 이름을 `Resource`에 넣으면 인벤토리, 보상, 소환, 상점, 각성 UI가 깨질 수 있어 별도 컬럼으로 분리했다.
+- Shinabro Spine 캐릭터는 `Skeleton.Data.FindSkin(skinName)` 기준으로 Skin을 찾으므로, 테이블에는 atlas region 경로가 아니라 `Character.json`의 `skins[].name` 값을 넣어야 한다.
+
+## 데이터 변경
+
+- `Assets/Resources/Excels/Equipment.xlsx`
+  - `Weapon` 시트에 `SpineRightHandSkin` 컬럼 추가.
+  - `Accessory` 시트에 `SpineLeftHandSkin` 컬럼 추가.
+  - 무기 35행, 악세서리 35행 모두 실제 존재하는 Spine Skin 값으로 입력.
+- `Assets/Resources/Excels/EDbEquipments.asset`
+  - Unity import로 신규 컬럼 반영.
+- `Assets/Resources/ExcelGenerated/Weapon.bytes`
+  - `DbWeapon.SpineRightHandSkin` 런타임 데이터 반영.
+- `Assets/Resources/ExcelGenerated/Accessory.bytes`
+  - `DbAccessory.SpineLeftHandSkin` 런타임 데이터 반영.
+
+## 코드 변경
+
+- `Assets/Scripts/Data/Editor/EDbEquipment/EDbWeapon.cs`
+  - `public string SpineRightHandSkin;` 추가.
+- `Assets/Scripts/Data/DbEquipment/DbWeapon.cs`
+  - `public string SpineRightHandSkin;` 추가.
+  - `GetSpineRightHandSkin()` 추가.
+- `Assets/Scripts/Data/Editor/EDbEquipment/EDbAccessory.cs`
+  - `public string SpineLeftHandSkin;` 추가.
+- `Assets/Scripts/Data/DbEquipment/DbAccessory.cs`
+  - `public string SpineLeftHandSkin;` 추가.
+  - `GetSpineLeftHandSkin()` 추가.
+- `Assets/Downloads/Shinabro/MiniFantasyCharacters/Scripts/SimpleSpineSkinAssigner.cs`
+  - `AssignSkins()`를 public으로 변경.
+- `Assets/Scripts/Fight/Units/Player.cs`
+  - `SkinAssigner` getter 추가.
+- `Assets/Scripts/Costume/SpineEquipmentSetter.cs`
+  - 신규 컴포넌트 추가.
+  - 장착 무기 변경 시 `DbWeapon.Get(id).GetSpineRightHandSkin()`을 오른손 Skin에 적용.
+  - 장착 악세서리 변경 시 `DbAccessory.Get(id).GetSpineLeftHandSkin()`을 왼손 Skin에 적용.
+  - `WeaponCostume` 장착 시 오른손 장비 Skin을 빈 문자열로 처리해 장비 외형을 숨기는 구조로 준비.
+- `Assets/Scripts/Scenes/FieldScene.cs`
+  - 런타임 Player GameObject에 `SpineEquipmentSetter`를 붙이도록 연결.
+- `Assets/Scripts/Costume/CostumeSetter.cs`
+  - Spine 전환 상태에서는 기존 2D SpriteRenderer 외형을 비활성화하고 `CostumeSetter` 자체를 비활성화하도록 처리.
+
+## 현재 연결 구조
+
+```text
+Equipment.xlsx
+-> EDbEquipments.asset
+-> Weapon.bytes / Accessory.bytes
+-> DbWeapon / DbAccessory
+-> SpineEquipmentSetter
+-> Player.SkinAssigner
+-> SimpleSpineSkinAssigner.AssignSkins()
+-> Skeleton.Data.FindSkin(skinName)
+-> Skeleton.SetSkin(combinedSkin)
+```
+
+## Skin 매핑
+
+- 무기:
+  - 홀수 Id는 `RIGHTHAND/Sword_TwoHand_*`
+  - 짝수 Id는 `RIGHTHAND/Spear_TwoHand_*`
+  - Shinabro에 Scythe 전용 Skin이 없어 양손 검/양손 창으로 임시 대체.
+- 악세서리:
+  - 홀수 Id는 `LEFTHAND/Shield_Small_*`
+  - 짝수 Id는 `LEFTHAND/Shield_Large_*`
+- 등급 변환:
+  - `Normal -> Common`
+  - `Magic -> Uncommon`
+  - `Rare -> Rare`
+  - `Unique/Heroic -> Epic`
+  - `Legendary/Mythic -> Legendary`
+
+## 검증
+
+- `Equipment.xlsx`의 신규 컬럼 값이 모두 `Character.json`의 실제 Skin 이름인지 확인.
+- `EDbEquipments.asset`에 `SpineRightHandSkin`, `SpineLeftHandSkin` 값 반영 확인.
+- `Weapon.bytes`에 `SpineRightHandSkin`, `RIGHTHAND/Sword_TwoHand_Common1`, `RIGHTHAND/Spear_TwoHand_Legendary4` 포함 확인.
+- `Accessory.bytes`에 `SpineLeftHandSkin`, `LEFTHAND/Shield_Small_Common1`, `LEFTHAND/Shield_Large_Legendary1` 포함 확인.
+- Unity 2022.3.62f2 batchmode 컴파일/import 체크 완료.
+- `git diff --check` 공백 오류 없음.
+
+## 남은 확인
+
+- Play Mode에서 장비 교체 시 오른손/왼손 Spine 외형이 즉시 바뀌는지 육안 확인.
+- Play Mode에서 기존 2D SpriteRenderer 외형이 실제로 꺼지고 Spine 렌더러만 보이는지 확인.
+- 추후 Spine 코스튬 Skin 컬럼이 추가되면 `SpineEquipmentSetter`의 코스튬 우선순위 로직에 연결.
+- 현재 Skin 매핑은 사용 가능한 Skin으로 채운 1차 임시 매핑이므로, 최종 장비별 외형은 기획/아트 기준으로 다시 조정 필요.

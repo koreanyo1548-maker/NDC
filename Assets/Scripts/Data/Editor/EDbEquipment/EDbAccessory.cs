@@ -18,6 +18,7 @@ namespace Data.Editor.EDbEquipment
         public int OwnHp;
         public int OwnGrowthHp;
         public string Resource;
+        public string SpineLeftHandSkin;
         public int Awakening;
         public int AwakeningMaterial;
         public int PrevId;

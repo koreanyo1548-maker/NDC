@@ -61,6 +61,7 @@ namespace Fight.Units
         public Transform Root => _root;
         public Transform WeaponEffectParent => _weaponEffectParent;
         public Transform SkillEffectParent => _skillEffectParent;
+        public SimpleSpineSkinAssigner SkinAssigner => _skinAssigner;
         
         private Transform _root;
         private Transform _positioner;
