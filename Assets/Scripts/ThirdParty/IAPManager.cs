@@ -170,16 +170,12 @@ namespace ThirdParty
                 Debug.LogError("현재 구매 진행중: " + JsonConvert.SerializeObject(item));
                 return;
             }
-            if (!_isConnected)
-            {
-                Debug.LogError("IAP 초기화 미완료 상태에서 구매 시도: " + JsonConvert.SerializeObject(item));
-                return;
-            }
-
              Debug.Log(">>>>>>>> [구매시작] " + JsonConvert.SerializeObject(item));
             
             var loading = Manager.UI.ShowSingleUI<UI_Loading>();
             _buyingItem = new BuyingItem(item, loading, afterSuccess);
+
+            if (TryCompleteTestPurchase("테스트 구매 모드", true)) return;
 
             if (!_isConnected)
             {
@@ -206,14 +202,10 @@ namespace ThirdParty
                 Debug.LogError("현재 구매 진행중: " + JsonConvert.SerializeObject(item));
                 return;
             }
-            if (!_isConnected)
-            {
-                Debug.LogError("IAP 초기화 미완료 상태에서 구매 시도: " + JsonConvert.SerializeObject(item));
-                return;
-            }
-
             var loading = Manager.UI.ShowSingleUI<UI_Loading>();
             _buyingItem = new BuyingItem(item, loading, afterSuccess);
+
+            if (TryCompleteTestPurchase("테스트 구매 모드", true)) return;
 
             if (!_isConnected)
             {
@@ -232,9 +224,9 @@ namespace ThirdParty
         }
         #endregion
 
-        private bool TryCompleteTestPurchase(string reason)
+        private bool TryCompleteTestPurchase(string reason, bool force = false)
         {
-            if (!_useTestPurchaseFallback) return false;
+            if (!force && !_useTestPurchaseFallback) return false;
 
             Debug.LogWarning($"테스트 구매 성공 처리: {reason}");
             CompletePurchase(_buyingItem, string.Empty);
