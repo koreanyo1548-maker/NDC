@@ -9,7 +9,7 @@ Mushroom Hero 코드베이스를 기반으로 신규 게임을 제작한다.
 
 Phase 1 완료 — PlayFab 서버 의존 런타임을 로컬 저장/스텁 구조로 전환
 Phase 2-B 진행 중 — Player/Monster 비주얼 에셋 교체 및 검증
-현재 미완료 핵심: Player 런타임 파츠 외부 제어 API, Monster 프리팹/Play Mode 시각 검증, Bundle ID/광고/Firebase/IAP 계정값 교체
+현재 미완료 핵심: Monster 프리팹 에디터 교체/Play Mode 시각 검증, Bundle ID/광고/Firebase/IAP 계정값 교체
 상세 계획 및 체크리스트: `_dev/new-game-migration-plan.md`
 
 ## MCP 사용 규칙
@@ -30,7 +30,7 @@ Phase 2-B 진행 중 — Player/Monster 비주얼 에셋 교체 및 검증
 - `IAPManager.cs`에는 `#if APPSFLYER_ENBALE` 블록 안에 `PlayFabClientAPI` 직접 호출이 남아 있다. 현재 심볼 오타로 비활성화되어 있지만, AppsFlyer를 되살릴 때 로컬 저장 또는 별도 분석 이벤트로 교체해야 한다.
 - `IAPManager.cs`의 `Use Test Purchase Fallback`은 현재 코드상 IAP 연결 후 상품 없음/구매 불가 상황에서만 도달한다. `_isConnected == false`인 미초기화 상태는 초반 guard에서 바로 return한다.
 - Player는 Shinabro Spine `SkeletonMecanim` 기반 애니메이션명으로 동작한다.
-- `SimpleSpineSkinAssigner.AssignSkins()`는 아직 private이고, `Player.SkinAssigner` getter도 없다. 외부 런타임 파츠 교체가 필요하면 두 API를 먼저 노출해야 한다.
+- `SimpleSpineSkinAssigner.AssignSkins()`는 public이고, `Player.SkinAssigner` getter도 존재한다. 런타임 파츠 교체는 `SpineEquipmentSetter`를 통해 이미 동작한다.
 - Monster는 SD Pack 소문자 상태명(`idle`, `walk`, `attack`, `die`) 기준으로 동작하며, `Init()`/`OnEnable()`에서 `ResetAnimatorToIdle()`을 호출한다.
 - Monster 루트에는 런타임에 `SortingGroup`과 `MonsterPartSorter`가 붙어 SD Pack 내부 local Z 기반 파츠 정렬을 보정한다. Play Mode 시각 검증은 아직 필요하다.
 

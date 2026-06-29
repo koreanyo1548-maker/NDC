@@ -832,3 +832,96 @@ Equipment.xlsx
 - Play Mode에서 기존 2D SpriteRenderer 외형이 실제로 꺼지고 Spine 렌더러만 보이는지 확인.
 - 추후 Spine 코스튬 Skin 컬럼이 추가되면 `SpineEquipmentSetter`의 코스튬 우선순위 로직에 연결.
 - 현재 Skin 매핑은 사용 가능한 Skin으로 채운 1차 임시 매핑이므로, 최종 장비별 외형은 기획/아트 기준으로 다시 조정 필요.
+
+---
+
+## 2026-06-29 코드 기준 실제 상태 전수 확인
+
+### 확인 방법
+히스토리 문서를 신뢰하지 않고, 핵심 파일을 직접 읽어 현재 코드 실제 상태를 검증함.
+
+### Player 계열 (확인 완료)
+
+**`Assets/Scripts/Fight/Units/Player.cs`**
+- `SkinAssigner` public getter 존재: `public SimpleSpineSkinAssigner SkinAssigner => _skinAssigner;` (line 64) ✅
+- 애니메이션 상태명: `Wait1`, `Walk1`, `Die`, `Run1`(대시), `Attack_OneHand1/2`, `Attack_TwoHand1/2`, `Attack_DualHand1/2`, `Shoot1`, `Spell1/2`, `Cast1/2` ✅
+- `LookAt(lookLeft)` 반전: Shinabro 기본 방향이 왼쪽이라 `lookLeft ? Define.LookRight : Define.LookLeft` ✅
+- `GetAttackAnimation()`, `GetSkillAnimation()` — `_skinAssigner.rightHandWeaponSkin/leftHandWeaponSkin` 기반 분기 ✅
+
+**`Assets/Downloads/Shinabro/MiniFantasyCharacters/Scripts/SimpleSpineSkinAssigner.cs`**
+- `AssignSkins()` **public으로 전환 완료** (line 114) ✅
+  - **CLAUDE.md에 "아직 private"으로 잘못 기재되어 있었음 → 이번에 정정**
+
+**`Assets/Scripts/Costume/SpineEquipmentSetter.cs`**
+- 신규 컴포넌트 구현 완료 ✅
+- `Awake()`에서 `EquipController.data.Weapon/Accessory/WeaponCostume.ValueChanged` 이벤트 구독
+- `Apply()` → `_skinAssigner.rightHandWeaponSkin/leftHandWeaponSkin` 세팅 후 `AssignSkins()` 호출
+- `GetRightHandCostumeSkin()`: 무기 코스튬 장착 시 빈 문자열 반환 (장비 외형 숨김 준비), 실제 Skin 연결은 미구현
+
+**`Assets/Scripts/Scenes/FieldScene.cs`**
+- `player.GetOrAddComponent<SpineEquipmentSetter>()` 런타임 부착 확인 (line 76) ✅
+
+**`Assets/Scripts/Costume/CostumeSetter.cs`**
+- `UseSpineAppearance = true` (const) → `Awake()`에서 레거시 SpriteRenderer 비활성화 후 `enabled = false` ✅
+
+**`Assets/Scripts/Data/DbEquipment/DbWeapon.cs`**
+- `SpineRightHandSkin` 필드 및 `GetSpineRightHandSkin()` 메서드 존재 ✅
+
+**`Assets/Scripts/Data/DbEquipment/DbAccessory.cs`**
+- `SpineLeftHandSkin` 필드 및 `GetSpineLeftHandSkin()` 메서드 존재 ✅
+
+### Monster 계열 (확인 완료)
+
+**`Assets/Scripts/Fight/Units/Monster.cs`**
+- `Awake()`에서 `SortingGroup.sortingOrder = 5` 자동 설정 ✅
+- `Awake()`에서 `MonsterPartSorter` 자동 부착 및 `Init(transform)` 호출 ✅
+- `ResetAnimatorToIdle()`: `Rebind()` → `Play("idle", 0, 0)` → `Update(0f)` → `_partSorter?.Apply()` ✅
+- `PlayAnimation()`: 대문자 상태명 방어 매핑 (`"Die"→"die"` 등) ✅
+- `GetNormalAttackPosition()`: `bounds.ClosestPoint(attackerPosition)` 방식 ✅
+
+**`Assets/Scripts/Controller/Play/PlayController.cs`**
+- `PlayAnimation("die")` (소문자) 확인 ✅
+
+**`Assets/Scripts/Utils/MonsterPartSorter.cs`**
+- `LateUpdate()`에서 `updateEveryFrame` 플래그 기준으로 `Apply()` 호출 ✅
+
+### IAPManager (확인 + 버그 발견)
+
+**`Assets/Scripts/ThirdParty/IAPManager.cs`**
+- `[SerializeField] private bool _useTestPurchaseFallback = true;` Inspector 노출 ✅
+- `TryCompleteTestPurchase()`, `FailCurrentPurchase()`, `CompletePurchase()`, `CloseLoading()` 구현 완료 ✅
+- `CompletePurchase()`에서 패스 구매 성공 시 `PlayFabManager.Store.ForceSave()` 호출이 남아 있음 (로컬 저장 레이어이므로 기능 동작은 하나, 명칭 혼란 가능성 있음)
+- **버그 발견**: `Buy(IDbShop)` 및 `Buy(DbPassShop)` 두 메서드 모두 동일 패턴의 dead code 존재
+  - `if (!_isConnected) { ... return; }` 첫 번째 guard에서 return
+  - 로딩/buyingItem 세팅 후 `if (!_isConnected)` 두 번째 체크 — 여기는 절대 `true`가 될 수 없음
+  - 결과: 미초기화 상태에서는 로딩이 열리지 않고 early return하므로 `TryCompleteTestPurchase`도 실행 안 됨
+  - 이 동작은 CLAUDE.md에 이미 정확하게 기재되어 있음 ("미초기화 상태는 초반 guard에서 바로 return")
+- `#if APPSFLYER_ENBALE` 블록 내 `PlayFabClientAPI.GetUserData/UpdateUserData` 잔여 호출 — 오타 심볼로 비활성화 상태 ✅
+
+### PlayFab 호환 레이어 (확인 완료)
+
+**`Assets/Scripts/ThirdParty/PlayFabManager.cs`**
+- 서버 SDK 호출 없음, `AfterLogin()`으로 직결 ✅
+- GPGS/Apple 로그인도 모두 `AfterLogin()` 호출로만 연결
+
+### 프로젝트 설정 (확인 완료)
+
+- `companyName: NDC` ✅
+- `productName: Webtoon Hero` ✅
+- `bundleVersion: 0.1.2`, `AndroidBundleVersionCode: 3` (미변경)
+- Android bundleIdentifier: `com.thumpquest.thumpquest` (미교체)
+- iOS bundleIdentifier: `mush.room.hero` (미교체)
+- Standalone: `com.nextall.mushroomhero` (미교체)
+
+### CLAUDE.md 정정 필요 항목
+
+- "`SimpleSpineSkinAssigner.AssignSkins()`는 아직 private" → 실제로는 public으로 전환 완료
+- "`Player.SkinAssigner` getter도 없다" → 실제로는 존재
+
+### 다음 세션에 이어할 것
+
+- CLAUDE.md 주의사항 섹션에서 AssignSkins/SkinAssigner 관련 오기 정정
+- `IAPManager.cs`의 두 번째 `if (!_isConnected)` dead code 정리 (기능 영향 없으나 코드 혼란 유발)
+- Monster 프리팹 에디터 교체 (`_dev/monster-mapping.md` 5절 절차)
+- Play Mode 검증: 몬스터 파츠 정렬, Slime2 die 시작 버그, 플레이어 공격 위치 판정
+- Bundle ID / AdMob / Firebase / IAP 계정값 교체 (Phase 2 잔여)
